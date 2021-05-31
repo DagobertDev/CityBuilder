@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://GUI/Blueprints.cs" type="Script" id=1]
 [ext_resource path="res://Camera.cs" type="Script" id=2]
 [ext_resource path="res://GUI/BlueprintButton.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CityBuilder.cs" type="Script" id=4]
+[ext_resource path="res://GUI/BlueprintGhost.cs" type="Script" id=5]
 
 [node name="CityBuilder" type="Node"]
 script = ExtResource( 4 )
@@ -30,3 +31,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 BlueprintButton = ExtResource( 3 )
+
+[node name="BlueprintGhost" type="Sprite" parent="."]
+script = ExtResource( 5 )

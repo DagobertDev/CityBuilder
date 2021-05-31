@@ -1,5 +1,7 @@
 ﻿using System;
+using CityBuilder.Messages;
 using CityBuilder.Models;
+using CityBuilder.Systems;
 using Godot;
 
 namespace CityBuilder.GUI
@@ -23,6 +25,11 @@ namespace CityBuilder.GUI
 			{
 				throw new ArgumentNullException(nameof(Blueprint));
 			}
+		}
+
+		public override void _Pressed()
+		{
+			CityBuilder.Publisher.Publish(new BlueprintSelectedMessage(Blueprint));
 		}
 	}
 }

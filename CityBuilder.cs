@@ -10,11 +10,13 @@ namespace CityBuilder
 	{
 		private static World World { get; } = new();
 		public static IPublisher Publisher => World;
+		public static CityBuilder Root { get; private set; }
 
 		private readonly ISystem<float> _system;
 
 		public CityBuilder()
 		{
+			Root = this;
 			_system = Systems.System.Create(World);
 		}
 
