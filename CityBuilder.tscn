@@ -12,7 +12,7 @@ script = ExtResource( 4 )
 [node name="Camera" type="Camera2D" parent="."]
 current = true
 script = ExtResource( 2 )
-Speed = 50
+Speed = 500
 MinimumZoom = 1.0
 MaximumZoom = 1024.0
 ZoomStep = 0.1
@@ -33,4 +33,7 @@ __meta__ = {
 BlueprintButton = ExtResource( 3 )
 
 [node name="BlueprintGhost" type="Sprite" parent="."]
+z_index = 1
 script = ExtResource( 5 )
+
+[node name="Map" type="YSort" parent="."]

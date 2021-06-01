@@ -10,18 +10,19 @@ namespace CityBuilder
 	{
 		private static World World { get; } = new();
 		public static IPublisher Publisher => World;
-		public static CityBuilder Root { get; private set; }
+		public static CityBuilder Instance { get; private set; }
+		public Node2D Map => GetNode<Node2D>("Map");
 
-		private readonly ISystem<float> _system;
+		private ISystem<float> _system;
 
 		public CityBuilder()
 		{
-			Root = this;
-			_system = Systems.System.Create(World);
+			Instance = this;
 		}
 
 		public override void _Ready()
 		{
+			_system = Systems.System.Create(World);
 			World.Publish(new LoadMods());
 		}
 

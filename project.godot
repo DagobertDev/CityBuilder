@@ -14,6 +14,14 @@ config/name="CityBuilder"
 run/main_scene="res://CityBuilder.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+settings/stdout/print_fps=true
+
+[display]
+
+window/vsync/use_vsync=false
+
 [input]
 
 camera_left={

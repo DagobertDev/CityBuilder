@@ -112,7 +112,7 @@ namespace CityBuilder
 
 		public override void _Process(float delta)
 		{
-			Position += Speed * _direction;
+			Position += Speed * delta * _direction;
 		}
 	}
 }

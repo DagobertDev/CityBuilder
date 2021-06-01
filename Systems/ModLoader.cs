@@ -77,6 +77,21 @@ namespace CityBuilder.Systems
 				}
 			}
 
+			if (file.HasSectionKey("agent", "speed"))
+			{
+				var speedObject = file.GetValue("agent", "speed");
+
+				switch (speedObject)
+				{
+					case float speed:
+						entity.Set(new Agent(speed));
+						break;
+					case int speed:
+						entity.Set(new Agent(speed));
+						break;
+				}
+			}
+
 			return new Blueprint((string)nameObject, entity);
 		}
 	}
