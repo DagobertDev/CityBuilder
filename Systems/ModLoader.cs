@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using CityBuilder.Models;
+using CityBuilder.Models.Flags;
 using DefaultEcs;
 using Godot;
 using Directory = System.IO.Directory;
@@ -45,7 +46,7 @@ namespace CityBuilder.Systems
 
 		private Blueprint? ParseBlueprint(string path)
 		{
-			using var file = new ConfigFile();
+			var file = new ConfigFile();
 
 			if (file.Load(path) != Error.Ok)
 			{
@@ -54,13 +55,20 @@ namespace CityBuilder.Systems
 
 			var nameObject = file.GetValue("blueprint", "name");
 
-			if (nameObject == null)
+			if (nameObject is not string name)
 			{
 				return null;
 			}
 
 			var entity = _world.CreateEntity();
 
+			PopulateEntity(entity, file, path);
+
+			return new Blueprint(name, entity, newEntity => PopulateEntity(newEntity, file, path));
+		}
+
+		private static void PopulateEntity(Entity entity, ConfigFile file, string path)
+		{
 			var textureObject = file.GetValue("blueprint", "texture");
 
 			if (textureObject is string texturePath)
@@ -90,9 +98,20 @@ namespace CityBuilder.Systems
 						entity.Set(new Agent(speed));
 						break;
 				}
+
+				entity.Set<SearchingHome>();
 			}
 
-			return new Blueprint((string)nameObject, entity);
+			if (file.HasSectionKey("housing", "beds"))
+			{
+				var bedsObject = file.GetValue("housing", "beds");
+
+				if (bedsObject is int beds)
+				{
+					entity.Set(new Housing(beds));
+					entity.Set<EmptyHousing>();
+				}
+			}
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using DefaultEcs;
+﻿using DefaultEcs;
 using DefaultEcs.Command;
 using DefaultEcs.System;
 using Godot;
@@ -19,24 +18,29 @@ namespace CityBuilder.Systems
 			_node = node;
 		}
 
-		protected override void Update(float state, ReadOnlySpan<Entity> entities)
+		private readonly EntityCommandRecorder _recorder = new();
+
+		protected override void Update(float state, in Entity entity)
 		{
-			var recorder = new EntityCommandRecorder();
-
-			foreach (var entity in entities)
+			var sprite = new Sprite
 			{
-				var sprite = new Sprite
-				{
-					Texture = entity.Get<Texture>()
-				};
+				Texture = entity.Get<Texture>()
+			};
 
-				_node.AddChild(sprite);
-
-				var record = recorder.Record(entity);
-				record.Set(sprite);
+			if (entity.Has<Agent>())
+			{
+				sprite.ZIndex = 1;
 			}
 
-			recorder.Execute();
+			_node.AddChild(sprite);
+
+			var record = _recorder.Record(entity);
+			record.Set(sprite);
+		}
+
+		protected override void PostUpdate(float state)
+		{
+			_recorder.Execute();
 		}
 	}
 }

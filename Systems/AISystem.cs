@@ -1,6 +1,7 @@
 ﻿using System;
 using CityBuilder.BehaviorTree;
 using CityBuilder.BehaviorTree.Nodes;
+using CityBuilder.Models;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
@@ -15,10 +16,12 @@ namespace CityBuilder.Systems
 
 		public AISystem(World world) : base(world)
 		{
-			var random = new Random();
-
-			_behaviourTree = new BehaviourTreeBuilder<Entity>()
-					.SetRandomDestination()
+			_behaviourTree =
+				new BehaviourTreeBuilder<Entity>()
+					.Selector()
+						.GoHome()
+						.MoveToRandomLocation()
+					.End()
 				.Build();
 		}
 
@@ -30,18 +33,36 @@ namespace CityBuilder.Systems
 
 	public static class BehaviorTreeExtensions
 	{
-		public static BehaviourTreeBuilder<Entity> SetRandomDestination(this BehaviourTreeBuilder<Entity> builder)
+		public static BehaviourTreeBuilder<Entity> GoHome(this BehaviourTreeBuilder<Entity> builder)
+		{
+
+			return builder
+				.Sequence()
+					.Condition(entity => entity.Has<Resident>())
+					.Do(entity =>
+					{
+						entity.Set(new Destination(entity.Get<Resident>().Location));
+						return BehaviourTreeStatus.Running;
+					})
+				.End();
+		}
+
+
+		public static BehaviourTreeBuilder<Entity> MoveToRandomLocation(this BehaviourTreeBuilder<Entity> builder)
 		{
 			var random = new Random();
 
 			return builder
 				.Sequence()
-					.Condition(data => !data.Has<Destination>())
-					.Do(data =>
+					.Condition(entity => !entity.Has<Destination>())
+					.Do(entity =>
 						{
-							var position = new Vector2(10000 * (float)random.NextDouble(), 10000 * (float)random.NextDouble());
+							var position = entity.Get<Transform2D>().origin;
 
-							data.Set(new Destination(position));
+							position += new Vector2(500 - 1000 * (float)random.NextDouble(),
+								500 - 1000 * (float)random.NextDouble());
+
+							entity.Set(new Destination(position));
 							return BehaviourTreeStatus.Success;
 						})
 				.End();
