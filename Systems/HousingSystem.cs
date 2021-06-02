@@ -8,7 +8,8 @@ using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
-	[With(typeof(SearchingHome))]
+	[With(typeof(Agent))]
+	[Without(typeof(Resident))]
 	[With(typeof(Transform2D))]
 	public class HousingSystem : AEntitySetSystem<float>
 	{
@@ -21,31 +22,44 @@ namespace CityBuilder.Systems
 
 		protected override void Update(float state, in Entity resident)
 		{
-			foreach (var home in _emptyHouses.GetEntities())
+			var house = FindBestHouse(resident, _emptyHouses.GetEntities());
+
+			if (house.IsAlive)
 			{
-				AddHome(resident, home);
-				break;
+				SetHouse(resident, house);
 			}
 		}
 
-		private static void AddHome(Entity resident, Entity home)
+		private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
+		{
+			var position = resident.Get<Transform2D>().origin;
+
+			Entity bestMatch = default;
+			var bestDistance = float.MaxValue;
+
+			foreach (var house in houses)
+			{
+				var housePosition = house.Get<Transform2D>().origin;
+				var distance = position.DistanceSquaredTo(housePosition);
+
+				if (distance < bestDistance)
+				{
+					bestMatch = house;
+					bestDistance = distance;
+				}
+			}
+
+			return bestMatch;
+		}
+
+		private static void SetHouse(Entity resident, Entity home)
 		{
 			if (resident.Has<Resident>())
 			{
-				throw new Exception("Resident already has home");
-				// TODO: Set new home if resident already has one
-				/*var oldHome = resident.Get<Resident>().Home;
-				var oldHousing = oldHome.Get<Housing>();
-				oldHousing.Residents.Remove(resident);
-
-				if (oldHousing.HasEmptyBeds)
-				{
-					oldHome.Set<EmptyHousing>();
-				}*/
+				throw new NotImplementedException("Resident already has home");
 			}
 
 			resident.Set(new Resident(home));
-			resident.Remove<SearchingHome>();
 
 			var housing = home.Get<Housing>();
 

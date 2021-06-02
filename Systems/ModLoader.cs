@@ -99,7 +99,7 @@ namespace CityBuilder.Systems
 						break;
 				}
 
-				entity.Set<SearchingHome>();
+				entity.Set<Tiredness>();
 			}
 
 			if (file.HasSectionKey("housing", "beds"))
@@ -110,6 +110,17 @@ namespace CityBuilder.Systems
 				{
 					entity.Set(new Housing(beds));
 					entity.Set<EmptyHousing>();
+				}
+			}
+
+			if (file.HasSection("job"))
+			{
+				var workersObject = file.GetValue("job", "workers");
+
+				if (workersObject is int workers)
+				{
+					entity.Set(new Workplace(workers));
+					entity.Set<EmptyWorkspace>();
 				}
 			}
 		}

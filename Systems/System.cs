@@ -2,7 +2,6 @@
 using CityBuilder.Messages;
 using DefaultEcs;
 using DefaultEcs.System;
-using DefaultEcs.Threading;
 using Godot;
 using World = DefaultEcs.World;
 
@@ -26,31 +25,42 @@ namespace CityBuilder.Systems
 				new SpriteSystem(world, CityBuilder.Instance.Map),
 				new PositionSystem(world),
 				new MovementSystem(world),
+				new LocationSensorSystem(world),
+				new RemoveOldLocationSystem(world),
 				new AISystem(world),
-				new HousingSystem(world));
+				new TirednessSystem(world),
+				new HousingSystem(world),
+				new SleepSystem(world),
+				new WorkSystem(world));
 		}
 
 		[Subscribe]
 		private void On(in BlueprintPlacedMessage message)
 		{
-		//	var entity = _world.CreateEntity();
-
-		//	message.Blueprint.Populate(entity);
-
-		//	entity.Set(message.Transform);
-
-			var random = new Random();
-
-			for (var i = 0; i < 1000; i++)
+			if (false)
 			{
-				var transform = Transform2D.Identity;
-				transform.origin = new Vector2(1000 * (float)random.NextDouble(), 1000 * (float)random.NextDouble());
+				var random = new Random();
 
+				for (var i = 0; i < 1000; i++)
+				{
+					var transform = Transform2D.Identity;
+					transform.origin = new Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
+
+					var entity = _world.CreateEntity();
+
+					message.Blueprint.Populate(entity);
+
+					entity.Set(transform);
+				}
+			}
+
+			else
+			{
 				var entity = _world.CreateEntity();
 
 				message.Blueprint.Populate(entity);
 
-				entity.Set(transform);
+				entity.Set(message.Transform);
 			}
 		}
 	}

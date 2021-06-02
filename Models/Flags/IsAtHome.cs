@@ -1,4 +1,4 @@
 ﻿namespace CityBuilder.Models.Flags
 {
-	public readonly struct SearchingHome { }
+	public readonly struct IsAtHome { }
 }
