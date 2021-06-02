@@ -1,4 +1,5 @@
-﻿using DefaultEcs;
+﻿using System;
+using DefaultEcs;
 using DefaultEcs.Command;
 using DefaultEcs.System;
 using Godot;
@@ -22,6 +23,11 @@ namespace CityBuilder.Systems
 
 		protected override void Update(float state, in Entity entity)
 		{
+			if (entity.Has<Sprite>())
+			{
+				throw new ApplicationException("Entity should not have sprite");
+			}
+
 			var sprite = new Sprite
 			{
 				Texture = entity.Get<Texture>()
@@ -36,6 +42,7 @@ namespace CityBuilder.Systems
 
 			var record = _recorder.Record(entity);
 			record.Set(sprite);
+			record.Remove<Texture>();
 		}
 
 		protected override void PostUpdate(float state)

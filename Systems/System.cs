@@ -21,6 +21,8 @@ namespace CityBuilder.Systems
 			world.Subscribe(new System(world));
 			world.Subscribe(new ModLoader());
 
+			TextureManager.Instance.Manage(world);
+
 			return new SequentialSystem<float>(
 				new SpriteSystem(world, CityBuilder.Instance.Map),
 				new PositionSystem(world),
@@ -37,7 +39,7 @@ namespace CityBuilder.Systems
 		[Subscribe]
 		private void On(in BlueprintPlacedMessage message)
 		{
-			if (false)
+			if (true)
 			{
 				var random = new Random();
 

@@ -2,6 +2,7 @@
 using CityBuilder.Models;
 using CityBuilder.Models.Flags;
 using DefaultEcs;
+using DefaultEcs.Resource;
 using Godot;
 using Directory = System.IO.Directory;
 using Path = System.IO.Path;
@@ -15,6 +16,11 @@ namespace CityBuilder.Systems
 
 		private string ModDirectory => ProjectSettings.GlobalizePath("res://mods");
 		private readonly World _world = new();
+
+		public ModLoader()
+		{
+			TextureManager.Instance.Manage(_world);
+		}
 
 		[Subscribe]
 		private void LoadMods(in LoadMods _)
@@ -74,15 +80,7 @@ namespace CityBuilder.Systems
 			if (textureObject is string texturePath)
 			{
 				texturePath = path.Replace(Path.GetFileName(path), texturePath);
-
-				var image = new Image();
-
-				if (image.Load(texturePath) == Error.Ok)
-				{
-					var texture = new ImageTexture();
-					texture.CreateFromImage(image);
-					entity.Set<Texture>(texture);
-				}
+				entity.Set(ManagedResource<Texture>.Create(texturePath));
 			}
 
 			if (file.HasSectionKey("agent", "speed"))
