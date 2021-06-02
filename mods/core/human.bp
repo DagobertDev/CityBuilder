@@ -1,0 +1,6 @@
+[blueprint]
+name = "Human"
+texture = "human.png"
+
+[agent]
+speed = 100

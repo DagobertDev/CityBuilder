@@ -1,0 +1,6 @@
+[blueprint]
+name = "Field"
+texture = "field.png"
+
+[job]
+workers = 2

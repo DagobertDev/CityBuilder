@@ -1,0 +1,6 @@
+[blueprint]
+name = "House"
+texture = "house.png"
+
+[housing]
+beds = 4
