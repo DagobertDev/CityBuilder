@@ -1,6 +1,6 @@
 using System;
 using CityBuilder.Messages;
-using CityBuilder.Models;
+using CityBuilder.ModSupport;
 using DefaultEcs;
 using Godot;
 

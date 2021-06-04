@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Components
 {
 	public readonly struct Destination
 	{

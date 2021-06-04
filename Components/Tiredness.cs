@@ -1,4 +1,4 @@
-﻿namespace CityBuilder.Models
+﻿namespace CityBuilder.Components
 {
 	public readonly struct Tiredness
 	{

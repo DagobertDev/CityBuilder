@@ -1,4 +1,5 @@
-﻿using DefaultEcs;
+﻿using CityBuilder.Components;
+using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
 using World = DefaultEcs.World;
@@ -16,8 +17,9 @@ namespace CityBuilder.Systems
 		{
 			var destination = entity.Get<Destination>().Position;
 			var transform = entity.Get<Transform2D>();
+			var speed = entity.Get<Agent>().Speed;
 
-			transform.origin = transform.origin.MoveToward(destination, state * entity.Get<Agent>().Speed);
+			transform.origin = transform.origin.MoveToward(destination, state * speed);
 
 			if (transform.origin.DistanceSquaredTo(destination) < 100)
 			{

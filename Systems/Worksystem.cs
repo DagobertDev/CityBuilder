@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using CityBuilder.Models;
-using CityBuilder.Models.Flags;
+using CityBuilder.Components;
+using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
@@ -52,7 +51,6 @@ namespace CityBuilder.Systems
 			return bestMatch;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void AddWorker(Entity employee, Entity workplace)
 		{
 			if (employee.Has<Employee>())

@@ -1,4 +1,4 @@
-﻿using CityBuilder.Models;
+﻿using CityBuilder.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 

@@ -1,4 +1,4 @@
-﻿using CityBuilder.Models;
+﻿using CityBuilder.ModSupport;
 
 namespace CityBuilder.Messages
 {

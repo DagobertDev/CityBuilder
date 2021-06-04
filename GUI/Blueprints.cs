@@ -1,5 +1,5 @@
 using System;
-using CityBuilder.Models;
+using CityBuilder.ModSupport;
 using Godot;
 
 namespace CityBuilder.GUI

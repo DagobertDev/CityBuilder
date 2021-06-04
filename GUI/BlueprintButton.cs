@@ -1,7 +1,6 @@
 ﻿using System;
 using CityBuilder.Messages;
-using CityBuilder.Models;
-using CityBuilder.Systems;
+using CityBuilder.ModSupport;
 using Godot;
 
 namespace CityBuilder.GUI

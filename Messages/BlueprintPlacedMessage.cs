@@ -1,4 +1,4 @@
-﻿using CityBuilder.Models;
+﻿using CityBuilder.ModSupport;
 using Godot;
 
 namespace CityBuilder.Messages

@@ -1,23 +1,21 @@
 ﻿using System;
+using CityBuilder.Components;
 using DefaultEcs;
 using DefaultEcs.Command;
 using DefaultEcs.System;
 using Godot;
 using World = DefaultEcs.World;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Systems.GodotInterface
 {
 	[With(typeof(Texture))]
 	[With(typeof(Transform2D))]
 	[Without(typeof(Sprite))]
-	public class SpriteSystem : AEntitySetSystem<float>
+	public class SpriteCreationSystem : AEntitySetSystem<float>
 	{
-		private readonly Node _node;
+		private readonly Node _node = CityBuilder.Instance.Map;
 
-		public SpriteSystem(World world, Node node) : base(world)
-		{
-			_node = node;
-		}
+		public SpriteCreationSystem(World world) : base(world) { }
 
 		private readonly EntityCommandRecorder _recorder = new();
 

@@ -1,4 +1,5 @@
-﻿using CityBuilder.Models.Flags;
+﻿using CityBuilder.Components;
+using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 

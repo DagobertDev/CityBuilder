@@ -1,5 +1,7 @@
 ﻿using System;
 using CityBuilder.Messages;
+using CityBuilder.ModSupport;
+using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
@@ -24,8 +26,8 @@ namespace CityBuilder.Systems
 			TextureManager.Instance.Manage(world);
 
 			return new SequentialSystem<float>(
-				new SpriteSystem(world, CityBuilder.Instance.Map),
-				new PositionSystem(world),
+				new SpriteCreationSystem(world),
+				new SpritePositionSystem(world),
 				new MovementSystem(world),
 				new LocationSensorSystem(world),
 				new RemoveOldLocationSystem(world),

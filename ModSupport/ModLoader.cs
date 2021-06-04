@@ -1,6 +1,8 @@
 ﻿using System.IO;
-using CityBuilder.Models;
-using CityBuilder.Models.Flags;
+using CityBuilder.Components;
+using CityBuilder.Components.Flags;
+using CityBuilder.Messages;
+using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.Resource;
 using Godot;
@@ -8,7 +10,7 @@ using Directory = System.IO.Directory;
 using Path = System.IO.Path;
 using World = DefaultEcs.World;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.ModSupport
 {
 	public class ModLoader
 	{

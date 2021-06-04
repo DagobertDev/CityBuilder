@@ -1,4 +1,4 @@
-﻿namespace CityBuilder.Systems
+﻿namespace CityBuilder.Components
 {
 	public readonly struct Agent
 	{

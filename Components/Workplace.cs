@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using DefaultEcs;
 
-namespace CityBuilder.Models
+namespace CityBuilder.Components
 {
 	public class Workplace
 	{

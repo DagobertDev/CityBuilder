@@ -1,7 +1,7 @@
 ﻿using DefaultEcs;
 using Godot;
 
-namespace CityBuilder.Models
+namespace CityBuilder.Components
 {
 	public readonly struct Resident
 	{

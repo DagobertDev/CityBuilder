@@ -1,5 +1,5 @@
-﻿using CityBuilder.Models;
-using CityBuilder.Models.Flags;
+﻿using CityBuilder.Components;
+using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -13,7 +13,7 @@ namespace CityBuilder.Systems
 
 		protected override void Update(float state, in Entity entity)
 		{
-			entity.Set<Tiredness>(entity.Get<Tiredness>() - 10 * state);
+			entity.Get<Tiredness>() -= 10 * state;
 		}
 	}
 }
