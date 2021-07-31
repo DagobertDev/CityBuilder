@@ -1,4 +1,8 @@
-﻿using CityBuilder.Messages;
+﻿using System;
+using CityBuilder.Messages;
+using CityBuilder.ModSupport;
+using CityBuilder.Systems;
+using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
@@ -10,25 +14,69 @@ namespace CityBuilder
 	{
 		private static World World { get; } = new();
 		public static IPublisher Publisher => World;
-		public static CityBuilder Instance { get; private set; }
-		public Node2D Map => GetNode<Node2D>("Map");
+		private Node2D Map => GetNode<Node2D>("Map");
 
-		private ISystem<float> _system;
+		private ISystem<float> _system = null!;
 
 		public CityBuilder()
 		{
-			Instance = this;
+			World.Subscribe(this);
 		}
 
 		public override void _Ready()
 		{
-			_system = Systems.System.Create(World);
-			World.Publish(new LoadMods());
+			_system = new SequentialSystem<float>(
+				new SpriteCreationSystem(World, Map),
+				new SpritePositionSystem(World),
+				new MovementSystem(World),
+				new LocationSensorSystem(World),
+				new RemoveOldLocationSystem(World),
+				new AISystem(World),
+				new TirednessSystem(World),
+				new HousingSystem(World),
+				new SleepSystem(World),
+				new WorkSystem(World));
+
+			var textureManager = new TextureManager();
+			textureManager.Manage(World);
+			
+			var modLoader = new ModLoader(textureManager);
+			modLoader.LoadMods();
 		}
 
 		public override void _Process(float delta)
 		{
 			_system.Update(delta);
+		}
+
+		[Subscribe]
+		private void On(in BlueprintPlacedMessage message)
+		{
+			if (true)
+			{
+				var random = new Random();
+
+				for (var i = 0; i < 1000; i++)
+				{
+					var transform = Transform2D.Identity;
+					transform.origin = new Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
+
+					var entity = World.CreateEntity();
+
+					message.Blueprint.Populate(entity);
+
+					entity.Set(transform);
+				}
+			}
+
+			else
+			{
+				var entity = World.CreateEntity();
+
+				message.Blueprint.Populate(entity);
+
+				entity.Set(message.Transform);
+			}
 		}
 	}
 }

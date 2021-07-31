@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using CityBuilder.Components;
 using CityBuilder.Components.Flags;
-using CityBuilder.Messages;
 using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.Resource;
@@ -16,16 +15,15 @@ namespace CityBuilder.ModSupport
 	{
 		private const string BlueprintFileExtension = "bp";
 
-		private string ModDirectory => ProjectSettings.GlobalizePath("res://mods");
+		private static string ModDirectory => ProjectSettings.GlobalizePath("res://mods");
 		private readonly World _world = new();
 
-		public ModLoader()
+		public ModLoader(TextureManager textureManager)
 		{
-			TextureManager.Instance.Manage(_world);
+			textureManager.Manage(_world);
 		}
 
-		[Subscribe]
-		private void LoadMods(in LoadMods _)
+		public void LoadMods()
 		{
 			LoadMods(ModDirectory);
 		}

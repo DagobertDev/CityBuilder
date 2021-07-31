@@ -3,18 +3,16 @@ using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
-using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
 	[WhenRemoved(typeof(Destination))]
-	public class LocationSensorSystem : AEntitySetSystem<float>
+	public sealed partial class LocationSensorSystem : AEntitySetSystem<float>
 	{
-		public LocationSensorSystem(World world) : base(world, true) { }
-
-		protected override void Update(float state, in Entity entity)
+		[Update] [UseBuffer]
+		private static void Update(in Entity entity, in Transform2D transform)
 		{
-			var position = entity.Get<Transform2D>().origin;
+			var position = transform.origin;
 
 			if (entity.Has<Resident>() && entity.Get<Resident>().Location.DistanceSquaredTo(position) < 10)
 			{

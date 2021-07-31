@@ -1,34 +1,30 @@
-﻿using System;
-using CityBuilder.Components;
+﻿using CityBuilder.Components;
 using DefaultEcs;
 using DefaultEcs.Command;
 using DefaultEcs.System;
 using Godot;
-using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems.GodotInterface
 {
-	[With(typeof(Texture))]
 	[With(typeof(Transform2D))]
-	[Without(typeof(Sprite))]
-	public class SpriteCreationSystem : AEntitySetSystem<float>
+	public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
 	{
-		private readonly Node _node = CityBuilder.Instance.Map;
-
-		public SpriteCreationSystem(World world) : base(world) { }
+		[ConstructorParameter]
+		private readonly Node _node;
 
 		private readonly EntityCommandRecorder _recorder = new();
 
-		protected override void Update(float state, in Entity entity)
+		[Update]
+		private void Update(in Entity entity, in Texture texture)
 		{
 			if (entity.Has<Sprite>())
 			{
-				throw new ApplicationException("Entity should not have sprite");
+				entity.Get<Sprite>().QueueFree();
 			}
 
 			var sprite = new Sprite
 			{
-				Texture = entity.Get<Texture>()
+				Texture = texture
 			};
 
 			if (entity.Has<Agent>())

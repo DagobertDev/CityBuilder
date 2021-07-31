@@ -6,11 +6,10 @@ using DefaultEcs.System;
 namespace CityBuilder.Systems
 {
 	[WhenAdded(typeof(Destination))]
-	public class RemoveOldLocationSystem : AEntitySetSystem<float>
+	public sealed partial class RemoveOldLocationSystem : AEntitySetSystem<float>
 	{
-		public RemoveOldLocationSystem(World world) : base(world, true) { }
-
-		protected override void Update(float state, in Entity entity)
+		[Update] [UseBuffer]
+		private static void Update(in Entity entity)
 		{
 			entity.Remove<IsAtHome>();
 			entity.Remove<IsAtWorkplace>();
