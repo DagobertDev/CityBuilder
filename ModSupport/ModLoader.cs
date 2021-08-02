@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using CityBuilder.Components;
+using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
 using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
@@ -81,6 +82,12 @@ namespace CityBuilder.ModSupport
 			{
 				texturePath = path.Replace(Path.GetFileName(path), texturePath);
 				entity.Set(ManagedResource<Texture>.Create(texturePath));
+			}
+
+			if (file.HasSection("agent"))
+			{
+				entity.Set<Idling>();
+				entity.Set(new BehaviorQueue());
 			}
 
 			if (file.HasSectionKey("agent", "speed"))

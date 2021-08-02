@@ -32,6 +32,7 @@ namespace CityBuilder
 				new LocationSensorSystem(World),
 				new RemoveOldLocationSystem(World),
 				new AISystem(World),
+				new WaitSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),
 				new SleepSystem(World),
@@ -52,7 +53,7 @@ namespace CityBuilder
 		[Subscribe]
 		private void On(in BlueprintPlacedMessage message)
 		{
-			if (true)
+			if (false)
 			{
 				var random = new Random();
 

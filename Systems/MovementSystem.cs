@@ -1,4 +1,5 @@
 ﻿using CityBuilder.Components;
+using CityBuilder.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
@@ -21,6 +22,7 @@ namespace CityBuilder.Systems
 				transform.origin = destination;
 
 				entity.Remove<Destination>();
+				entity.Set<Idling>();
 			}
 
 			entity.Set(transform);

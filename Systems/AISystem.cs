@@ -2,6 +2,7 @@
 using CityBuilder.BehaviorTree;
 using CityBuilder.BehaviorTree.Nodes;
 using CityBuilder.Components;
+using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
@@ -10,12 +11,12 @@ using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
-	[With(typeof(Agent))]
-	public class AISystem : AEntitySetSystem<float>
+	[With(typeof(Idling))]
+	public sealed partial class AISystem : AEntitySetSystem<float>
 	{
 		private readonly IBehaviourTreeNode<Entity> _behaviourTree;
 
-		public AISystem(World world) : base(world)
+		public AISystem(World world) : base(world, true)
 		{
 			_behaviourTree =
 				new BehaviourTreeBuilder<Entity>()
@@ -27,9 +28,18 @@ namespace CityBuilder.Systems
 				.Build();
 		}
 
-		protected override void Update(float state, in Entity entity)
+		[Update]
+		private void Update(in Entity entity, in BehaviorQueue behaviorQueue)
 		{
-			_behaviourTree.Tick(entity);
+			if (behaviorQueue.Count > 0)
+			{
+				entity.Remove<Idling>();
+				behaviorQueue.Dequeue()(entity);
+			}
+			else
+			{
+				_behaviourTree.Tick(entity);
+			}
 		}
 	}
 
@@ -49,9 +59,11 @@ namespace CityBuilder.Systems
 
 		public static BehaviourTreeBuilder<Entity> Sleep(this BehaviourTreeBuilder<Entity> builder)
 		{
-			return builder.Do(entity => entity.Has<IsAtHome>()
-				? BehaviourTreeStatus.Running
-				: BehaviourTreeStatus.Failure);
+			return builder
+				.Sequence()
+					.Condition(entity => entity.Has<IsAtHome>())
+					.EnqueueBehavior(entity => entity.Set<Sleeping>())
+				.End();
 		}
 
 		public static BehaviourTreeBuilder<Entity> GoHomeToSleep(this BehaviourTreeBuilder<Entity> builder)
@@ -59,7 +71,9 @@ namespace CityBuilder.Systems
 			return builder
 				.Sequence()
 					.Condition(entity => entity.Get<Tiredness>() >= 20)
-					.GoHome()
+					.Condition(entity => entity.Has<Resident>())
+					.EnqueueBehavior(GoTo(entity => entity.Get<Resident>().Location), 
+						entity => entity.Set<Sleeping>())
 				.End();
 		}
 
@@ -68,28 +82,12 @@ namespace CityBuilder.Systems
 			return builder
 				.Sequence()
 					.Condition(entity => entity.Has<Employee>())
-					.Do(entity =>
+					.EnqueueBehavior(entity =>
 					{
 						entity.Set(new Destination(entity.Get<Employee>().Location));
-						return BehaviourTreeStatus.Running;
-					})
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> GoHome(this BehaviourTreeBuilder<Entity> builder)
-		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Has<Resident>())
-					.Do(entity =>
+					}, entity =>
 					{
-						if (entity.Has<IsAtHome>())
-						{
-							return BehaviourTreeStatus.Running;
-						}
-
-						entity.Set(new Destination(entity.Get<Resident>().Location));
-						return BehaviourTreeStatus.Running;
+						entity.Set(new Waiting(5));
 					})
 				.End();
 		}
@@ -99,19 +97,30 @@ namespace CityBuilder.Systems
 			var random = new Random();
 
 			return builder
-				.Sequence()
-					.Condition(entity => !entity.Has<Destination>())
-					.Do(entity =>
-						{
-							var position = entity.Get<Transform2D>().origin;
+				.EnqueueBehavior(GoTo(entity => 
+				{ 
+					var position = entity.Get<Transform2D>().origin; 
+					position += new Vector2(500 - 1000 * (float)random.NextDouble(), 
+						500 - 1000 * (float)random.NextDouble()); 
+					return position; 
+				}), entity => entity.Set(new Waiting(3)));
+		}
 
-							position += new Vector2(500 - 1000 * (float)random.NextDouble(),
-								500 - 1000 * (float)random.NextDouble());
+		private static Action<Entity> GoTo(Func<Entity, Vector2> getLocation) => entity => entity.Set(new Destination(getLocation(entity)));
 
-							entity.Set(new Destination(position));
-							return BehaviourTreeStatus.Success;
-						})
-				.End();
+		public static BehaviourTreeBuilder<Entity> EnqueueBehavior(this BehaviourTreeBuilder<Entity> builder, params Action<Entity>[] actions)
+		{
+			return builder.Do(entity =>
+			{
+				var queue = entity.Get<BehaviorQueue>();
+				
+				foreach (var action in actions)
+				{
+					queue.Enqueue(action);
+				}
+				
+				return BehaviourTreeStatus.Running;
+			});
 		}
 	}
 }
