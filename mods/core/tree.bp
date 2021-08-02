@@ -1,0 +1,6 @@
+[blueprint]
+name = "Tree"
+texture = "tree.png"
+
+[job]
+workers = 1
