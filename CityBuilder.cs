@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Messages;
 using CityBuilder.ModSupport;
@@ -12,7 +13,7 @@ using World = DefaultEcs.World;
 
 namespace CityBuilder
 {
-	public class CityBuilder : Node
+	public class CityBuilder : Control
 	{
 		private static World World { get; } = new();
 		public static IPublisher Publisher => World;
@@ -53,6 +54,24 @@ namespace CityBuilder
 		public override void _Process(float delta)
 		{
 			_system.Update(delta);
+		}
+
+		public override void _UnhandledInput(InputEvent @event)
+		{
+			if (@event.IsActionPressed("mouseclick_left"))
+			{
+				var mousePosition = GetGlobalMousePosition();
+				
+				var selected = World.Get<QuadTree<HitBox>>()
+					.GetNearestObjects(new HitBox(mousePosition, Vector2.One, default));
+
+				var first = selected.FirstOrDefault(hitBox => hitBox.Value.HasPoint(mousePosition));
+
+				if (first is not null)
+				{
+					World.Publish(new EntitySelected(first.Entity));
+				}
+			}
 		}
 
 		[Subscribe]

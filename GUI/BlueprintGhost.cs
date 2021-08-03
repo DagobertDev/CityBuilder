@@ -35,11 +35,13 @@ namespace CityBuilder.GUI
 			if (@event.IsActionPressed(MouseclickLeft))
 			{
 				Build();
+				GetTree().SetInputAsHandled();
 			}
 
 			else if (@event.IsActionPressed(MouseclickRight))
 			{
 				Disable();
+				GetTree().SetInputAsHandled();
 			}
 		}
 

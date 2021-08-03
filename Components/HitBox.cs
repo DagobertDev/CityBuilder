@@ -8,28 +8,22 @@ namespace CityBuilder.Components
 	{
 		public HitBox(Vector2 position, Vector2 size, Entity entity)
 		{
-			X = position.x;
-			Y = position.y;
-			Width = size.x;
-			Height = size.y;
+			Value = new Rect2(position - 0.5f * size, size);
 			Entity = entity;
 		}
-			
-		public float X { get; }
-		public float Y {get;}
-		public float Height { get; }
-		public float Width { get; }
+
+		public Rect2 Value;
 		public Entity Entity { get; }
 	}
 	
 	public class HitBoxBounds : IQuadTreeObjectBounds<HitBox>
 	{
-		public double GetLeft(HitBox hitBox) => hitBox.X;
+		public double GetLeft(HitBox hitBox) => hitBox.Value.Position.x;
 
-		public double GetRight(HitBox hitBox) => hitBox.X + hitBox.Width;
+		public double GetRight(HitBox hitBox) => hitBox.Value.Position.x + hitBox.Value.Size.x;
 
-		public double GetTop(HitBox hitBox) => hitBox.Y;
+		public double GetTop(HitBox hitBox) => hitBox.Value.Position.y;
 
-		public double GetBottom(HitBox hitBox) => hitBox.Y + hitBox.Height;
+		public double GetBottom(HitBox hitBox) => hitBox.Value.Position.y + hitBox.Value.Size.y;
 	}
 }
