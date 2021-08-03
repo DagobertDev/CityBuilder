@@ -1,4 +1,5 @@
 ﻿using System;
+using CityBuilder.Components;
 using CityBuilder.Messages;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems;
@@ -6,6 +7,7 @@ using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
+using UltimateQuadTree;
 using World = DefaultEcs.World;
 
 namespace CityBuilder
@@ -25,10 +27,13 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
+			World.Set( new QuadTree<HitBox>(100000, 100000, new HitBoxBounds()));
+			
 			_system = new SequentialSystem<float>(
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
 				new MovementSystem(World),
+				new QuadTreeSystem(World),
 				new LocationSensorSystem(World),
 				new RemoveOldLocationSystem(World),
 				new AISystem(World),

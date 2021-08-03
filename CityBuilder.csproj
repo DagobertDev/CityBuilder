@@ -10,5 +10,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="UltimateQuadTree" Version="1.0.3" />
   </ItemGroup>
 </Project>
