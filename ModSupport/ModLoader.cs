@@ -104,6 +104,7 @@ namespace CityBuilder.ModSupport
 						break;
 				}
 
+				entity.Set<Hunger>();
 				entity.Set<Tiredness>();
 			}
 
@@ -127,6 +128,11 @@ namespace CityBuilder.ModSupport
 					entity.Set(new Workplace(workers));
 					entity.Set<EmptyWorkspace>();
 				}
+			}
+
+			if (file.HasSection("market"))
+			{
+				entity.Set<Market>();
 			}
 		}
 	}

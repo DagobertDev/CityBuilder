@@ -39,6 +39,7 @@ namespace CityBuilder
 				new RemoveOldLocationSystem(World),
 				new AISystem(World),
 				new WaitSystem(World),
+				new HungerSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),
 				new SleepSystem(World),

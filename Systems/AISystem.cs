@@ -18,9 +18,12 @@ namespace CityBuilder.Systems
 
 		public AISystem(World world) : base(world, true)
 		{
+			var markets = world.GetEntities().With<Market>().With<Transform2D>().AsSet();
+
 			_behaviourTree =
 				new BehaviourTreeBuilder<Entity>()
 					.Selector()
+						.SatisfyHunger(markets)
 						.SatisfyTiredness()
 						.GoToWork()
 						.GoToRandomLocation()
@@ -45,6 +48,43 @@ namespace CityBuilder.Systems
 
 	public static class BehaviorTreeExtensions
 	{
+		public static BehaviourTreeBuilder<Entity> SatisfyHunger(this BehaviourTreeBuilder<Entity> builder, EntitySet markets)
+		{
+			return builder
+				.Sequence()
+					.Condition(entity => entity.Get<Hunger>().Value >= 20 && markets.Count > 0)
+					.EnqueueBehavior(GoTo(entity =>
+					{
+						var position = entity.Get<Transform2D>().origin;
+						var distance = float.MaxValue;
+						var closest = default(Entity);
+
+						foreach (var market in markets.GetEntities())
+						{
+							var newDistance = market.Get<Transform2D>().origin.DistanceSquaredTo(position);
+							
+							if (newDistance < distance)
+							{
+								distance = newDistance;
+								closest = market;
+							}
+						}
+
+						if (closest == default)
+						{
+							throw new ApplicationException("Market not found");
+						}
+
+						return closest.Get<Transform2D>().origin;
+					}), entity => entity.Set(new Waiting(3)), 
+					entity =>
+					{
+						entity.Get<Hunger>() = 0;
+						entity.Set<Idling>();
+					})
+				.End();
+		}
+
 		public static BehaviourTreeBuilder<Entity> SatisfyTiredness(this BehaviourTreeBuilder<Entity> builder)
 		{
 			return builder
