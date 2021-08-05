@@ -1,5 +1,5 @@
-﻿using DefaultEcs;
-using Godot;
+﻿using System.Numerics;
+using DefaultEcs;
 
 namespace CityBuilder.Components
 {
@@ -8,7 +8,7 @@ namespace CityBuilder.Components
 		public Resident(Entity home)
 		{
 			Home = home;
-			Location = home.Get<Transform2D>().origin;
+			Location = home.Get<Position>().Value;
 		}
 
 		public Entity Home { get; }

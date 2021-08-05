@@ -3,21 +3,19 @@ using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
-using Godot;
-using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
 	[With(typeof(Agent))]
 	[Without(typeof(Resident))]
-	[With(typeof(Transform2D))]
+	[With(typeof(Position))]
 	public class HousingSystem : AEntitySetSystem<float>
 	{
 		private readonly EntitySet _emptyHouses;
 
 		public HousingSystem(World world) : base(world, true)
 		{
-			_emptyHouses = world.GetEntities().With<Housing>().With<EmptyHousing>().With<Transform2D>().AsSet();
+			_emptyHouses = world.GetEntities().With<Housing>().With<EmptyHousing>().With<Position>().AsSet();
 		}
 
 		protected override void Update(float state, in Entity resident)
@@ -32,14 +30,14 @@ namespace CityBuilder.Systems
 
 		private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
 		{
-			var position = resident.Get<Transform2D>().origin;
+			var position = resident.Get<Position>().Value;
 
 			Entity bestMatch = default;
 			var bestDistance = float.MaxValue;
 
 			foreach (var house in houses)
 			{
-				var housePosition = house.Get<Transform2D>().origin;
+				var housePosition = house.Get<Position>().Value;
 				var distance = position.DistanceSquaredTo(housePosition);
 
 				if (distance < bestDistance)

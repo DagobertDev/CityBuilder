@@ -9,11 +9,12 @@ using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
 using UltimateQuadTree;
+using InputMap = CityBuilder.GUI.InputMap;
 using World = DefaultEcs.World;
 
 namespace CityBuilder
 {
-	public class CityBuilder : Control
+	public class Game : Control
 	{
 		private static World World { get; } = new();
 		public static IPublisher Publisher => World;
@@ -21,7 +22,7 @@ namespace CityBuilder
 
 		private ISystem<float> _system = null!;
 
-		public CityBuilder()
+		public Game()
 		{
 			World.Subscribe(this);
 		}
@@ -59,7 +60,7 @@ namespace CityBuilder
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
-			if (@event.IsActionPressed("mouseclick_left"))
+			if (@event.IsActionPressed(InputMap.MouseclickLeft))
 			{
 				var mousePosition = GetGlobalMousePosition();
 				
@@ -84,14 +85,12 @@ namespace CityBuilder
 
 				for (var i = 0; i < 1000; i++)
 				{
-					var transform = Transform2D.Identity;
-					transform.origin = new Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
-
 					var entity = World.CreateEntity();
 
 					message.Blueprint.Populate(entity);
 
-					entity.Set(transform);
+					var position  = new System.Numerics.Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
+					entity.Set(new Position(position));
 				}
 			}
 
@@ -101,7 +100,9 @@ namespace CityBuilder
 
 				message.Blueprint.Populate(entity);
 
-				entity.Set(message.Transform);
+				var position = new System.Numerics.Vector2(message.Transform.origin.x, message.Transform.origin.y);
+
+				entity.Set(new Position(position));
 			}
 		}
 	}

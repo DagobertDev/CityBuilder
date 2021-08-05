@@ -8,14 +8,11 @@ namespace CityBuilder.GUI
 {
 	public class BlueprintGhost : Sprite
 	{
-		private const string MouseclickLeft = "mouseclick_left";
-		private const string MouseclickRight = "mouseclick_right";
-
 		private Blueprint? Blueprint { get; set; }
 
 		public BlueprintGhost()
 		{
-			CityBuilder.Publisher.Subscribe(this);
+			Game.Publisher.Subscribe(this);
 		}
 
 		public override void _Ready()
@@ -32,13 +29,13 @@ namespace CityBuilder.GUI
 
 		public override void _Input(InputEvent @event)
 		{
-			if (@event.IsActionPressed(MouseclickLeft))
+			if (@event.IsActionPressed(InputMap.MouseclickLeft))
 			{
 				Build();
 				GetTree().SetInputAsHandled();
 			}
 
-			else if (@event.IsActionPressed(MouseclickRight))
+			else if (@event.IsActionPressed(InputMap.MouseclickRight))
 			{
 				Disable();
 				GetTree().SetInputAsHandled();
@@ -52,7 +49,7 @@ namespace CityBuilder.GUI
 				throw new ArgumentNullException(nameof(Blueprint));
 			}
 
-			CityBuilder.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, GlobalTransform));
+			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, GlobalTransform));
 		}
 
 		private void Enable(Blueprint blueprint)

@@ -1,21 +1,17 @@
 ﻿using CityBuilder.Components;
 using DefaultEcs;
-using DefaultEcs.Command;
 using DefaultEcs.System;
 using Godot;
 
 namespace CityBuilder.Systems.GodotInterface
 {
-	[With(typeof(Transform2D))]
 	public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
 	{
 		[ConstructorParameter]
 		private readonly Node _node;
 
-		private readonly EntityCommandRecorder _recorder = new();
-
-		[Update]
-		private void Update(in Entity entity, in Texture texture)
+		[Update] [UseBuffer]
+		private void Update(in Entity entity, in Texture texture, in Position position)
 		{
 			if (entity.Has<Sprite>())
 			{
@@ -24,7 +20,8 @@ namespace CityBuilder.Systems.GodotInterface
 
 			var sprite = new Sprite
 			{
-				Texture = texture
+				Texture = texture,
+				Position = position.Value.ToGodotVector()
 			};
 
 			if (entity.Has<Agent>())
@@ -34,14 +31,8 @@ namespace CityBuilder.Systems.GodotInterface
 
 			_node.AddChild(sprite);
 
-			var record = _recorder.Record(entity);
-			record.Set(sprite);
-			record.Remove<Texture>();
-		}
-
-		protected override void PostUpdate(float state)
-		{
-			_recorder.Execute();
+			entity.Set(sprite);
+			entity.Remove<Texture>();
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using CityBuilder.BehaviorTree;
 using CityBuilder.BehaviorTree.Nodes;
 using CityBuilder.Components;
@@ -6,8 +7,6 @@ using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
-using Godot;
-using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
@@ -18,7 +17,7 @@ namespace CityBuilder.Systems
 
 		public AISystem(World world) : base(world, true)
 		{
-			var markets = world.GetEntities().With<Market>().With<Transform2D>().AsSet();
+			var markets = world.GetEntities().With<Market>().With<Position>().AsSet();
 
 			_behaviourTree =
 				new BehaviourTreeBuilder<Entity>()
@@ -55,13 +54,13 @@ namespace CityBuilder.Systems
 					.Condition(entity => entity.Get<Hunger>().Value >= 20 && markets.Count > 0)
 					.EnqueueBehavior(GoTo(entity =>
 					{
-						var position = entity.Get<Transform2D>().origin;
+						var position = entity.Get<Position>().Value;
 						var distance = float.MaxValue;
 						var closest = default(Entity);
 
 						foreach (var market in markets.GetEntities())
 						{
-							var newDistance = market.Get<Transform2D>().origin.DistanceSquaredTo(position);
+							var newDistance = market.Get<Position>().Value.DistanceSquaredTo(position);
 							
 							if (newDistance < distance)
 							{
@@ -75,7 +74,7 @@ namespace CityBuilder.Systems
 							throw new ApplicationException("Market not found");
 						}
 
-						return closest.Get<Transform2D>().origin;
+						return closest.Get<Position>().Value;
 					}), entity => entity.Set(new Waiting(3)), 
 					entity =>
 					{
@@ -139,7 +138,7 @@ namespace CityBuilder.Systems
 			return builder
 				.EnqueueBehavior(GoTo(entity => 
 				{ 
-					var position = entity.Get<Transform2D>().origin; 
+					var position = entity.Get<Position>().Value; 
 					position += new Vector2(500 - 1000 * (float)random.NextDouble(), 
 						500 - 1000 * (float)random.NextDouble()); 
 					return position; 

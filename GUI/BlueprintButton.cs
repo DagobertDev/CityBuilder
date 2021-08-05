@@ -28,7 +28,7 @@ namespace CityBuilder.GUI
 
 		public override void _Pressed()
 		{
-			CityBuilder.Publisher.Publish(new BlueprintSelectedMessage(Blueprint));
+			Game.Publisher.Publish(new BlueprintSelectedMessage(Blueprint));
 		}
 	}
 }

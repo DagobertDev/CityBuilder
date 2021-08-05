@@ -3,21 +3,19 @@ using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
-using Godot;
-using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems
 {
 	[With(typeof(Agent))]
 	[Without(typeof(Employee))]
-	[With(typeof(Transform2D))]
+	[With(typeof(Position))]
 	public class WorkSystem : AEntitySetSystem<float>
 	{
 		private readonly EntitySet _emptyWorkplaces;
 
 		public WorkSystem(World world) : base(world, true)
 		{
-			_emptyWorkplaces = world.GetEntities().With<Workplace>().With<EmptyWorkspace>().With<Transform2D>().AsSet();
+			_emptyWorkplaces = world.GetEntities().With<Workplace>().With<EmptyWorkspace>().With<Position>().AsSet();
 		}
 
 		protected override void Update(float state, in Entity worker)
@@ -32,13 +30,13 @@ namespace CityBuilder.Systems
 
 		private static Entity FindBestWorkplace(Entity worker, ReadOnlySpan<Entity> workplaces)
 		{
-			var position = worker.Get<Transform2D>().origin;
+			var position = worker.Get<Position>().Value;
 			Entity bestMatch = default;
 			var currentDistance = float.MaxValue;
 
 			foreach (var workplace in workplaces)
 			{
-				var workplacePosition = workplace.Get<Transform2D>().origin;
+				var workplacePosition = workplace.Get<Position>().Value;
 				var distance = position.DistanceSquaredTo(workplacePosition);
 
 				if (distance < currentDistance)

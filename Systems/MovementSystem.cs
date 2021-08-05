@@ -2,7 +2,6 @@
 using CityBuilder.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
-using Godot;
 
 namespace CityBuilder.Systems
 {
@@ -10,17 +9,15 @@ namespace CityBuilder.Systems
 	{
 		[Update] [UseBuffer]
 		private static void Update(float state, in Entity entity, in Destination destinationComponent,
-			ref Transform2D transform, in Agent agent)
+			ref Position transform, in Agent agent)
 		{
 			var destination = destinationComponent.Position;
 			var speed = agent.Speed;
 
-			transform.origin = transform.origin.MoveToward(destination, state * speed);
+			transform = new Position(transform.Value.MoveToward(destination, state * speed));
 
-			if (transform.origin.DistanceSquaredTo(destination) < 100)
+			if (transform.Value == destination)
 			{
-				transform.origin = destination;
-
 				entity.Remove<Destination>();
 				entity.Set<Idling>();
 			}

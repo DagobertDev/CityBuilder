@@ -1,9 +1,9 @@
 using System;
-using Godot;
 using System.Collections.Generic;
 using CityBuilder.Messages;
 using DefaultEcs;
 using DefaultEcs.Serialization;
+using Godot;
 using Newtonsoft.Json;
 
 public class EntityInspector : WindowDialog
@@ -13,7 +13,7 @@ public class EntityInspector : WindowDialog
 	
 	public override void _Ready()
     {
-	    CityBuilder.CityBuilder.Publisher.Subscribe(this);
+	    CityBuilder.Game.Publisher.Subscribe(this);
 	    
 	    _timer.Connect("timeout", this, nameof(UpdateEntity));
 	    AddChild(_timer);

@@ -16,7 +16,7 @@ namespace CityBuilder.GUI
 				throw new ArgumentNullException(nameof(BlueprintButton));
 			}
 
-			CityBuilder.Publisher.Subscribe<Blueprint>(On);
+			Game.Publisher.Subscribe<Blueprint>(On);
 		}
 
 		private void On(in Blueprint blueprint)

@@ -47,7 +47,7 @@ namespace CityBuilder.ModSupport
 					continue;
 				}
 
-				CityBuilder.Publisher.Publish(blueprint);
+				Game.Publisher.Publish(blueprint);
 			}
 		}
 

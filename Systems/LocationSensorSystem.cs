@@ -2,7 +2,6 @@
 using CityBuilder.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
-using Godot;
 
 namespace CityBuilder.Systems
 {
@@ -10,9 +9,9 @@ namespace CityBuilder.Systems
 	public sealed partial class LocationSensorSystem : AEntitySetSystem<float>
 	{
 		[Update] [UseBuffer]
-		private static void Update(in Entity entity, in Transform2D transform)
+		private static void Update(in Entity entity, in Position positionComponent)
 		{
-			var position = transform.origin;
+			var position = positionComponent.Value;
 
 			if (entity.Has<Resident>() && entity.Get<Resident>().Location.DistanceSquaredTo(position) < 10)
 			{
