@@ -1,0 +1,9 @@
+[blueprint]
+name = "Market"
+texture = "market.png"
+
+[job]
+workers = 1
+
+[market]
+dummy = true
