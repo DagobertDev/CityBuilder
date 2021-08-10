@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
-using CityBuilder.Components.Flags;
 using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.Resource;
@@ -16,11 +15,12 @@ namespace CityBuilder.ModSupport
 	{
 		private const string BlueprintFileExtension = "bp";
 
-		private static string ModDirectory => ProjectSettings.GlobalizePath("res://mods");
+		private string ModDirectory { get; }
 		private readonly World _world = new();
 
-		public ModLoader(TextureManager textureManager)
+		public ModLoader(TextureManager textureManager, string modDirectory)
 		{
+			ModDirectory = modDirectory;
 			textureManager.Manage(_world);
 		}
 
@@ -115,7 +115,6 @@ namespace CityBuilder.ModSupport
 				if (bedsObject is int beds)
 				{
 					entity.Set(new Housing(beds));
-					entity.Set<EmptyHousing>();
 				}
 			}
 
@@ -126,7 +125,6 @@ namespace CityBuilder.ModSupport
 				if (workersObject is int workers)
 				{
 					entity.Set(new Workplace(workers));
-					entity.Set<EmptyWorkspace>();
 				}
 			}
 

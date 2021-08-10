@@ -43,13 +43,15 @@ namespace CityBuilder
 				new HungerSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),
+				new HousingInitSystem(World),
 				new SleepSystem(World),
-				new WorkSystem(World));
+				new WorkSystem(World),
+				new WorkspaceInitSystem(World));
 
 			var textureManager = new TextureManager();
 			textureManager.Manage(World);
 			
-			var modLoader = new ModLoader(textureManager);
+			var modLoader = new ModLoader(textureManager, ProjectSettings.GlobalizePath("res://mods"));
 			modLoader.LoadMods();
 		}
 
