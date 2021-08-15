@@ -1,4 +1,5 @@
-﻿using DefaultEcs;
+﻿using System;
+using DefaultEcs;
 using Godot;
 using UltimateQuadTree;
 
@@ -9,11 +10,12 @@ namespace CityBuilder.Components
 		public HitBox(Vector2 position, Vector2 size, Entity entity)
 		{
 			Value = new Rect2(position - 0.5f * size, size);
-			Entity = entity;
+			_entity = entity;
 		}
 
 		public Rect2 Value;
-		public Entity Entity { get; }
+		private readonly Entity _entity;
+		public Entity Entity => _entity.IsAlive ? _entity : throw new ApplicationException("Entity is not alive");
 	}
 	
 	public class HitBoxBounds : IQuadTreeObjectBounds<HitBox>

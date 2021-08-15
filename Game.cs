@@ -29,9 +29,53 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			World.Set( new QuadTree<HitBox>(100000, 100000, new HitBoxBounds()));
+			var quadTree = new QuadTree<HitBox>(-10000, -10000, 110000, 110000, new HitBoxBounds());
+			World.Set(quadTree);
 			
+			World.SubscribeComponentRemoved((in Entity _, in HitBox hitBox) => quadTree.Remove(hitBox));
+			
+			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
+			
+			World.SubscribeComponentRemoved((in Entity entity, in Employee employee) =>
+			{
+				var workplace = employee.Workplace;
+
+				if (workplace.IsAlive)
+				{
+					workplace.Get<Workplace>().Employees.Remove(entity);
+					workplace.NotifyChanged<Workplace>();
+				}
+			});
+
+			World.SubscribeComponentRemoved((in Entity _, in Workplace workplace) =>
+			{
+				foreach (var employee in workplace.Employees.Where(entity => entity.IsAlive).ToList())
+				{
+					employee.Remove<Employee>();
+				}
+			});
+			
+			World.SubscribeComponentRemoved((in Entity entity, in Resident resident) =>
+			{
+				var home = resident.Home;
+
+				if (home.IsAlive)
+				{
+					home.Get<Housing>().Residents.Remove(entity);
+					home.NotifyChanged<Housing>();
+				}
+			});
+
+			World.SubscribeComponentRemoved((in Entity _, in Housing housing) =>
+			{
+				foreach (var employee in housing.Residents.Where(entity => entity.IsAlive).ToList())
+				{
+					employee.Remove<Resident>();
+				}
+			});
+
 			_system = new SequentialSystem<float>(
+				new RemoveSystem(World),
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
 				new MovementSystem(World),

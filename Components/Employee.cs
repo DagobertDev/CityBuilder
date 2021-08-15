@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using DefaultEcs;
 
 namespace CityBuilder.Components
@@ -7,11 +8,12 @@ namespace CityBuilder.Components
 	{
 		public Employee(Entity workplace)
 		{
-			Workplace = workplace;
+			_workplace = workplace;
 			Location = workplace.Get<Position>().Value;
 		}
 
-		public Entity Workplace { get; }
+		private readonly Entity _workplace;
+		public Entity Workplace => _workplace.IsAlive ? _workplace : throw new ApplicationException("Entity is not alive");
 		public Vector2 Location { get; }
 	}
 }

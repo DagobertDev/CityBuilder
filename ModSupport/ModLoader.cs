@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
+using CityBuilder.Components.Flags;
 using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
 using DefaultEcs.Resource;
@@ -76,6 +77,11 @@ namespace CityBuilder.ModSupport
 
 		private static void PopulateEntity(Entity entity, ConfigFile file, string path)
 		{
+			if (file.HasSectionKey("blueprint", "remove"))
+			{
+				entity.Set<RemoveRequest>();
+			}
+			
 			var textureObject = file.GetValue("blueprint", "texture");
 
 			if (textureObject is string texturePath)
