@@ -29,13 +29,13 @@ namespace CityBuilder.GUI
 
 		public override void _Input(InputEvent @event)
 		{
-			if (@event.IsActionPressed(InputMap.MouseclickLeft))
+			if (@event.IsActionPressed(InputAction.MouseclickLeft))
 			{
 				Build();
 				GetTree().SetInputAsHandled();
 			}
 
-			else if (@event.IsActionPressed(InputMap.MouseclickRight))
+			else if (@event.IsActionPressed(InputAction.MouseclickRight))
 			{
 				Disable();
 				GetTree().SetInputAsHandled();

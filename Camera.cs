@@ -1,17 +1,11 @@
 using System;
+using CityBuilder.GUI;
 using Godot;
 
 namespace CityBuilder
 {
 	public class Camera : Camera2D
 	{
-		public const string CameraLeft = "camera_left";
-		public const string CameraRight = "camera_right";
-		public const string CameraUp = "camera_up";
-		public const string CameraDown = "camera_down";
-		public const string ZoomIn = "zoom_in";
-		public const string ZoomOut = "zoom_out";
-
 		private Vector2 _direction;
 
 		[Export(PropertyHint.Range, "0, 1024")]
@@ -50,7 +44,7 @@ namespace CityBuilder
 				throw new ArgumentException($"{nameof(MinimumZoom)} can't be bigger than {nameof(MaximumZoom)}.");
 			}
 
-			if (ZoomStep <= 0 || ZoomStep >= 1)
+			if (ZoomStep is <= 0 or >= 1)
 			{
 				throw new ArgumentOutOfRangeException(nameof(ZoomStep));
 			}
@@ -58,53 +52,53 @@ namespace CityBuilder
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
-			if (@event.IsActionPressed(ZoomIn))
+			if (@event.IsActionPressed(InputAction.ZoomIn))
 			{
 				Zoom *= 1 - ZoomStep;
 			}
 
-			else if (@event.IsActionPressed(ZoomOut))
+			else if (@event.IsActionPressed(InputAction.ZoomOut))
 			{
 				Zoom /= 1 - ZoomStep;
 			}
 
 
-			else if (@event.IsActionPressed(CameraUp))
+			else if (@event.IsActionPressed(InputAction.CameraUp))
 			{
 				_direction.y = -1;
 			}
 
-			else if (@event.IsActionReleased(CameraUp))
+			else if (@event.IsActionReleased(InputAction.CameraUp))
 			{
 				_direction.y = 0;
 			}
 
-			else if (@event.IsActionPressed(CameraDown))
+			else if (@event.IsActionPressed(InputAction.CameraDown))
 			{
 				_direction.y = 1;
 			}
 
-			else if (@event.IsActionReleased(CameraDown))
+			else if (@event.IsActionReleased(InputAction.CameraDown))
 			{
 				_direction.y = 0;
 			}
 
-			else if (@event.IsActionPressed(CameraLeft))
+			else if (@event.IsActionPressed(InputAction.CameraLeft))
 			{
 				_direction.x = -1;
 			}
 
-			else if (@event.IsActionReleased(CameraLeft))
+			else if (@event.IsActionReleased(InputAction.CameraLeft))
 			{
 				_direction.x = 0;
 			}
 
-			else if (@event.IsActionPressed(CameraRight))
+			else if (@event.IsActionPressed(InputAction.CameraRight))
 			{
 				_direction.x = 1;
 			}
 
-			else if (@event.IsActionReleased(CameraRight))
+			else if (@event.IsActionReleased(InputAction.CameraRight))
 			{
 				_direction.x = 0;
 			}

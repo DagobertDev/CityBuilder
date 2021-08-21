@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CityBuilder.Components;
+using CityBuilder.GUI;
 using CityBuilder.Messages;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems;
@@ -9,7 +10,6 @@ using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
 using UltimateQuadTree;
-using InputMap = CityBuilder.GUI.InputMap;
 using World = DefaultEcs.World;
 
 namespace CityBuilder
@@ -106,7 +106,7 @@ namespace CityBuilder
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
-			if (@event.IsActionPressed(InputMap.MouseclickLeft))
+			if (@event.IsActionPressed(InputAction.MouseclickLeft))
 			{
 				var mousePosition = GetGlobalMousePosition();
 				
