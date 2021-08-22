@@ -4,3 +4,7 @@ texture = "field.png"
 
 [job]
 workers = 2
+
+[construction]
+workers = 2
+duration = 2

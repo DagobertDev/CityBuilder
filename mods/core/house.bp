@@ -4,3 +4,7 @@ texture = "house.png"
 
 [housing]
 beds = 4
+
+[construction]
+workers = 4
+duration = 10

@@ -68,5 +68,18 @@ namespace CityBuilder.Systems
 				home.Remove<EmptyHousing>();
 			}
 		}
+
+		public static void RemoveResident(in Entity entity, in Resident resident)
+		{
+			entity.Remove<IsAtHome>();
+
+			var home = resident.Home;
+
+			if (home.IsAlive)
+			{
+				home.Get<Housing>().Residents.Remove(entity);
+				home.NotifyChanged<Housing>();
+			}
+		}
 	}
 }

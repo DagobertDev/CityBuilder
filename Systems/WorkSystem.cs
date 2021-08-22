@@ -56,6 +56,7 @@ namespace CityBuilder.Systems
 				throw new NotImplementedException("Employee already has workplace");
 			}
 
+			employee.SetSameAs<WorkProgress>(workplace);
 			employee.Set(new Employee(workplace));
 
 			var workplaceComponent = workplace.Get<Workplace>();
@@ -65,6 +66,20 @@ namespace CityBuilder.Systems
 			if (!workplaceComponent.HasEmptyWorkspace)
 			{
 				workplace.Remove<EmptyWorkspace>();
+			}
+		}
+
+		public static void RemoveEmployee(in Entity entity, in Employee employee)
+		{
+			entity.Remove<IsAtWorkplace>();
+			entity.Remove<WorkProgress>();
+
+			var workplace = employee.Workplace;
+
+			if (workplace.IsAlive)
+			{
+				workplace.Get<Workplace>().Employees.Remove(entity);
+				workplace.NotifyChanged<Workplace>();
 			}
 		}
 	}

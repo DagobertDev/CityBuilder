@@ -35,17 +35,9 @@ namespace CityBuilder
 			World.SubscribeComponentRemoved((in Entity _, in HitBox hitBox) => quadTree.Remove(hitBox));
 			
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
-			
-			World.SubscribeComponentRemoved((in Entity entity, in Employee employee) =>
-			{
-				var workplace = employee.Workplace;
 
-				if (workplace.IsAlive)
-				{
-					workplace.Get<Workplace>().Employees.Remove(entity);
-					workplace.NotifyChanged<Workplace>();
-				}
-			});
+			World.SubscribeComponentRemoved((in Entity entity, in Employee employee) => 
+				WorkSystem.RemoveEmployee(entity, employee));
 
 			World.SubscribeComponentRemoved((in Entity _, in Workplace workplace) =>
 			{
@@ -54,17 +46,9 @@ namespace CityBuilder
 					employee.Remove<Employee>();
 				}
 			});
-			
-			World.SubscribeComponentRemoved((in Entity entity, in Resident resident) =>
-			{
-				var home = resident.Home;
 
-				if (home.IsAlive)
-				{
-					home.Get<Housing>().Residents.Remove(entity);
-					home.NotifyChanged<Housing>();
-				}
-			});
+			World.SubscribeComponentRemoved((in Entity entity, in Resident resident) =>
+				HousingSystem.RemoveResident(entity, resident));
 
 			World.SubscribeComponentRemoved((in Entity _, in Housing housing) =>
 			{
@@ -75,6 +59,7 @@ namespace CityBuilder
 			});
 
 			_system = new SequentialSystem<float>(
+				new BlueprintSystem(World),
 				new RemoveSystem(World),
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
@@ -90,6 +75,8 @@ namespace CityBuilder
 				new HousingInitSystem(World),
 				new SleepSystem(World),
 				new WorkSystem(World),
+				new WorkingSystem(World),
+				new ConstructionSystem(World),
 				new WorkspaceInitSystem(World));
 
 			var textureManager = new TextureManager();
@@ -132,9 +119,6 @@ namespace CityBuilder
 				for (var i = 0; i < 1000; i++)
 				{
 					var entity = World.CreateEntity();
-
-					message.Blueprint.Populate(entity);
-
 					var position  = new System.Numerics.Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
 					entity.Set(new Position(position));
 				}
@@ -143,10 +127,8 @@ namespace CityBuilder
 			else
 			{
 				var entity = World.CreateEntity();
-
-				message.Blueprint.Populate(entity);
-
-				var position = new System.Numerics.Vector2(message.Transform.origin.x, message.Transform.origin.y);
+				entity.Set(message.Blueprint);
+				var position = message.Transform.origin.ToNumericsVector();
 
 				entity.Set(new Position(position));
 			}

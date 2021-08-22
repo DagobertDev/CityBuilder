@@ -90,6 +90,21 @@ namespace CityBuilder.ModSupport
 				entity.Set(ManagedResource<Texture>.Create(texturePath));
 			}
 
+			if (file.HasSection("construction"))
+			{
+				if (file.GetValue("construction", "workers") is not int workers)
+				{
+					workers = 1;
+				}
+				
+				if (file.GetValue("construction", "duration") is not int duration)
+				{
+					duration = 1;
+				}
+				
+				entity.Set(new Construction(workers, duration));
+			}
+
 			if (file.HasSection("agent"))
 			{
 				entity.Set<Idling>();

@@ -19,6 +19,11 @@ namespace CityBuilder.Systems
 			{
 				entity.Remove<EmptyWorkspace>();
 			}
+
+			if (!entity.Has<WorkProgress>())
+			{
+				entity.Set<WorkProgress>();
+			}
 		}
 	}
 }

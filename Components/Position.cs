@@ -24,5 +24,6 @@ namespace CityBuilder.Components
 			return num <= delta || num < 9.99999997475243E-07 ? to : from + other / num * delta;
 		}
 		public static Godot.Vector2 ToGodotVector(this Vector2 vector) => new(vector.X, vector.Y);
+		public static Vector2 ToNumericsVector(this Godot.Vector2 vector) => new(vector.x, vector.y);
 	}
 }
