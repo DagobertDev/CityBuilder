@@ -1,0 +1,4 @@
+[blueprint]
+name = "Remove"
+texture = "remove.png"
+remove = true
