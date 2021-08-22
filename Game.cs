@@ -7,6 +7,7 @@ using CityBuilder.ModSupport;
 using CityBuilder.Systems;
 using CityBuilder.Systems.GodotInterface;
 using DefaultEcs;
+using DefaultEcs.Resource;
 using DefaultEcs.System;
 using Godot;
 using UltimateQuadTree;
@@ -59,7 +60,6 @@ namespace CityBuilder
 			});
 
 			_system = new SequentialSystem<float>(
-				new BlueprintSystem(World),
 				new RemoveSystem(World),
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
@@ -77,6 +77,8 @@ namespace CityBuilder
 				new WorkSystem(World),
 				new WorkingSystem(World),
 				new ConstructionSystem(World),
+				new ConstructionProgressVisualisationInitSystem(World),
+				new ConstructionProgressVisualisationSystem(World),
 				new WorkspaceInitSystem(World));
 
 			var textureManager = new TextureManager();
@@ -126,12 +128,39 @@ namespace CityBuilder
 
 			else
 			{
-				var entity = World.CreateEntity();
-				entity.Set(message.Blueprint);
-				var position = message.Transform.origin.ToNumericsVector();
+				var position = new Position(message.Transform.origin.ToNumericsVector());
+				var blueprint = message.Blueprint;
+				
+				if (message.Blueprint.Entity.Has<Construction>())
+				{
+					var entity = World.CreateEntity();
+					entity.Set(position);
+					
+					entity.Set(blueprint);
+					
+					var construction = blueprint.Entity.Get<Construction>();
+					entity.Set(construction);
+				
+					var texture = blueprint.Entity.Get<ManagedResource<string, Texture>>();
+					entity.Set(texture);
+				
+					entity.Set(new Workplace(construction.Workers));
+				}
 
-				entity.Set(new Position(position));
+				else
+				{
+					World.Publish(new FinishedBuilding(blueprint, position));
+				}
 			}
+		}
+
+		[Subscribe]
+		private void On(in FinishedBuilding message)
+		{
+			var entity = World.CreateEntity();
+			entity.Set(message.Position);
+			message.Blueprint.Populate(entity);
+			entity.Remove<Construction>();
 		}
 	}
 }

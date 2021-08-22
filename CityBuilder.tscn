@@ -65,7 +65,7 @@ __meta__ = {
 }
 
 [node name="BlueprintGhost" type="Sprite" parent="."]
-z_index = 1
+z_index = 1024
 script = ExtResource( 5 )
 
 [node name="Map" type="YSort" parent="."]
