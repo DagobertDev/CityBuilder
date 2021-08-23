@@ -16,7 +16,7 @@ namespace CityBuilder
 {
 	public class Game : Control
 	{
-		private static World World { get; } = new();
+		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
 		private Node2D Map => GetNode<Node2D>("Map");
 
@@ -30,6 +30,7 @@ namespace CityBuilder
 		public override void _Ready()
 		{
 			var collisionSystem = new CollisionSystem(World);
+			World.SetMaxCapacity<CollisionSystem>(1);
 			World.Set(collisionSystem);
 
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());

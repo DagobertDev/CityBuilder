@@ -1,6 +1,10 @@
 using System;
+using System.Linq;
+using CityBuilder.Components;
+using CityBuilder.Components.Flags;
 using CityBuilder.Messages;
 using CityBuilder.ModSupport;
+using CityBuilder.Systems;
 using DefaultEcs;
 using Godot;
 
@@ -9,6 +13,21 @@ namespace CityBuilder.GUI
 	public class BlueprintGhost : Sprite
 	{
 		private Blueprint? Blueprint { get; set; }
+
+		private bool _canBuild;
+
+		private bool CanBuild
+		{
+			get => _canBuild;
+			set
+			{
+				if (value != _canBuild)
+				{
+					SelfModulate = Colors.White.LinearInterpolate(Colors.Transparent, value ? 0.1f : 0.4f);
+					_canBuild = value;
+				}
+			}
+		}
 
 		public BlueprintGhost()
 		{
@@ -31,7 +50,11 @@ namespace CityBuilder.GUI
 		{
 			if (@event.IsActionPressed(InputAction.MouseclickLeft))
 			{
-				Build();
+				if (CanBuild)
+				{
+					Build();
+				}
+
 				GetTree().SetInputAsHandled();
 			}
 
@@ -71,7 +94,11 @@ namespace CityBuilder.GUI
 
 		public override void _Process(float delta)
 		{
-			GlobalPosition = GetGlobalMousePosition();
+			var position = GetGlobalMousePosition();
+			GlobalPosition = position;
+
+			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<CollisionSystem>()
+				.GetEntities(new HitBox(position, Texture.GetSize(), default)).All(entity => entity.Has<Agent>());
 		}
 	}
 }
