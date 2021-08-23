@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using CityBuilder.Components;
+﻿using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs.System;
-using UltimateQuadTree;
 
 namespace CityBuilder.Systems
 {
@@ -10,16 +8,15 @@ namespace CityBuilder.Systems
 	public sealed partial class RemoveSystem : AEntitySetSystem<float>
 	{
 		[WorldComponent]
-		private readonly QuadTree<HitBox> _quadTree;
+		private readonly CollisionSystem _quadTree;
 		
 		[Update] [UseBuffer]
 		private void Update(in HitBox hitBox)
 		{
-			var box = hitBox;
-
-			_quadTree.GetNearestObjects(hitBox)
-				.Where(x => x.Value.Intersects(box.Value)).ToList()
-				.ForEach(toBeRemoved => toBeRemoved.Entity.Dispose());
+			foreach (var entity in _quadTree.GetEntities(hitBox))
+			{
+				entity.Dispose();
+			}
 		}
 	}
 }

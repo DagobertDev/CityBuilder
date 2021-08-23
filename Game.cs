@@ -10,7 +10,6 @@ using DefaultEcs;
 using DefaultEcs.Resource;
 using DefaultEcs.System;
 using Godot;
-using UltimateQuadTree;
 using World = DefaultEcs.World;
 
 namespace CityBuilder
@@ -30,11 +29,9 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			var quadTree = new QuadTree<HitBox>(-10000, -10000, 110000, 110000, new HitBoxBounds());
-			World.Set(quadTree);
-			
-			World.SubscribeComponentRemoved((in Entity _, in HitBox hitBox) => quadTree.Remove(hitBox));
-			
+			var collisionSystem = new CollisionSystem(World);
+			World.Set(collisionSystem);
+
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
 
 			World.SubscribeComponentRemoved((in Entity entity, in Employee employee) => 
@@ -64,7 +61,7 @@ namespace CityBuilder
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
 				new MovementSystem(World),
-				new QuadTreeSystem(World),
+				collisionSystem,
 				new LocationSensorSystem(World),
 				new RemoveOldLocationSystem(World),
 				new AISystem(World),
@@ -99,14 +96,11 @@ namespace CityBuilder
 			{
 				var mousePosition = GetGlobalMousePosition();
 				
-				var selected = World.Get<QuadTree<HitBox>>()
-					.GetNearestObjects(new HitBox(mousePosition, Vector2.One, default));
+				var selected = World.Get<CollisionSystem>().GetEntities(mousePosition).FirstOrDefault();
 
-				var first = selected.FirstOrDefault(hitBox => hitBox.Value.HasPoint(mousePosition));
-
-				if (first is not null)
+				if (selected.IsAlive)
 				{
-					World.Publish(new EntitySelected(first.Entity));
+					World.Publish(new EntitySelected(selected));
 				}
 			}
 		}

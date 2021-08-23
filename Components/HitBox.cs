@@ -1,7 +1,6 @@
 ﻿using System;
 using DefaultEcs;
 using Godot;
-using UltimateQuadTree;
 
 namespace CityBuilder.Components
 {
@@ -16,16 +15,5 @@ namespace CityBuilder.Components
 		public Rect2 Value;
 		private readonly Entity _entity;
 		public Entity Entity => _entity.IsAlive ? _entity : throw new ApplicationException("Entity is not alive");
-	}
-	
-	public class HitBoxBounds : IQuadTreeObjectBounds<HitBox>
-	{
-		public double GetLeft(HitBox hitBox) => hitBox.Value.Position.x;
-
-		public double GetRight(HitBox hitBox) => hitBox.Value.Position.x + hitBox.Value.Size.x;
-
-		public double GetTop(HitBox hitBox) => hitBox.Value.Position.y;
-
-		public double GetBottom(HitBox hitBox) => hitBox.Value.Position.y + hitBox.Value.Size.y;
 	}
 }
