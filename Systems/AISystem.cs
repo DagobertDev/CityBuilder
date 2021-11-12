@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using CityBuilder.BehaviorTree;
-using CityBuilder.BehaviorTree.Nodes;
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
@@ -13,21 +11,11 @@ namespace CityBuilder.Systems
 	[With(typeof(Idling))]
 	public sealed partial class AISystem : AEntitySetSystem<float>
 	{
-		private readonly IBehaviourTreeNode<Entity> _behaviourTree;
+		private readonly EntitySet _markets;
 
 		public AISystem(World world) : base(world, true)
 		{
-			var markets = world.GetEntities().With<Market>().With<Position>().AsSet();
-
-			_behaviourTree =
-				new BehaviourTreeBuilder<Entity>()
-					.Selector()
-						.SatisfyHunger(markets)
-						.SatisfyTiredness()
-						.GoToWork()
-						.GoToRandomLocation()
-					.End()
-				.Build();
+			_markets = world.GetEntities().With<Market>().With<Position>().AsSet();
 		}
 
 		[Update]
@@ -40,126 +28,92 @@ namespace CityBuilder.Systems
 			}
 			else
 			{
-				_behaviourTree.Tick(entity);
+				// SatisfyHunger
+				if (entity.Get<Hunger>() >= 20 && _markets.Count > 0)
+				{
+					var market = FindClosest(entity.Get<Position>().Value, _markets);
+					var marketPosition = market.Get<Position>().Value;
+
+					EnqueueBehavior(entity, GoTo(_ => marketPosition), 
+						e => e.Set(new Waiting(3)), e =>
+					{
+						e.Get<Hunger>() = 0;
+						e.Set<Idling>();
+					});
+				}
+
+				// SatisfyTiredness()
+				else if (entity.Get<Tiredness>().Value >= 0 && entity.Has<Resident>())
+				{
+					if (entity.Has<IsAtHome>())
+					{
+						EnqueueBehavior(entity, e => e.Set<Sleeping>());
+					}
+
+					else if (entity.Get<Tiredness>() >= 20)
+					{
+						EnqueueBehavior(entity, GoTo(e => e.Get<Resident>().Location), e => e.Set<Sleeping>());
+					}
+				}
+
+				// GoToWork
+				else if (entity.Has<Employee>())
+				{
+					EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
+						e => { e.Set(new Waiting(5)); });
+				}
+
+				// GoToRandomLocation
+				else
+				{
+					var random = new Random();
+
+					EnqueueBehavior(entity, GoTo(e =>
+					{
+						var position = e.Get<Position>().Value;
+						position += new Vector2(500 - 1000 * (float)random.NextDouble(),
+							500 - 1000 * (float)random.NextDouble());
+						return position;
+					}), e => e.Set(new Waiting(3)));
+				}
 			}
 		}
-	}
 
-	public static class BehaviorTreeExtensions
-	{
-		public static BehaviourTreeBuilder<Entity> SatisfyHunger(this BehaviourTreeBuilder<Entity> builder, EntitySet markets)
+		private static Entity FindClosest(Vector2 position, EntitySet entities)
 		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Get<Hunger>().Value >= 20 && markets.Count > 0)
-					.EnqueueBehavior(GoTo(entity =>
-					{
-						var position = entity.Get<Position>().Value;
-						var distance = float.MaxValue;
-						var closest = default(Entity);
+			var distance = float.MaxValue;
+			var closest = default(Entity);
 
-						foreach (var market in markets.GetEntities())
-						{
-							var newDistance = market.Get<Position>().Value.DistanceSquaredTo(position);
-							
-							if (newDistance < distance)
-							{
-								distance = newDistance;
-								closest = market;
-							}
-						}
-
-						if (closest == default)
-						{
-							throw new ApplicationException("Market not found");
-						}
-
-						return closest.Get<Position>().Value;
-					}), entity => entity.Set(new Waiting(3)), 
-					entity =>
-					{
-						entity.Get<Hunger>() = 0;
-						entity.Set<Idling>();
-					})
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> SatisfyTiredness(this BehaviourTreeBuilder<Entity> builder)
-		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Get<Tiredness>() >= 0)
-					.Selector()
-						.Sleep()
-						.GoHomeToSleep()
-					.End()
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> Sleep(this BehaviourTreeBuilder<Entity> builder)
-		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Has<IsAtHome>())
-					.EnqueueBehavior(entity => entity.Set<Sleeping>())
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> GoHomeToSleep(this BehaviourTreeBuilder<Entity> builder)
-		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Get<Tiredness>() >= 20)
-					.Condition(entity => entity.Has<Resident>())
-					.EnqueueBehavior(GoTo(entity => entity.Get<Resident>().Location), 
-						entity => entity.Set<Sleeping>())
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> GoToWork(this BehaviourTreeBuilder<Entity> builder)
-		{
-			return builder
-				.Sequence()
-					.Condition(entity => entity.Has<Employee>())
-					.EnqueueBehavior(entity =>
-					{
-						entity.Set(new Destination(entity.Get<Employee>().Location));
-					}, entity =>
-					{
-						entity.Set(new Waiting(5));
-					})
-				.End();
-		}
-
-		public static BehaviourTreeBuilder<Entity> GoToRandomLocation(this BehaviourTreeBuilder<Entity> builder)
-		{
-			var random = new Random();
-
-			return builder
-				.EnqueueBehavior(GoTo(entity => 
-				{ 
-					var position = entity.Get<Position>().Value; 
-					position += new Vector2(500 - 1000 * (float)random.NextDouble(), 
-						500 - 1000 * (float)random.NextDouble()); 
-					return position; 
-				}), entity => entity.Set(new Waiting(3)));
-		}
-
-		private static Action<Entity> GoTo(Func<Entity, Vector2> getLocation) => entity => entity.Set(new Destination(getLocation(entity)));
-
-		public static BehaviourTreeBuilder<Entity> EnqueueBehavior(this BehaviourTreeBuilder<Entity> builder, params Action<Entity>[] actions)
-		{
-			return builder.Do(entity =>
+			foreach (var market in entities.GetEntities())
 			{
-				var queue = entity.Get<BehaviorQueue>();
-				
-				foreach (var action in actions)
+				var newDistance = market.Get<Position>().Value.DistanceSquaredTo(position);
+
+				if (newDistance < distance)
 				{
-					queue.Enqueue(action);
+					distance = newDistance;
+					closest = market;
 				}
-				
-				return BehaviourTreeStatus.Running;
-			});
+			}
+
+			if (closest.IsAlive == false)
+			{
+				throw new ApplicationException("Market not found");
+			}
+
+			return closest;
+		}
+
+		private static Action<Entity> GoTo(Func<Entity, Vector2> getLocation) =>
+			entity => entity.Set(new Destination(getLocation(entity)));
+
+		private static void EnqueueBehavior(Entity entity, params Action<Entity>[] actions)
+		{
+			var queue = entity.Get<BehaviorQueue>();
+
+			foreach (var action in actions)
+			{
+				queue.Enqueue(action);
+			}
 		}
 	}
 }
