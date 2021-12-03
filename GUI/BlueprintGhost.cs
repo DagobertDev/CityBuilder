@@ -72,7 +72,7 @@ namespace CityBuilder.GUI
 				throw new ArgumentNullException(nameof(Blueprint));
 			}
 
-			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, GlobalTransform));
+			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, new Position(GlobalPosition.ToNumericsVector())));
 		}
 
 		private void Enable(Blueprint blueprint)

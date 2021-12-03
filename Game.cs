@@ -98,7 +98,7 @@ namespace CityBuilder
 
 			else
 			{
-				var position = new Position(message.Transform.origin.ToNumericsVector());
+				var position = message.Position;
 				var blueprint = message.Blueprint;
 				
 				if (message.Blueprint.Entity.Has<Construction>())
