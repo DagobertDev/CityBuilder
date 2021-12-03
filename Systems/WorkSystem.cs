@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
@@ -15,8 +16,39 @@ namespace CityBuilder.Systems
 
 		public WorkSystem(World world) : base(world, true)
 		{
+			world.SubscribeComponentAdded<Workplace>(Initialize);
+			
+			World.SubscribeComponentRemoved<Employee>(RemoveEmployee);
+
+			World.SubscribeComponentRemoved((in Entity _, in Workplace workplace) =>
+			{
+				foreach (var employee in workplace.Employees.Where(entity => entity.IsAlive).ToList())
+				{
+					employee.Remove<Employee>();
+				}
+			});
+
 			_emptyWorkplaces = world.GetEntities().With<Workplace>().With<EmptyWorkspace>().With<Position>().AsSet();
 		}
+		
+		private static void Initialize(in Entity entity, in Workplace workplace)
+		{
+			if (workplace.HasEmptyWorkspace)
+			{
+				entity.Set<EmptyWorkspace>();
+			}
+
+			else
+			{
+				entity.Remove<EmptyWorkspace>();
+			}
+
+			if (!entity.Has<WorkProgress>())
+			{
+				entity.Set<WorkProgress>();
+			}
+		}
+
 
 		protected override void Update(float state, in Entity worker)
 		{

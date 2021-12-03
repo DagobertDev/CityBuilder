@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
@@ -15,9 +16,34 @@ namespace CityBuilder.Systems
 
 		public HousingSystem(World world) : base(world, true)
 		{
+			world.SubscribeComponentAdded<Housing>(Initialize);
+			
+			World.SubscribeComponentRemoved<Resident>(RemoveResident);
+
+			World.SubscribeComponentRemoved((in Entity _, in Housing housing) =>
+			{
+				foreach (var employee in housing.Residents.Where(entity => entity.IsAlive).ToList())
+				{
+					employee.Remove<Resident>();
+				}
+			});
+
 			_emptyHouses = world.GetEntities().With<Housing>().With<EmptyHousing>().With<Position>().AsSet();
 		}
 
+		private static void Initialize(in Entity entity, in Housing housing)
+		{
+			if (housing.HasEmptyBeds)
+			{
+				entity.Set<EmptyHousing>();
+			}
+
+			else
+			{
+				entity.Remove<EmptyHousing>();
+			}
+		}
+		
 		protected override void Update(float state, in Entity resident)
 		{
 			var house = FindBestHouse(resident, _emptyHouses.GetEntities());

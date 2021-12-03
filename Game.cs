@@ -35,28 +35,6 @@ namespace CityBuilder
 
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
 
-			World.SubscribeComponentRemoved((in Entity entity, in Employee employee) => 
-				WorkSystem.RemoveEmployee(entity, employee));
-
-			World.SubscribeComponentRemoved((in Entity _, in Workplace workplace) =>
-			{
-				foreach (var employee in workplace.Employees.Where(entity => entity.IsAlive).ToList())
-				{
-					employee.Remove<Employee>();
-				}
-			});
-
-			World.SubscribeComponentRemoved((in Entity entity, in Resident resident) =>
-				HousingSystem.RemoveResident(entity, resident));
-
-			World.SubscribeComponentRemoved((in Entity _, in Housing housing) =>
-			{
-				foreach (var employee in housing.Residents.Where(entity => entity.IsAlive).ToList())
-				{
-					employee.Remove<Resident>();
-				}
-			});
-
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World),
 				new SpriteCreationSystem(World, Map),
@@ -64,20 +42,17 @@ namespace CityBuilder
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
-				new RemoveOldLocationSystem(World),
 				new AISystem(World),
 				new WaitSystem(World),
 				new HungerSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),
-				new HousingInitSystem(World),
 				new SleepSystem(World),
 				new WorkSystem(World),
 				new WorkingSystem(World),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
-				new ConstructionProgressVisualisationSystem(World),
-				new WorkspaceInitSystem(World));
+				new ConstructionProgressVisualisationSystem(World));
 
 			var textureManager = new TextureManager();
 			textureManager.Manage(World);

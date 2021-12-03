@@ -8,6 +8,17 @@ namespace CityBuilder.Systems
 	[WhenRemoved(typeof(Destination))]
 	public sealed partial class LocationSensorSystem : AEntitySetSystem<float>
 	{
+		public LocationSensorSystem(World world) : base(world, CreateEntityContainer, null, 0)
+		{
+			world.SubscribeComponentRemoved<Destination>(RemoveOldLocations);
+		}
+
+		private static void RemoveOldLocations(in Entity entity, in Destination destination)
+		{
+			entity.Remove<IsAtHome>();
+			entity.Remove<IsAtWorkplace>();
+		}
+		
 		[Update] [UseBuffer]
 		private static void Update(in Entity entity, in Position positionComponent)
 		{
