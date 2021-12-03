@@ -2,7 +2,7 @@
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
-using CityBuilder.Systems.GodotInterface;
+using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
 using Godot;

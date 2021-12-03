@@ -2,7 +2,7 @@
 using DefaultEcs.Resource;
 using Godot;
 
-namespace CityBuilder.Systems.GodotInterface
+namespace CityBuilder.Systems.UI
 {
 	public class TextureManager : AResourceManager<string, Texture>
 	{

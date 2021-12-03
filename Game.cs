@@ -5,7 +5,7 @@ using CityBuilder.GUI;
 using CityBuilder.Messages;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems;
-using CityBuilder.Systems.GodotInterface;
+using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
 using DefaultEcs.System;

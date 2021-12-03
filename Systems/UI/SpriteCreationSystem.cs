@@ -3,7 +3,7 @@ using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
 
-namespace CityBuilder.Systems.GodotInterface
+namespace CityBuilder.Systems.UI
 {
 	public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
 	{

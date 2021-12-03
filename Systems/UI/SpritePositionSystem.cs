@@ -2,7 +2,7 @@
 using DefaultEcs.System;
 using Godot;
 
-namespace CityBuilder.Systems.GodotInterface
+namespace CityBuilder.Systems.UI
 {
 	public sealed partial class SpritePositionSystem : AEntitySetSystem<float>
 	{
