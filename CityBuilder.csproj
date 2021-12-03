@@ -13,4 +13,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="UltimateQuadTree" Version="1.0.3" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="CityBuilder.Core\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="CityBuilder.Core\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="CityBuilder.Core\CityBuilder.Core.csproj" />
+  </ItemGroup>
 </Project>

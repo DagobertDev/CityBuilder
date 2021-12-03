@@ -2,6 +2,8 @@
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityBuilder", "CityBuilder.csproj", "{B0011240-606F-4CA1-AB1F-4398DD00FD85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityBuilder.Core", "CityBuilder.Core\CityBuilder.Core.csproj", "{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -15,5 +17,11 @@ Global
 		{B0011240-606F-4CA1-AB1F-4398DD00FD85}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{B0011240-606F-4CA1-AB1F-4398DD00FD85}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{B0011240-606F-4CA1-AB1F-4398DD00FD85}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
