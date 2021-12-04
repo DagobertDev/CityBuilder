@@ -8,7 +8,7 @@ namespace CityBuilder.Systems
 	public sealed partial class RemoveSystem : AEntitySetSystem<float>
 	{
 		[WorldComponent]
-		private readonly CollisionSystem _quadTree;
+		private readonly ICollisionSystem _quadTree;
 		
 		[Update] [UseBuffer]
 		private void Update(in HitBox hitBox)

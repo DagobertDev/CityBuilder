@@ -29,9 +29,9 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			var collisionSystem = new CollisionSystem(World);
-			World.SetMaxCapacity<CollisionSystem>(1);
-			World.Set(collisionSystem);
+			var collisionSystem = new CollisionSystem<Sprite>(World, sprite => sprite.Texture.GetSize().ToNumericsVector());
+			World.SetMaxCapacity<ICollisionSystem>(1);
+			World.Set<ICollisionSystem>(collisionSystem);
 
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
 
@@ -72,7 +72,7 @@ namespace CityBuilder
 			{
 				var mousePosition = GetGlobalMousePosition();
 				
-				var selected = World.Get<CollisionSystem>().GetEntities(mousePosition).FirstOrDefault();
+				var selected = World.Get<ICollisionSystem>().GetEntities(mousePosition.ToNumericsVector()).FirstOrDefault();
 
 				if (selected.IsAlive)
 				{

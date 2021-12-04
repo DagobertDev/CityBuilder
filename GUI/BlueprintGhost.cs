@@ -97,8 +97,8 @@ namespace CityBuilder.GUI
 			var position = GetGlobalMousePosition();
 			GlobalPosition = position;
 
-			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<CollisionSystem>()
-				.GetEntities(new HitBox(position, Texture.GetSize(), default)).All(entity => entity.Has<Agent>());
+			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<ICollisionSystem>()
+				.GetEntities(new HitBox(position.ToNumericsVector(), Texture.GetSize().ToNumericsVector(), default)).All(entity => entity.Has<Agent>());
 		}
 	}
 }

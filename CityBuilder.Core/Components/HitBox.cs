@@ -1,6 +1,7 @@
-﻿using System;
+using System;
+using System.Drawing;
+using System.Numerics;
 using DefaultEcs;
-using Godot;
 
 namespace CityBuilder.Components
 {
@@ -8,11 +9,11 @@ namespace CityBuilder.Components
 	{
 		public HitBox(Vector2 position, Vector2 size, Entity entity)
 		{
-			Value = new Rect2(position - 0.5f * size, size);
+			Value = new RectangleF((position - 0.5f * size).ToPoint(), new SizeF(size.X, size.Y));
 			_entity = entity;
 		}
 
-		public Rect2 Value;
+		public RectangleF Value;
 		private readonly Entity _entity;
 		public Entity Entity => _entity.IsAlive ? _entity : throw new ApplicationException("Entity is not alive");
 	}
