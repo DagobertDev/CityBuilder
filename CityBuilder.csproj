@@ -13,9 +13,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="CityBuilder.Core\**" />
+    <Compile Remove="CityBuilder.Tests\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="CityBuilder.Core\**" />
+    <EmbeddedResource Remove="CityBuilder.Tests\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="CityBuilder.Core\CityBuilder.Core.csproj" />

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityBuilder", "CityBuilder.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityBuilder.Core", "CityBuilder.Core\CityBuilder.Core.csproj", "{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityBuilder.Tests", "CityBuilder.Tests\CityBuilder.Tests.csproj", "{C8CD8AC9-8745-4599-87D4-8C84054CE577}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -23,5 +25,11 @@ Global
 		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{C21B7E3C-B48E-4355-949C-FD6944A1FE9E}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8CD8AC9-8745-4599-87D4-8C84054CE577}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
