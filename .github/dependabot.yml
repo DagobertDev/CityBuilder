@@ -9,3 +9,11 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/CityBuilder.Core"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "/CityBuilder.Tests"
+    schedule:
+      interval: "daily"
