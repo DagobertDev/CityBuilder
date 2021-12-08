@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CityBuilder.GUI;
 using CityBuilder.Messages;
 using DefaultEcs;
 using DefaultEcs.Serialization;
@@ -8,8 +9,12 @@ using Newtonsoft.Json;
 
 public class EntityInspector : WindowDialog
 {
+	[Export]
+	public NodePath JsonTreePath { get; set; }
+	
 	private Entity? _entity;
 	private readonly Timer _timer = new();
+	private JsonTree JsonTree => GetNode<JsonTree>(JsonTreePath);
 	
 	public override void _Ready()
     {
@@ -37,7 +42,7 @@ public class EntityInspector : WindowDialog
 		_entity.Value.ReadAllComponents(reader);
 		var text = JsonConvert.SerializeObject(reader.Components, new EntityConverter());
 		var godot = JSON.Parse(text);
-		GetNode("Panel/EntityInspectorView").Call("set_data", godot.Result);
+		JsonTree.SetData(godot.Result);
 	}
 
 	[Subscribe]

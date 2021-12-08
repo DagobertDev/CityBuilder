@@ -5,7 +5,7 @@
 [ext_resource path="res://GUI/BlueprintButton.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Game.cs" type="Script" id=4]
 [ext_resource path="res://GUI/BlueprintGhost.cs" type="Script" id=5]
-[ext_resource path="res://GUI/JSONTree.gd" type="Script" id=6]
+[ext_resource path="res://GUI/JsonTree.cs" type="Script" id=6]
 [ext_resource path="res://GUI/EntityInspector.cs" type="Script" id=7]
 
 [node name="CityBuilder" type="Control"]
@@ -43,6 +43,7 @@ margin_bottom = 200.0
 window_title = "Entity Inspector"
 resizable = true
 script = ExtResource( 7 )
+JsonTreePath = NodePath("Panel/EntityInspectorView")
 
 [node name="Panel" type="Panel" parent="GUI/EntityInspector"]
 anchor_right = 1.0
