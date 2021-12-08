@@ -8,7 +8,7 @@ namespace CityBuilder.Systems.UI
 	{
 		[Update]
 		private static void Update([Added] [Changed] in WorkProgress workProgress,
-			in Construction construction, in Sprite sprite, in ProgressBar progressBar)
+			in Construction construction, in Sprite sprite, [Added] [Changed] in ProgressBar progressBar)
 		{
 			var modulate = sprite.SelfModulate;
 			modulate.a = 0.2f + 0.6f * workProgress / construction.Duration;
