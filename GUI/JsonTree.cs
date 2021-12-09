@@ -54,7 +54,7 @@ namespace CityBuilder.GUI
 					
 					default:
 						child.SetText(0, key.ToString());
-						child.SetText(1, value.ToString());
+						child.SetText(1, value?.ToString());
 						break;
 				}
 			}
