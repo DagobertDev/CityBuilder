@@ -24,6 +24,7 @@ MaximumZoom = 1024.0
 ZoomStep = 0.1
 
 [node name="GUI" type="CanvasLayer" parent="."]
+pause_mode = 2
 
 [node name="DebugConsole" type="LineEdit" parent="GUI"]
 visible = false

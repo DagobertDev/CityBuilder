@@ -13,6 +13,7 @@ namespace CityBuilder.GUI
 		{
 			_commands = new List<DebugCommand>();
 			_commands.Add(new DebugCommand("print", GD.Print));
+			_commands.Add(new DebugCommand("pause", () => GetTree().Paused = !GetTree().Paused));
 
 			Connect("text_entered", this, nameof(HandleInput));
 		}
