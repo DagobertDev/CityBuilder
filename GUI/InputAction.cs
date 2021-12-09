@@ -10,5 +10,6 @@
 		public const string ZoomOut = "zoom_out";
 		public const string MouseclickLeft = "mouseclick_left";
 		public const string MouseclickRight = "mouseclick_right";
+		public const string ToggleDebug = "doggle_debug";
 	}
 }

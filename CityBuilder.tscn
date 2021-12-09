@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://GUI/Blueprints.cs" type="Script" id=1]
 [ext_resource path="res://Camera.cs" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://GUI/BlueprintGhost.cs" type="Script" id=5]
 [ext_resource path="res://GUI/JsonTree.cs" type="Script" id=6]
 [ext_resource path="res://GUI/EntityInspector.cs" type="Script" id=7]
+[ext_resource path="res://GUI/DebugConsole.cs" type="Script" id=8]
 
 [node name="CityBuilder" type="Control"]
 script = ExtResource( 4 )
@@ -23,6 +24,13 @@ MaximumZoom = 1024.0
 ZoomStep = 0.1
 
 [node name="GUI" type="CanvasLayer" parent="."]
+
+[node name="DebugConsole" type="LineEdit" parent="GUI"]
+visible = false
+anchor_right = 1.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 0, 20 )
+script = ExtResource( 8 )
 
 [node name="Blueprints" type="HBoxContainer" parent="GUI"]
 anchor_left = 0.5
