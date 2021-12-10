@@ -25,7 +25,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_SetName([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_SetName([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -35,7 +35,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_SetAmount([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_SetAmount([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -53,7 +53,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_SetExistingAmount([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount, [Values(0, 1, 2)] int newAmount)
+		public void Test_SetExistingAmount([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount, [Range(0, 2)] int newAmount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -64,7 +64,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_CanGet([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_CanGet([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -75,7 +75,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_GetName([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_GetName([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -85,7 +85,7 @@ namespace CityBuilder.Tests
 		}
 
 		[Test]
-		public void Test_GetAmount([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_GetAmount([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -97,7 +97,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_GetOwner([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount)
+		public void Test_GetOwner([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 		{
 			var owner = _world.CreateEntity();
 
@@ -109,7 +109,7 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
-		public void Test_GetFromMultiple([Values("Iron", "Wood")] string good, [Values(0, 1, 2)] int amount,
+		public void Test_GetFromMultiple([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount,
 			[Values(1, 2)] int ownerToGet, [Values(2, 3)] int totalOwners)
 		{
 			Entity owner = default;
