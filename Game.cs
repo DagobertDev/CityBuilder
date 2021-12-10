@@ -33,6 +33,10 @@ namespace CityBuilder
 			World.SetMaxCapacity<ICollisionSystem>(1);
 			World.Set<ICollisionSystem>(collisionSystem);
 
+			var inventorySystem = new InventorySystem(World);
+			World.SetMaxCapacity<IInventorySystem>(1);
+			World.Set<IInventorySystem>(inventorySystem);
+
 			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
 
 			_system = new SequentialSystem<float>(
