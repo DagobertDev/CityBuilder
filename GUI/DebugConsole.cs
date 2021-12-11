@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CityBuilder.Components.Inventory;
+using CityBuilder.Messages;
+using CityBuilder.Systems;
+using DefaultEcs;
 using Godot;
 
 namespace CityBuilder.GUI
@@ -13,7 +17,12 @@ namespace CityBuilder.GUI
 		{
 			_commands = new List<DebugCommand>();
 			_commands.Add(new DebugCommand("print", GD.Print));
-			_commands.Add(new DebugCommand("pause", () => GetTree().Paused = !GetTree().Paused));
+			_commands.Add(new DebugCommand("pause", () =>
+			{
+				var paused = GetTree().Paused;
+				GetTree().Paused = !paused;
+				GD.Print(paused ? "Game continued" : "Game paused");
+			}));
 
 			Connect("text_entered", this, nameof(HandleInput));
 		}
