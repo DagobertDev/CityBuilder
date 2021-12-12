@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DefaultEcs;
 
 namespace CityBuilder.Systems
@@ -6,5 +7,6 @@ namespace CityBuilder.Systems
 	{ 
 		Entity SetGood(Entity owner, string good, int amount);
 		Entity? GetGood(Entity owner, string good);
+		ICollection<Entity> GetGoods(Entity owner);
 	}
 }

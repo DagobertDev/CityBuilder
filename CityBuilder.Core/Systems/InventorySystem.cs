@@ -62,6 +62,16 @@ namespace CityBuilder.Systems
 			return null;
 		}
 		
+		public ICollection<Entity> GetGoods(Entity owner)
+		{
+			if (!_inventories.TryGetEntities(new Owner(owner), out var entities))
+			{
+				entities = ReadOnlySpan<Entity>.Empty;
+			}
+
+			return entities.ToArray();
+		} 
+
 		private class SameInventoryComparer : IEqualityComparer<Owner>
 		{
 			public bool Equals(Owner x, Owner y) => x.Value == y.Value;
