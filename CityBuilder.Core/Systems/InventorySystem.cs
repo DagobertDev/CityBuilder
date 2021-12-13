@@ -8,12 +8,14 @@ namespace CityBuilder.Systems
 	public class InventorySystem : IInventorySystem
 	{
 		private World World { get; }
-		private readonly EntityMultiMap<Owner> _inventories;
+		private readonly EntityMap<(Owner, Good)> _ownerAndGood;
+		private readonly EntityMultiMap<Owner> _goodsByOwner;
 
 		public InventorySystem(World world)
 		{
 			World = world;
-			_inventories = World.GetEntities().With<Owner>().AsMultiMap(new SameInventoryComparer());
+			_ownerAndGood = World.GetEntities().AsMap<(Owner, Good)>();
+			_goodsByOwner = World.GetEntities().AsMultiMap<Owner>();
 		}
 
 		public Entity SetGood(Entity owner, string good, int amount)
@@ -35,28 +37,15 @@ namespace CityBuilder.Systems
 			entity.Set(new Owner(owner));
 			entity.Set(new Good(good));
 			entity.Set(new Amount(amount));
+			entity.Set((new Owner(owner), new Good(good)));
 			return entity;
 		}
 
 		public Entity? GetGood(Entity owner, string name)
 		{
-			if (!_inventories.TryGetEntities(new Owner(owner), out var entities))
+			if (_ownerAndGood.TryGetEntity(new (new Owner(owner), new Good(name)), out var entity))
 			{
-				entities = ReadOnlySpan<Entity>.Empty;
-			}
-
-			var goods = entities.GetEnumerator();
-
-			while (goods.MoveNext())
-			{
-				var current = goods.Current;
-				
-				var good = current.Get<Good>();
-				
-				if (good.Name == name)
-				{
-					return current;
-				}
+				return entity;
 			}
 
 			return null;
@@ -64,19 +53,12 @@ namespace CityBuilder.Systems
 		
 		public ICollection<Entity> GetGoods(Entity owner)
 		{
-			if (!_inventories.TryGetEntities(new Owner(owner), out var entities))
+			if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
 			{
-				entities = ReadOnlySpan<Entity>.Empty;
+				return entities.ToArray();
 			}
 
-			return entities.ToArray();
-		} 
-
-		private class SameInventoryComparer : IEqualityComparer<Owner>
-		{
-			public bool Equals(Owner x, Owner y) => x.Value == y.Value;
-
-			public int GetHashCode(Owner obj) => obj.Value.GetHashCode();
+			return Array.Empty<Entity>();
 		}
 	}
 }
