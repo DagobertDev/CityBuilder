@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CityBuilder.Components;
 using CityBuilder.Components.Inventory;
 using DefaultEcs;
 
@@ -38,6 +39,12 @@ namespace CityBuilder.Systems
 			entity.Set(new Good(good));
 			entity.Set(new Amount(amount));
 			entity.Set((new Owner(owner), new Good(good)));
+
+			if (owner.Has<Market>())
+			{
+				entity.Set<Market>();
+			}
+			
 			return entity;
 		}
 

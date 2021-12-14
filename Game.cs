@@ -48,6 +48,7 @@ namespace CityBuilder
 				new LocationSensorSystem(World),
 				new AISystem(World),
 				new WaitSystem(World),
+				new TransportSystem(World),
 				new HungerSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),
