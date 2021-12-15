@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
@@ -13,45 +13,31 @@ namespace CityBuilder.Systems
 	public class HousingSystem : AEntitySetSystem<float>
 	{
 		private readonly EntitySet _emptyHouses;
+		private readonly EntityMultiMap<Resident> _residents;
 
 		public HousingSystem(World world) : base(world, true)
 		{
-			world.SubscribeComponentAdded<Housing>(Initialize);
-			
+			World.SubscribeComponentAdded<Resident>(AddResident);
+			World.SubscribeComponentChanged<Resident>(ChangeResident);
 			World.SubscribeComponentRemoved<Resident>(RemoveResident);
 
-			World.SubscribeComponentRemoved((in Entity _, in Housing housing) =>
+			World.SubscribeComponentRemoved((in Entity house, in Housing _) =>
 			{
-				foreach (var employee in housing.Residents.Where(entity => entity.IsAlive).ToList())
+				foreach (var resident in GetResidents(house))
 				{
-					employee.Remove<Resident>();
+					resident.Remove<Resident>();
 				}
 			});
 
-			_emptyHouses = world.GetEntities().With<Housing>().With<EmptyHousing>().With<Position>().AsSet();
-		}
-
-		private static void Initialize(in Entity entity, in Housing housing)
-		{
-			if (housing.HasEmptyBeds)
-			{
-				entity.Set<EmptyHousing>();
-			}
-
-			else
-			{
-				entity.Remove<EmptyHousing>();
-			}
+			_emptyHouses = world.GetEntities().With((in Housing housing) => housing.HasEmptyBeds).With<Position>().AsSet();
+			_residents = world.GetEntities().With<Position>().AsMultiMap<Resident>();
 		}
 		
 		protected override void Update(float state, in Entity resident)
 		{
 			var house = FindBestHouse(resident, _emptyHouses.GetEntities());
 
-			if (house.IsAlive)
-			{
-				SetHouse(resident, house);
-			}
+			resident.Set(new Resident(house));
 		}
 
 		private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
@@ -76,36 +62,38 @@ namespace CityBuilder.Systems
 			return bestMatch;
 		}
 
-		private static void SetHouse(Entity resident, Entity home)
+		private static void AddResident(in Entity entity, in Resident resident)
 		{
-			if (resident.Has<Resident>())
-			{
-				throw new NotImplementedException("Resident already has home");
-			}
-
-			resident.Set(new Resident(home));
-
-			var housing = home.Get<Housing>();
-
-			housing.Residents.Add(resident);
-
-			if (!housing.HasEmptyBeds)
-			{
-				home.Remove<EmptyHousing>();
-			}
+			var house = resident.Home;
+			var housing = house.Get<Housing>();
+			housing = new Housing(housing.MaxBeds, housing.UsedBeds + 1);
+			house.Set(housing);
 		}
 
-		public static void RemoveResident(in Entity entity, in Resident resident)
+		private static void RemoveResident(in Entity entity, in Resident resident)
 		{
 			entity.Remove<IsAtHome>();
 
-			var home = resident.Home;
+			var house = resident.Home;
+			var housing = house.Get<Housing>();
+			housing = new Housing(housing.MaxBeds, housing.UsedBeds - 1);
+			house.Set(housing);
+		}
+		
+		private static void ChangeResident(in Entity entity, in Resident oldResident, in Resident newResident)
+		{
+			RemoveResident(entity, oldResident);
+			AddResident(entity, newResident);
+		}
 
-			if (home.IsAlive)
+		public ICollection<Entity> GetResidents(Entity house)
+		{
+			if (_residents.TryGetEntities(new Resident(house), out var residents))
 			{
-				home.Get<Housing>().Residents.Remove(entity);
-				home.NotifyChanged<Housing>();
+				return residents.ToArray();
 			}
+
+			return Array.Empty<Entity>();
 		}
 	}
 }

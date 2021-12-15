@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
-using DefaultEcs;
-
-namespace CityBuilder.Components
+﻿namespace CityBuilder.Components
 {
 	public class Housing
 	{
-		public Housing(int totalBeds)
+		public Housing(int maxBeds, int usedBeds = 0)
 		{
-			TotalBeds = totalBeds;
-			Residents = new List<Entity>(TotalBeds);
+			MaxBeds = maxBeds;
+			UsedBeds = usedBeds;
 		}
 
-		public int TotalBeds { get; }
-		public int UsedBeds => Residents.Count;
-		public int EmptyBeds => TotalBeds - UsedBeds;
-		public bool HasEmptyBeds => EmptyBeds > 0;
-		public List<Entity> Residents { get; }
+		public int MaxBeds { get; }
+		public int UsedBeds { get; }
+		public int EmptyBeds => MaxBeds - UsedBeds;
+		public bool HasEmptyBeds => UsedBeds < MaxBeds;
 	}
 }

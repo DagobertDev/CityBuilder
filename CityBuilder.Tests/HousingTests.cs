@@ -1,7 +1,6 @@
 using CityBuilder.Components;
 using CityBuilder.Systems;
 using DefaultEcs;
-using DefaultEcs.System;
 using NUnit.Framework;
 
 namespace CityBuilder.Tests
@@ -9,7 +8,7 @@ namespace CityBuilder.Tests
 	public class HousingTests
 	{
 		private World _world;
-		private ISystem<float> _system;
+		private HousingSystem _system;
 
 		[SetUp]
 		public void Setup()
@@ -26,6 +25,15 @@ namespace CityBuilder.Tests
 		}
 		
 		[Test]
+		public void Test_EmptyHousingAdded()
+		{
+			var house = _world.CreateEntity();
+			house.Set<Position>();
+			house.Set(new Housing(1));
+			Assert.That(house.Get<Housing>().HasEmptyBeds);
+		}
+		
+		[Test]
 		public void Test_NoHome_NoResident()
 		{
 			var resident = _world.CreateEntity();
@@ -34,7 +42,7 @@ namespace CityBuilder.Tests
 
 			_system.Update(0);
 			
-			Assert.IsFalse(resident.Has<Resident>());
+			Assert.That(resident.Has<Resident>(), Is.False);
 		}
 
 		[Test]
@@ -45,26 +53,44 @@ namespace CityBuilder.Tests
 			resident.Set<Position>();
 
 			var housing = _world.CreateEntity();
-			housing.Set(new Housing(1));
 			housing.Set<Position>();
-			
+			housing.Set(new Housing(1));
+
 			_system.Update(0);
 			
-			Assert.IsTrue(resident.Has<Resident>());
-			Assert.AreEqual(resident.Get<Resident>().Home, housing);
+			Assert.That(resident.Has<Resident>());
 		}
+		
+		[Test]
+		public void Test_ResidentHome_IsHousing()
+		{
+			var resident = _world.CreateEntity();
+			resident.Set<Agent>();
+			resident.Set<Position>();
+
+			var housing = _world.CreateEntity();
+			housing.Set<Position>();
+			housing.Set(new Housing(1));
+
+			_system.Update(0);
+			
+			Assume.That(resident.Has<Resident>());
+			Assert.That(resident.Get<Resident>().Home, Is.EqualTo(housing));
+		}
+		
 		
 		[Test]
 		public void Test_NoPerson_NoResident()
 		{
 			var house = _world.CreateEntity();
 			var housing = new Housing(1);
-			house.Set(housing);
 			house.Set<Position>();
-			
+			house.Set(housing);
+
 			_system.Update(0);
 			
-			Assert.IsTrue(housing.HasEmptyBeds);
+			Assert.That(_system.GetResidents(house), Is.Empty);
+			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.True);
 		}
 		
 		[Test]
@@ -72,26 +98,27 @@ namespace CityBuilder.Tests
 		{
 			var house = _world.CreateEntity();
 			var housing = new Housing(1);
-			house.Set(housing);
 			house.Set<Position>();
-			
+			house.Set(housing);
+
 			var resident = _world.CreateEntity();
 			resident.Set<Agent>();
 			resident.Set<Position>();
 
 			_system.Update(0);
 			
-			Assert.IsFalse(housing.HasEmptyBeds);
+			Assert.That(_system.GetResidents(house), Is.Not.Empty);
+			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.False);
 		}
 		
 		[Test]
-		public void Test_HousingDisposed_Unemployed()
+		public void Test_HousingDisposed_Homeless()
 		{
 			var house = _world.CreateEntity();
 			var housing = new Housing(1);
-			house.Set(housing);
 			house.Set<Position>();
-			
+			house.Set(housing);
+
 			var resident = _world.CreateEntity();
 			resident.Set<Agent>();
 			resident.Set<Position>();
@@ -102,7 +129,7 @@ namespace CityBuilder.Tests
 			
 			_system.Update(0);
 			
-			Assert.IsFalse(resident.Has<Resident>());
+			Assert.That(resident.Has<Resident>(), Is.False);
 		}
 		
 		[Test]
@@ -110,21 +137,23 @@ namespace CityBuilder.Tests
 		{
 			var house = _world.CreateEntity();
 			var housing = new Housing(1);
-			house.Set(housing);
 			house.Set<Position>();
-			
+			house.Set(housing);
+
 			var resident = _world.CreateEntity();
 			resident.Set<Agent>();
 			resident.Set<Position>();
 
 			_system.Update(0);
 			
-			Assert.IsFalse(housing.HasEmptyBeds);
+			Assert.That(_system.GetResidents(house), Is.Not.Empty);
+			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.False);
 			resident.Dispose();
 			
 			_system.Update(0);
 			
-			Assert.IsTrue(housing.HasEmptyBeds);
+			Assert.That(_system.GetResidents(house), Is.Empty);
+			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.True);
 		}
 	}
 }
