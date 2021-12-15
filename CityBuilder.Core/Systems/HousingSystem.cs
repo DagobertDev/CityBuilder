@@ -37,7 +37,10 @@ namespace CityBuilder.Systems
 		{
 			var house = FindBestHouse(resident, _emptyHouses.GetEntities());
 
-			resident.Set(new Resident(house));
+			if (house.IsAlive)
+			{
+				resident.Set(new Resident(house));
+			}
 		}
 
 		private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
