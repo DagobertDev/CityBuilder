@@ -58,5 +58,15 @@ namespace CityBuilder.Tests
 
 			Assert.That(marketInventory.Get<Amount>().Value, Is.EqualTo(amount + startAmount));
 		}
+		
+		[Test]
+		public void Test_NoMarketDoesNotThrow([Values("Food", "Wood")] string good, [Range(1, 3)] int amount)
+		{
+			var source = _world.CreateEntity();
+
+			_inventorySystem.SetGood(source, good, amount);
+			
+			Assert.That(() => _transportSystem.Update(0), Throws.Nothing);
+		}
 	}
 }
