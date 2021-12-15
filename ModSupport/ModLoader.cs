@@ -2,6 +2,7 @@
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
+using CityBuilder.Components.Production;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
@@ -146,6 +147,22 @@ namespace CityBuilder.ModSupport
 				if (workersObject is int workers)
 				{
 					entity.Set(new Workplace(workers));
+				}
+
+				if (file.HasSectionKey("job", "output") 
+				    && file.HasSectionKey("job", "output_amount")
+				    && file.HasSectionKey("job", "difficulty"))
+				{
+					var goodObject = file.GetValue("job", "output");
+					var outputAmountObject = file.GetValue("job", "output_amount");
+					var difficultyObject = file.GetValue("job", "difficulty");
+
+					if (goodObject is string good 
+					    && outputAmountObject is int outputAmount
+					    && difficultyObject is int difficulty)
+					{
+						entity.Set(new Output(good, outputAmount, difficulty));
+					}
 				}
 			}
 

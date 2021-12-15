@@ -4,3 +4,6 @@ texture = "tree.png"
 
 [job]
 workers = 1
+output = "Wood"
+output_amount = 5
+difficulty = 10

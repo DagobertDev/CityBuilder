@@ -4,6 +4,9 @@ texture = "field.png"
 
 [job]
 workers = 2
+output = "Food"
+output_amount = 1
+difficulty = 5
 
 [construction]
 workers = 2

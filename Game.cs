@@ -55,6 +55,7 @@ namespace CityBuilder
 				new SleepSystem(World),
 				new WorkSystem(World),
 				new WorkingSystem(World),
+				new ProductionSystem(World),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
 				new ConstructionProgressVisualisationSystem(World));
