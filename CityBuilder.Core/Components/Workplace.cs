@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
-using DefaultEcs;
-
-namespace CityBuilder.Components
+﻿namespace CityBuilder.Components
 {
 	public class Workplace
 	{
-		public Workplace(int totalWorkspace)
+		public Workplace(int maxEmployees, int currentEmployees = 0)
 		{
-			TotalWorkspace = totalWorkspace;
-			Employees = new List<Entity>(TotalWorkspace);
+			MaxEmployees = maxEmployees;
+			CurrentEmployees = currentEmployees;
 		}
 
-		public int TotalWorkspace { get; }
-		public int UsedWorkspace => Employees.Count;
-		public int EmptyWorkspace => TotalWorkspace - UsedWorkspace;
-		public bool HasEmptyWorkspace => EmptyWorkspace > 0;
-		public List<Entity> Employees { get; }
+		public int MaxEmployees { get; }
+		public int CurrentEmployees { get; }
+		public int EmptyWorkspace => MaxEmployees - CurrentEmployees;
+		public bool HasEmptyWorkspace => CurrentEmployees < MaxEmployees;
 	}
 }

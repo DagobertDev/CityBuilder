@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using CityBuilder.Components;
 using CityBuilder.Components.Flags;
 using DefaultEcs;
@@ -13,36 +13,29 @@ namespace CityBuilder.Systems
 	public class WorkSystem : AEntitySetSystem<float>
 	{
 		private readonly EntitySet _emptyWorkplaces;
+		private readonly EntityMultiMap<Employee> _employees;
 
 		public WorkSystem(World world) : base(world, true)
 		{
-			world.SubscribeComponentAdded<Workplace>(Initialize);
-			
+			World.SubscribeComponentAdded<Workplace>(Initialize);
+			World.SubscribeComponentAdded<Employee>(AddEmployee);
+			World.SubscribeComponentChanged<Employee>(ChangeEmployee);
 			World.SubscribeComponentRemoved<Employee>(RemoveEmployee);
 
-			World.SubscribeComponentRemoved((in Entity _, in Workplace workplace) =>
+			World.SubscribeComponentRemoved((in Entity workplace, in Workplace _) =>
 			{
-				foreach (var employee in workplace.Employees.Where(entity => entity.IsAlive).ToList())
+				foreach (var employee in GetEmployees(workplace))
 				{
 					employee.Remove<Employee>();
 				}
 			});
-
-			_emptyWorkplaces = world.GetEntities().With<Workplace>().With<EmptyWorkspace>().With<Position>().AsSet();
+			
+			_emptyWorkplaces = world.GetEntities().With((in Workplace workplace) => workplace.HasEmptyWorkspace).With<Position>().AsSet();
+			_employees = world.GetEntities().With<Position>().AsMultiMap<Employee>();
 		}
 		
 		private static void Initialize(in Entity entity, in Workplace workplace)
 		{
-			if (workplace.HasEmptyWorkspace)
-			{
-				entity.Set<EmptyWorkspace>();
-			}
-
-			else
-			{
-				entity.Remove<EmptyWorkspace>();
-			}
-
 			if (!entity.Has<WorkProgress>())
 			{
 				entity.Set<WorkProgress>();
@@ -56,7 +49,7 @@ namespace CityBuilder.Systems
 
 			if (workplace.IsAlive)
 			{
-				AddWorker(worker, workplace);
+				worker.Set(new Employee(workplace));
 			}
 		}
 
@@ -81,38 +74,41 @@ namespace CityBuilder.Systems
 			return bestMatch;
 		}
 
-		private static void AddWorker(Entity employee, Entity workplace)
+		private static void AddEmployee(in Entity entity, in Employee employee)
 		{
-			if (employee.Has<Employee>())
-			{
-				throw new NotImplementedException("Employee already has workplace");
-			}
+			var work = employee.Workplace;
+			entity.SetSameAs<WorkProgress>(work);
 
-			employee.SetSameAs<WorkProgress>(workplace);
-			employee.Set(new Employee(workplace));
-
-			var workplaceComponent = workplace.Get<Workplace>();
-
-			workplaceComponent.Employees.Add(employee);
-
-			if (!workplaceComponent.HasEmptyWorkspace)
-			{
-				workplace.Remove<EmptyWorkspace>();
-			}
+			var workplace = work.Get<Workplace>();
+			workplace = new Workplace(workplace.MaxEmployees, workplace.CurrentEmployees + 1);
+			work.Set(workplace);
 		}
 
-		public static void RemoveEmployee(in Entity entity, in Employee employee)
+		private static void RemoveEmployee(in Entity entity, in Employee employee)
 		{
 			entity.Remove<IsAtWorkplace>();
 			entity.Remove<WorkProgress>();
 
-			var workplace = employee.Workplace;
+			var work = employee.Workplace;
+			var workplace = work.Get<Workplace>();
+			workplace = new Workplace(workplace.MaxEmployees, workplace.CurrentEmployees - 1);
+			work.Set(workplace);
+		}
 
-			if (workplace.IsAlive)
+		private static void ChangeEmployee(in Entity entity, in Employee oldEmployee, in Employee newEmployee)
+		{
+			RemoveEmployee(entity, oldEmployee);
+			AddEmployee(entity, newEmployee);
+		}
+		
+		public ICollection<Entity> GetEmployees(Entity work)
+		{
+			if (_employees.TryGetEntities(new Employee(work), out var employees))
 			{
-				workplace.Get<Workplace>().Employees.Remove(entity);
-				workplace.NotifyChanged<Workplace>();
+				return employees.ToArray();
 			}
+
+			return Array.Empty<Entity>();
 		}
 	}
 }

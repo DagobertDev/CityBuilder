@@ -71,17 +71,16 @@ namespace CityBuilder.Tests
 		public void Test_Person_Employee()
 		{
 			var work = _world.CreateEntity();
-			var workplace = new Workplace(1);
-			work.Set(workplace);
 			work.Set<Position>();
-			
+			work.Set(new Workplace(1));
+
 			var person = _world.CreateEntity();
 			person.Set<Agent>();
 			person.Set<Position>();
 
 			_system.Update(0);
 			
-			Assert.IsFalse(workplace.HasEmptyWorkspace);
+			Assert.That(work.Get<Workplace>().HasEmptyWorkspace, Is.False);
 		}
 		
 		[Test]
@@ -109,22 +108,21 @@ namespace CityBuilder.Tests
 		public void Test_ResidentDisposed_EmptyHousing()
 		{
 			var work = _world.CreateEntity();
-			var workplace = new Workplace(1);
-			work.Set(workplace);
 			work.Set<Position>();
-			
+			work.Set(new Workplace(1));
+
 			var person = _world.CreateEntity();
 			person.Set<Agent>();
 			person.Set<Position>();
 
 			_system.Update(0);
 			
-			Assert.IsFalse(workplace.HasEmptyWorkspace);
+			Assert.That(work.Get<Workplace>().HasEmptyWorkspace, Is.False);
 			person.Dispose();
 			
 			_system.Update(0);
 			
-			Assert.IsTrue(workplace.HasEmptyWorkspace);
+			Assert.That(work.Get<Workplace>().HasEmptyWorkspace);
 		}
 	}
 }
