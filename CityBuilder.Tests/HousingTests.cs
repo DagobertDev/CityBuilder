@@ -30,6 +30,7 @@ namespace CityBuilder.Tests
 			var house = _world.CreateEntity();
 			house.Set<Position>();
 			house.Set(new Housing(1));
+			
 			Assert.That(house.Get<Housing>().HasEmptyBeds);
 		}
 		
@@ -46,19 +47,24 @@ namespace CityBuilder.Tests
 		}
 
 		[Test]
-		public void Test_Home_Resident()
+		public void Test_PersonHome_Resident()
 		{
-			var resident = _world.CreateEntity();
-			resident.Set<Agent>();
-			resident.Set<Position>();
+			var house = _world.CreateEntity();
+			house.Set<Position>();
+			house.Set(new Housing(1));
 
-			var housing = _world.CreateEntity();
-			housing.Set<Position>();
-			housing.Set(new Housing(1));
+			var person = _world.CreateEntity();
+			person.Set<Agent>();
+			person.Set<Position>();
 
 			_system.Update(0);
 			
-			Assert.That(resident.Has<Resident>());
+			Assert.Multiple(() =>
+			{
+				Assert.That(_system.GetResidents(house), Is.Not.Empty);
+				Assert.That(house.Get<Housing>().HasEmptyBeds, Is.False);
+				Assert.That(person.Has<Resident>());
+			});
 		}
 		
 		[Test]
@@ -83,62 +89,46 @@ namespace CityBuilder.Tests
 		public void Test_NoPerson_NoResident()
 		{
 			var house = _world.CreateEntity();
-			var housing = new Housing(1);
 			house.Set<Position>();
-			house.Set(housing);
+			house.Set(new Housing(1));
 
 			_system.Update(0);
 			
-			Assert.That(_system.GetResidents(house), Is.Empty);
-			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.True);
+			Assert.Multiple(() =>
+			{
+				Assert.That(_system.GetResidents(house), Is.Empty);
+				Assert.That(house.Get<Housing>().HasEmptyBeds);
+			});
 		}
-		
-		[Test]
-		public void Test_Person_Resident()
-		{
-			var house = _world.CreateEntity();
-			var housing = new Housing(1);
-			house.Set<Position>();
-			house.Set(housing);
 
-			var resident = _world.CreateEntity();
-			resident.Set<Agent>();
-			resident.Set<Position>();
-
-			_system.Update(0);
-			
-			Assert.That(_system.GetResidents(house), Is.Not.Empty);
-			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.False);
-		}
-		
 		[Test]
 		public void Test_HousingDisposed_Homeless()
 		{
 			var house = _world.CreateEntity();
-			var housing = new Housing(1);
 			house.Set<Position>();
-			house.Set(housing);
+			house.Set(new Housing(1));
 
-			var resident = _world.CreateEntity();
-			resident.Set<Agent>();
-			resident.Set<Position>();
+			var person = _world.CreateEntity();
+			person.Set<Agent>();
+			person.Set<Position>();
 
 			_system.Update(0);
+			
+			Assume.That(person.Has<Resident>());
 			
 			house.Dispose();
 			
 			_system.Update(0);
 			
-			Assert.That(resident.Has<Resident>(), Is.False);
+			Assert.That(person.Has<Resident>(), Is.False);
 		}
 		
 		[Test]
 		public void Test_ResidentDisposed_EmptyHousing()
 		{
 			var house = _world.CreateEntity();
-			var housing = new Housing(1);
 			house.Set<Position>();
-			house.Set(housing);
+			house.Set(new Housing(1));
 
 			var resident = _world.CreateEntity();
 			resident.Set<Agent>();
@@ -146,14 +136,45 @@ namespace CityBuilder.Tests
 
 			_system.Update(0);
 			
-			Assert.That(_system.GetResidents(house), Is.Not.Empty);
-			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.False);
+			Assume.That(_system.GetResidents(house), Is.Not.Empty);
+			Assume.That(house.Get<Housing>().HasEmptyBeds, Is.False);
+			
 			resident.Dispose();
 			
 			_system.Update(0);
 			
 			Assert.That(_system.GetResidents(house), Is.Empty);
 			Assert.That(house.Get<Housing>().HasEmptyBeds, Is.True);
+		}
+		
+		[Test]
+		public void Test_ChangeResident()
+		{
+			var houseOne = _world.CreateEntity();
+			houseOne.Set<Position>();
+			houseOne.Set(new Housing(1));
+			
+			var person = _world.CreateEntity();
+			person.Set<Agent>();
+			person.Set<Position>();
+
+			_system.Update(0);
+			
+			Assume.That(person.Has<Resident>());
+			Assume.That(person.Get<Resident>().Home, Is.EqualTo(houseOne));
+			Assume.That(houseOne.Get<Housing>().HasEmptyBeds, Is.False);
+			
+			var houseTwo = _world.CreateEntity();
+			houseTwo.Set<Position>();
+			houseTwo.Set(new Housing(1));
+			
+			person.Set(new Resident(houseTwo));
+			
+			Assert.Multiple(() =>
+			{
+				Assert.That(houseOne.Get<Housing>().HasEmptyBeds);
+				Assert.That(houseTwo.Get<Housing>().HasEmptyBeds, Is.False);
+			});
 		}
 	}
 }
