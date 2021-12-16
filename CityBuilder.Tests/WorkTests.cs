@@ -124,5 +124,33 @@ namespace CityBuilder.Tests
 			
 			Assert.That(work.Get<Workplace>().HasEmptyWorkspace);
 		}
+		
+		[Test]
+		public void Test_ChangeEmployee()
+		{
+			var workOne = _world.CreateEntity();
+			workOne.Set<Position>();
+			workOne.Set(new Workplace(1));
+
+			var person = _world.CreateEntity();
+			person.Set<Agent>();
+			person.Set<Position>();
+
+			_system.Update(0);
+			
+			Assume.That(workOne.Get<Workplace>().HasEmptyWorkspace, Is.False);
+			
+			var workTwo = _world.CreateEntity();
+			workTwo.Set<Position>();
+			workTwo.Set(new Workplace(1));
+			
+			person.Set(new Employee(workTwo));
+
+			Assert.Multiple(() =>
+			{
+				Assert.That(workOne.Get<Workplace>().HasEmptyWorkspace);
+				Assert.That(workTwo.Get<Workplace>().HasEmptyWorkspace, Is.False);
+			});
+		}
 	}
 }
