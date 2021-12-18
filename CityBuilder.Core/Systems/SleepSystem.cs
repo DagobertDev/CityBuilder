@@ -10,10 +10,13 @@ namespace CityBuilder.Systems
 	[With(typeof(IsAtHome))]
 	public sealed partial class SleepSystem : AEntitySetSystem<float>
 	{
+		[ConstructorParameter] 
+		private readonly float _rate;
+		
 		[Update] [UseBuffer]
-		private static void Update(float state, in Entity entity, ref Tiredness tiredness)
+		private void Update(float state, in Entity entity, ref Tiredness tiredness)
 		{
-			tiredness -= 10 * state;
+			tiredness -= state * _rate;
 
 			if (tiredness <= 0)
 			{

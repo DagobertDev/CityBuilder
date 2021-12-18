@@ -6,11 +6,16 @@ namespace CityBuilder.Systems
 {
 	public sealed class HungerSystem : AComponentSystem<float, Hunger>
 	{
-		public HungerSystem(World world) : base(world) { }
+		private readonly float _rate;
+
+		public HungerSystem(World world, float rate) : base(world)
+		{
+			_rate = rate;
+		}
 
 		protected override void Update(float state, ref Hunger hunger)
 		{
-			hunger += state;
+			hunger += state * _rate;
 		}
 	}
 }
