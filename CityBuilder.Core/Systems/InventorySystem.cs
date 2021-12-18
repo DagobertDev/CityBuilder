@@ -39,6 +39,7 @@ namespace CityBuilder.Systems
 			entity.Set(new Good(good));
 			entity.Set(new Amount(amount));
 			entity.Set((new Owner(owner), new Good(good)));
+			entity.SetSameAs<Position>(owner);
 
 			if (owner.Has<Market>())
 			{
