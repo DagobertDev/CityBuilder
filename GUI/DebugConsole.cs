@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CityBuilder.Components;
 using CityBuilder.Components.Inventory;
 using CityBuilder.Messages;
 using CityBuilder.Systems;
@@ -51,7 +52,9 @@ namespace CityBuilder.GUI
 
 				var inventory = Game.World.Get<IInventorySystem>().GetGoods(_selectedEntity.Value);
 				
-				GD.Print(string.Join("\n", inventory.Select(entity => $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}")));
+				GD.Print(string.Join("\n", inventory.Select(entity 
+					=> $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}" 
+					   + $"{(entity.Has<Market>() ? " - Market" : string.Empty)}")));
 			}));
 
 			Connect("text_entered", this, nameof(HandleInput));
