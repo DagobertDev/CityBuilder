@@ -29,7 +29,9 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			var collisionSystem = new CollisionSystem<Sprite>(World, sprite => sprite.Texture.GetSize().ToNumericsVector());
+			var collisionSystem = new CollisionSystem<Sprite>(World,
+				-10000, -10000, 110000, 110000,
+				sprite => sprite.Texture.GetSize().ToNumericsVector());
 			World.SetMaxCapacity<ICollisionSystem>(1);
 			World.Set<ICollisionSystem>(collisionSystem);
 

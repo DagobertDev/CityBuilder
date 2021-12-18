@@ -18,7 +18,8 @@ namespace CityBuilder.Tests
 		public void Setup()
 		{
 			_world = new World();
-			_system = new CollisionSystem<SizeF>(_world, value => new Vector2(value.Width, value.Height));
+			_system = new CollisionSystem<SizeF>(_world, -1000, -1000, 10000, 10000, 
+				value => new Vector2(value.Width, value.Height));
 		}
 
 		[TearDown]
