@@ -3,6 +3,7 @@ using System.Numerics;
 using CityBuilder.Components;
 using CityBuilder.Components.Behaviors;
 using CityBuilder.Components.Flags;
+using CityBuilder.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -12,10 +13,12 @@ namespace CityBuilder.Systems
 	public sealed partial class AISystem : AEntitySetSystem<float>
 	{
 		private readonly EntitySet _markets;
-
 		public AISystem(World world) : base(world, true)
 		{
-			_markets = world.GetEntities().With<Market>().With<Position>().AsSet();
+			_markets = world.GetEntities().With<Market>().With<Position>()
+				.With((in Good good) => good.Name == "Food")
+				.With((in Amount amount) => amount.Value >= 1)
+				.AsSet();
 		}
 
 		[Update]
@@ -34,11 +37,17 @@ namespace CityBuilder.Systems
 					var market = FindClosest(entity.Get<Position>().Value, _markets);
 					var marketPosition = market.Get<Position>().Value;
 
-					EnqueueBehavior(entity, GoTo(_ => marketPosition), 
-						e => e.Set(new Waiting(3)), e =>
+					EnqueueBehavior(entity, GoTo(_ => marketPosition), e => 
 					{
-						e.Get<Hunger>() = 0;
-						e.Set<Idling>();
+						const int foodHungerReduction = 10;
+
+						var hunger = e.Get<Hunger>().Value;
+						var availableFood = market.Get<Amount>().Value;
+						var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
+							
+						market.Set(new Amount(availableFood - eatenFood));
+						e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
+						e.Set(new Waiting(eatenFood)); 
 					});
 				}
 
