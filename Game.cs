@@ -23,25 +23,6 @@ namespace CityBuilder
 
 		private ISystem<float> _system = null!;
 
-		private class Test : Node
-		{
-			private IDisposable? _disposable;
-			
-			public Test(IDisposable disposable)
-			{
-				_disposable = disposable;
-			}
-			
-			public Test(){}
-			
-			protected override void Dispose(bool disposing)
-			{
-				_disposable?.Dispose();
-				GD.Print("ok");
-				base.Dispose(disposing);
-			}
-		}
-
 		public Game()
 		{
 			World.Subscribe(this);
@@ -49,9 +30,6 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			var x = new Test(new Test());
-			x.Free();
-			
 			var collisionSystem = new CollisionSystem<Sprite>(World,
 				-10000, -10000, 110000, 110000,
 				sprite => sprite.Texture.GetSize().ToNumericsVector());
