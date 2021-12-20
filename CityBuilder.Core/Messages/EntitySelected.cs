@@ -1,6 +1,6 @@
 ﻿using DefaultEcs;
 
-namespace CityBuilder.Messages
+namespace CityBuilder.Core.Messages
 {
 	public readonly struct EntitySelected
 	{

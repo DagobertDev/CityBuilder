@@ -1,4 +1,4 @@
-﻿namespace CityBuilder.Components.Behaviors
+﻿namespace CityBuilder.Core.Components.Behaviors
 {
 	public readonly struct Waiting
 	{

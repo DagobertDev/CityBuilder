@@ -1,7 +1,7 @@
-﻿using CityBuilder.Components;
-using CityBuilder.ModSupport;
+﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.ModSupport;
 
-namespace CityBuilder.Messages
+namespace CityBuilder.Core.Messages
 {
 	public readonly struct BlueprintPlacedMessage
 	{

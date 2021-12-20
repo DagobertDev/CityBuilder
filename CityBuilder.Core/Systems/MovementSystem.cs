@@ -1,9 +1,9 @@
-﻿using CityBuilder.Components;
-using CityBuilder.Components.Behaviors;
+﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public sealed partial class MovementSystem : AEntitySetSystem<float>
 	{

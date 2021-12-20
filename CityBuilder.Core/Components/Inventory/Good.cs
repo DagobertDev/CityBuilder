@@ -1,4 +1,4 @@
-namespace CityBuilder.Components.Inventory
+namespace CityBuilder.Core.Components.Inventory
 {
 	public readonly struct Good
 	{

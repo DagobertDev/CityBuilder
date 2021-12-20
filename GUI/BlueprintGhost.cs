@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
 using CityBuilder.Components;
-using CityBuilder.Components.Flags;
-using CityBuilder.Messages;
-using CityBuilder.ModSupport;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Flags;
+using CityBuilder.Core.Messages;
+using CityBuilder.Core.ModSupport;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using Godot;
 

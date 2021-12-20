@@ -1,6 +1,6 @@
 using DefaultEcs;
 
-namespace CityBuilder.Components.Inventory
+namespace CityBuilder.Core.Components.Inventory
 {
 	public readonly struct Owner
 	{

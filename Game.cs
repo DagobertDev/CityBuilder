@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Messages;
+using CityBuilder.Core.Systems;
 using CityBuilder.GUI;
-using CityBuilder.Messages;
 using CityBuilder.ModSupport;
-using CityBuilder.Systems;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;

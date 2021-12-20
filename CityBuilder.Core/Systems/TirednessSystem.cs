@@ -1,8 +1,8 @@
-﻿using CityBuilder.Components;
+﻿using CityBuilder.Core.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public class TirednessSystem : AComponentSystem<float, Tiredness>
 	{

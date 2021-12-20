@@ -1,11 +1,10 @@
-using System;
-using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
-using CityBuilder.Components.Production;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public sealed partial class ProductionSystem : AEntitySetSystem<float>
 	{

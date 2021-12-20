@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Numerics;
 using DefaultEcs;
 
-namespace CityBuilder.Components
+namespace CityBuilder.Core.Components
 {
 	public class HitBox
 	{

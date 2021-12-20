@@ -1,10 +1,10 @@
-﻿using CityBuilder.Components;
-using CityBuilder.Messages;
-using CityBuilder.ModSupport;
+﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Messages;
+using CityBuilder.Core.ModSupport;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[With(typeof(Blueprint))]
 	public sealed partial class ConstructionSystem : AEntitySetSystem<float>

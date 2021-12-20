@@ -1,9 +1,9 @@
-using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[Without(typeof(Market))]
 	public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>

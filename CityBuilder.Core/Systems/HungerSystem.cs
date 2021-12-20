@@ -1,8 +1,8 @@
-﻿using CityBuilder.Components;
+﻿using CityBuilder.Core.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public sealed class HungerSystem : AComponentSystem<float, Hunger>
 	{

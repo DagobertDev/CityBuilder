@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace CityBuilder.Components
+namespace CityBuilder.Core.Components
 {
 	public readonly struct Destination
 	{

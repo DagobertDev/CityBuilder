@@ -1,5 +1,5 @@
-using CityBuilder.Components;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using NUnit.Framework;
 

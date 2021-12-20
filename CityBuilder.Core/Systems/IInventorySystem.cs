@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using DefaultEcs;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public interface IInventorySystem
 	{ 

@@ -1,4 +1,4 @@
-﻿namespace CityBuilder.Components.Flags
+﻿namespace CityBuilder.Core.Components.Flags
 {
 	public readonly struct RemoveRequest { }
 }

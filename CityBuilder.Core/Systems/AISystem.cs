@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Numerics;
-using CityBuilder.Components;
-using CityBuilder.Components.Behaviors;
-using CityBuilder.Components.Flags;
-using CityBuilder.Components.Inventory;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.Flags;
+using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[With(typeof(Idling))]
 	public sealed partial class AISystem : AEntitySetSystem<float>

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using CityBuilder.Components;
-using CityBuilder.Components.Flags;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[With(typeof(Agent))]
 	[Without(typeof(Resident))]

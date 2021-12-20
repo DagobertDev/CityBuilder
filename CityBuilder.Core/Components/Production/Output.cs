@@ -1,4 +1,4 @@
-namespace CityBuilder.Components.Production
+namespace CityBuilder.Core.Components.Production
 {
 	public readonly struct Output
 	{

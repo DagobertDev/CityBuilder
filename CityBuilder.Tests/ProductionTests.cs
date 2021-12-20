@@ -1,7 +1,7 @@
-using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
-using CityBuilder.Components.Production;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Components.Production;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using NUnit.Framework;
 

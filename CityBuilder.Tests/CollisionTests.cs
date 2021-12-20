@@ -1,10 +1,8 @@
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using CityBuilder.Components;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
-using DefaultEcs.System;
 using NUnit.Framework;
 
 namespace CityBuilder.Tests

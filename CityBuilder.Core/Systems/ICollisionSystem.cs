@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Numerics;
-using CityBuilder.Components;
+using CityBuilder.Core.Components;
 using DefaultEcs;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public interface ICollisionSystem
 	{

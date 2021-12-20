@@ -1,10 +1,10 @@
-﻿using CityBuilder.Components;
-using CityBuilder.Components.Behaviors;
-using CityBuilder.Components.Flags;
+﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.Flags;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[With(typeof(Sleeping))]
 	[With(typeof(IsAtHome))]

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public class InventorySystem : IInventorySystem
 	{

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using CityBuilder.Components;
+using CityBuilder.Core.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 using UltimateQuadTree;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	public sealed partial class CollisionSystem<T> : AEntitySetSystem<float>, ICollisionSystem
 	{

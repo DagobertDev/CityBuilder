@@ -1,8 +1,8 @@
-﻿using CityBuilder.Components;
-using CityBuilder.Components.Flags;
+﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Flags;
 using DefaultEcs.System;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Core.Systems
 {
 	[With(typeof(RemoveRequest))]
 	public sealed partial class RemoveSystem : AEntitySetSystem<float>

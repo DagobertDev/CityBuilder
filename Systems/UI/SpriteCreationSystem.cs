@@ -1,4 +1,5 @@
 ﻿using CityBuilder.Components;
+using CityBuilder.Core.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DefaultEcs;
 
-namespace CityBuilder.Components
+namespace CityBuilder.Core.Components
 {
 	public class BehaviorQueue : Queue<Action<Entity>> { }
 }

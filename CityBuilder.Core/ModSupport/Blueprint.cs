@@ -1,7 +1,7 @@
 ﻿using System;
 using DefaultEcs;
 
-namespace CityBuilder.ModSupport
+namespace CityBuilder.Core.ModSupport
 {
 	public class Blueprint
 	{

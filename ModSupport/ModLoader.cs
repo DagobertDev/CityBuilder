@@ -1,8 +1,9 @@
 ﻿using System.IO;
-using CityBuilder.Components;
-using CityBuilder.Components.Behaviors;
-using CityBuilder.Components.Flags;
-using CityBuilder.Components.Production;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.Flags;
+using CityBuilder.Core.Components.Production;
+using CityBuilder.Core.ModSupport;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;

@@ -1,6 +1,6 @@
 using System;
-using CityBuilder.Components.Inventory;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using NUnit.Framework;
 

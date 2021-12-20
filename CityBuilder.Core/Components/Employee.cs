@@ -2,7 +2,7 @@
 using System.Numerics;
 using DefaultEcs;
 
-namespace CityBuilder.Components
+namespace CityBuilder.Core.Components
 {
 	public readonly struct Employee
 	{

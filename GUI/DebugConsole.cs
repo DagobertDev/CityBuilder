@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CityBuilder.Components;
-using CityBuilder.Components.Inventory;
-using CityBuilder.Messages;
-using CityBuilder.Systems;
+using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Messages;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using Godot;
 
