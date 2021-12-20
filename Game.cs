@@ -44,9 +44,9 @@ namespace CityBuilder
 
 			World.SubscribeComponentAdded((in Entity entity, in Market _) =>
 			{
-				if (!entity.Has<Good>() && inventorySystem.GetGood(entity, "Food") is not {IsAlive: true})
+				if (!entity.Has<Good>() && inventorySystem.GetGood(entity, Goods.Food) is not {IsAlive: true})
 				{
-					inventorySystem.SetGood(entity, "Food", 0);
+					inventorySystem.SetGood(entity, Goods.Food, 0);
 				}
 			});
 

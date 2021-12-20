@@ -16,7 +16,7 @@ namespace CityBuilder.Systems
 		public AISystem(World world) : base(world, true)
 		{
 			_markets = world.GetEntities().With<Market>().With<Position>()
-				.With((in Good good) => good.Name == "Food")
+				.With((in Good good) => good.Name == Goods.Food)
 				.With((in Amount amount) => amount.Value >= 1)
 				.AsSet();
 		}
