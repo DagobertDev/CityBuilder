@@ -30,14 +30,14 @@ namespace CityBuilder.Systems
 
 			if (nullableEntity.HasValue)
 			{
-				nullableEntity.Value.Set(new Amount(amount));
+				nullableEntity.Value.Set<Amount>(amount);
 				return nullableEntity.Value;
 			}
 			
 			var entity = World.CreateEntity();
 			entity.Set(new Owner(owner));
 			entity.Set(new Good(good));
-			entity.Set(new Amount(amount));
+			entity.Set<Amount>(amount);
 			entity.Set((new Owner(owner), new Good(good)));
 			
 			if (owner.Has<Position>())

@@ -40,7 +40,7 @@ namespace CityBuilder.Systems
 			}
 			
 			var inventory = nullableInventory.Value;
-			inventory.Set(new Amount(inventory.Get<Amount>().Value + output.Amount));
+			inventory.Set<Amount>(inventory.Get<Amount>() + output.Amount);
 			workplace.Set<WorkProgress>(work.Value - output.Difficulty);
 		}
 	}

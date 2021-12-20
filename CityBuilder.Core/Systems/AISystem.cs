@@ -17,7 +17,7 @@ namespace CityBuilder.Systems
 		{
 			_markets = world.GetEntities().With<Market>().With<Position>()
 				.With((in Good good) => good.Name == Goods.Food)
-				.With((in Amount amount) => amount.Value >= 1)
+				.With((in Amount amount) => amount >= 1)
 				.AsSet();
 		}
 
@@ -45,7 +45,7 @@ namespace CityBuilder.Systems
 						var availableFood = market.Get<Amount>().Value;
 						var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
 							
-						market.Set(new Amount(availableFood - eatenFood));
+						market.Set<Amount>(availableFood - eatenFood);
 						e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
 						e.Set(new Waiting(eatenFood)); 
 					});

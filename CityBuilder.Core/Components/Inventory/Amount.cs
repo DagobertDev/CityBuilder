@@ -8,5 +8,8 @@ namespace CityBuilder.Components.Inventory
 		}
 		
 		public int Value { get; }
+		
+		public static implicit operator int(Amount tiredness) => tiredness.Value;
+		public static implicit operator Amount(int value) => new(value);
 	}
 }

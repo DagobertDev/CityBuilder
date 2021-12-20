@@ -19,12 +19,11 @@ namespace CityBuilder.Systems
 		{
 			if (_markets.TryGetEntities(good, out var markets) && !markets.IsEmpty)
 			{
-				var addedAmount = source.Get<Amount>().Value;
-				source.Set(new Amount(0));
+				var addedAmount = source.Get<Amount>();
+				source.Set<Amount>(0);
 
 				var market = _markets[good][0];
-				var currentAmount = market.Get<Amount>().Value;
-				market.Set(new Amount(currentAmount + addedAmount));
+				market.Set<Amount>(market.Get<Amount>()+ addedAmount);
 			}
 		}
 
