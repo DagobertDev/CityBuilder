@@ -18,8 +18,7 @@ namespace CityBuilder.Tests
 		{
 			_world = new World();
 			_inventorySystem = new InventorySystem(_world);
-			_world.Set(_inventorySystem);
-			_system = new ProductionSystem(_world);
+			_system = new ProductionSystem(_world, _inventorySystem);
 		}
 
 		[TearDown]
@@ -28,20 +27,7 @@ namespace CityBuilder.Tests
 			_world.Dispose();
 			_system.Dispose();
 		}
-		
-		[Test]
-		public void Test_InventoryInitialized([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount, [Range(1, 3)] int difficulty)
-		{
-			var workplace = _world.CreateEntity();
-			var output = new Output(good, amount, difficulty);
-			workplace.Set(output);
 
-			var inventory = _inventorySystem.GetGood(workplace, good);
-
-			Assert.That(inventory.HasValue);
-			Assert.That(inventory.Value.Get<Amount>().Value, Is.Zero);
-		}
-		
 		[Test]
 		public void Test_Production([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount, [Range(1, 3)] int difficulty)
 		{

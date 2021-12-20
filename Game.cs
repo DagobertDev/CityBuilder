@@ -51,7 +51,7 @@ namespace CityBuilder
 			});
 
 			_system = new SequentialSystem<float>(
-				new RemoveSystem(World),
+				new RemoveSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, Map),
 				new SpritePositionSystem(World),
 				new MovementSystem(World),
@@ -66,7 +66,7 @@ namespace CityBuilder
 				new SleepSystem(World, 10f),
 				new WorkSystem(World),
 				new WorkingSystem(World),
-				new ProductionSystem(World),
+				new ProductionSystem(World, inventorySystem),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
 				new ConstructionProgressVisualisationSystem(World));

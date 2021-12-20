@@ -7,7 +7,7 @@ namespace CityBuilder.Systems
 	[With(typeof(RemoveRequest))]
 	public sealed partial class RemoveSystem : AEntitySetSystem<float>
 	{
-		[WorldComponent]
+		[ConstructorParameter]
 		private readonly ICollisionSystem _quadTree;
 		
 		[Update] [UseBuffer]
