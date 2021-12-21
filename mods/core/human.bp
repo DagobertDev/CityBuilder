@@ -1,6 +1,9 @@
-[blueprint]
-name = "Human"
-texture = "human.png"
+Entity 1
+Component BlueprintInfo {
+	Name "Human"
+	Texture "human.png"
+}
 
-[agent]
-speed = 100
+Component Agent {
+	Speed 100
+}

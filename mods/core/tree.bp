@@ -1,9 +1,15 @@
-[blueprint]
-name = "Tree"
-texture = "tree.png"
+Entity 1
+Component BlueprintInfo {
+	Name "Tree"
+	Texture "tree.png"
+}
 
-[job]
-workers = 1
-output = "Wood"
-output_amount = 5
-difficulty = 10
+Component Workplace {
+	MaxEmployees 1
+}
+
+Component Output {
+	Good "Wood"
+	Amount 5
+	Difficulty 10
+}

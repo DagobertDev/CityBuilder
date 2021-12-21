@@ -1,4 +1,7 @@
-[blueprint]
-name = "Remove"
-texture = "remove.png"
-remove = true
+Entity 1
+Component BlueprintInfo {
+	Name "Remove"
+	Texture "remove.png"
+}
+Component RemoveRequest {
+}

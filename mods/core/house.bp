@@ -1,10 +1,14 @@
-[blueprint]
-name = "House"
-texture = "house.png"
+Entity 1
+Component BlueprintInfo {
+	Name "House"
+	Texture "house.png"
+}
 
-[housing]
-beds = 4
+Component Construction {
+	Workers 4
+	Duration 10
+}
 
-[construction]
-workers = 4
-duration = 10
+Component Housing {
+	MaxBeds 4
+}

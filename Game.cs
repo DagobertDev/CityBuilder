@@ -2,6 +2,7 @@
 using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
@@ -49,6 +50,14 @@ namespace CityBuilder
 				{
 					inventorySystem.SetGood(entity, Goods.Food, 0);
 				}
+			});
+
+			World.SubscribeComponentAdded((in Entity entity, in Agent _) =>
+			{
+				entity.Set<Idling>();
+				entity.Set<Hunger>();
+				entity.Set<Tiredness>();
+				entity.Set(new BehaviorQueue());
 			});
 
 			_system = new SequentialSystem<float>(

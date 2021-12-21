@@ -1,13 +1,17 @@
-[blueprint]
-name = "Market"
-texture = "market.png"
+Entity 1
+Component BlueprintInfo {
+	Name "Market"
+	Texture "market.png"
+}
 
-[job]
-workers = 1
+Component Construction {
+	Workers 5
+	Duration 20
+}
 
-[market]
-dummy = true
+Component Workplace {
+	MaxEmployees 1
+}
 
-[construction]
-workers = 5
-duration = 20
+Component Market {
+}

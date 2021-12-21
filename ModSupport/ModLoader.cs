@@ -1,16 +1,13 @@
-﻿using System.IO;
-using CityBuilder.Core.Components;
-using CityBuilder.Core.Components.Behaviors;
-using CityBuilder.Core.Components.Flags;
-using CityBuilder.Core.Components.Production;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using CityBuilder.Core.ModSupport;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
-using Godot;
-using Directory = System.IO.Directory;
-using Path = System.IO.Path;
-using World = DefaultEcs.World;
+using DefaultEcs.Serialization;
+using Texture = Godot.Texture;
 
 namespace CityBuilder.ModSupport
 {
@@ -56,121 +53,95 @@ namespace CityBuilder.ModSupport
 
 		private Blueprint? ParseBlueprint(string path)
 		{
-			var file = new ConfigFile();
+			var serializer = new TextSerializer(new TextSerializationContext());
 
-			if (file.Load(path) != Error.Ok)
+			Entity entity;
+			
+			var str = new MemoryStream();
+			var writer = new StreamWriter(str);
+			writer.Write("ComponentType BlueprintInfo CityBuilder.Core.ModSupport.BlueprintInfo, CityBuilder.Core\n" +
+				"ComponentType Construction CityBuilder.Core.Components.Construction, CityBuilder.Core\n" +
+				"ComponentType RemoveRequest CityBuilder.Core.Components.Flags.RemoveRequest, CityBuilder.Core\n" +
+				"ComponentType Agent CityBuilder.Core.Components.Agent, CityBuilder.Core\n" +
+				"ComponentType Housing CityBuilder.Core.Components.Housing, CityBuilder.Core\n" +
+				"ComponentType Workplace CityBuilder.Core.Components.Workplace, CityBuilder.Core\n" +
+				"ComponentType Output CityBuilder.Core.Components.Production.Output, CityBuilder.Core\n" +
+				"ComponentType Market CityBuilder.Core.Components.Market, CityBuilder.Core\n");
+			writer.Flush();
+			str.Position = 0;
+
+			using (var stream = new ConcatenatedStream(str, File.OpenRead(path)))
+			{
+				entity = serializer.Deserialize(stream, _world).FirstOrDefault();
+			}
+
+			if (entity == default || !entity.Has<BlueprintInfo>())
 			{
 				return null;
 			}
 
-			var nameObject = file.GetValue("blueprint", "name");
+			var info = entity.Get<BlueprintInfo>();
+			entity.Remove<BlueprintInfo>();
+			var texturePath = path.Replace(Path.GetFileName(path), info.Texture);
+			entity.Set(ManagedResource<Texture>.Create(texturePath));
 
-			if (nameObject is not string name)
+			return new Blueprint(info.Name, entity, newEntity =>
 			{
-				return null;
-			}
-
-			var entity = _world.CreateEntity();
-
-			PopulateEntity(entity, file, path);
-
-			return new Blueprint(name, entity, newEntity => PopulateEntity(newEntity, file, path));
+				new ComponentCloner().Clone(entity, newEntity);
+			});
 		}
 
-		private static void PopulateEntity(Entity entity, ConfigFile file, string path)
+		private class ConcatenatedStream : Stream
 		{
-			if (file.HasSectionKey("blueprint", "remove"))
-			{
-				entity.Set<RemoveRequest>();
-			}
-			
-			var textureObject = file.GetValue("blueprint", "texture");
+			private readonly Queue<Stream> _streams;
 
-			if (textureObject is string texturePath)
+			public ConcatenatedStream(params Stream[] streams)
 			{
-				texturePath = path.Replace(Path.GetFileName(path), texturePath);
-				entity.Set(ManagedResource<Texture>.Create(texturePath));
+				_streams = new Queue<Stream>(streams);
 			}
 
-			if (file.HasSection("construction"))
+			public override bool CanRead => true;
+
+			public override int Read(byte[] buffer, int offset, int count)
 			{
-				if (file.GetValue("construction", "workers") is not int workers)
+				var totalBytesRead = 0;
+
+				while (count > 0 && _streams.Count > 0)
 				{
-					workers = 1;
-				}
-				
-				if (file.GetValue("construction", "duration") is not int duration)
-				{
-					duration = 1;
-				}
-				
-				entity.Set(new Construction(workers, duration));
-			}
-
-			if (file.HasSection("agent"))
-			{
-				entity.Set<Idling>();
-				entity.Set(new BehaviorQueue());
-			}
-
-			if (file.HasSectionKey("agent", "speed"))
-			{
-				var speedObject = file.GetValue("agent", "speed");
-
-				switch (speedObject)
-				{
-					case float speed:
-						entity.Set(new Agent(speed));
-						break;
-					case int speed:
-						entity.Set(new Agent(speed));
-						break;
-				}
-
-				entity.Set<Hunger>();
-				entity.Set<Tiredness>();
-			}
-
-			if (file.HasSectionKey("housing", "beds"))
-			{
-				var bedsObject = file.GetValue("housing", "beds");
-
-				if (bedsObject is int beds)
-				{
-					entity.Set(new Housing(beds));
-				}
-			}
-
-			if (file.HasSection("job"))
-			{
-				var workersObject = file.GetValue("job", "workers");
-
-				if (workersObject is int workers)
-				{
-					entity.Set(new Workplace(workers));
-				}
-
-				if (file.HasSectionKey("job", "output") 
-				    && file.HasSectionKey("job", "output_amount")
-				    && file.HasSectionKey("job", "difficulty"))
-				{
-					var goodObject = file.GetValue("job", "output");
-					var outputAmountObject = file.GetValue("job", "output_amount");
-					var difficultyObject = file.GetValue("job", "difficulty");
-
-					if (goodObject is string good 
-					    && outputAmountObject is int outputAmount
-					    && difficultyObject is int difficulty)
+					var bytesRead = _streams.Peek().Read(buffer, offset, count);
+					if (bytesRead == 0)
 					{
-						entity.Set(new Output(good, outputAmount, difficulty));
+						_streams.Dequeue().Dispose();
+						continue;
 					}
+
+					totalBytesRead += bytesRead;
+					offset += bytesRead;
+					count -= bytesRead;
 				}
+
+				return totalBytesRead;
 			}
 
-			if (file.HasSection("market"))
+			public override bool CanSeek => false;
+			public override bool CanWrite => false;
+
+			public override void Flush()
 			{
-				entity.Set<Market>();
+				throw new NotImplementedException();
 			}
+
+			public override long Length => throw new NotImplementedException();
+
+			public override long Position
+			{
+				get => throw new NotImplementedException();
+				set => throw new NotImplementedException();
+			}
+
+			public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+			public override void SetLength(long value) => throw new NotImplementedException();
+			public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 		}
 	}
 }
