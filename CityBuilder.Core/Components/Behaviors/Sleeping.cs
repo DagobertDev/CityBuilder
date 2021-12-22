@@ -1,4 +1,3 @@
-﻿namespace CityBuilder.Core.Components.Behaviors
-{
-	public readonly struct Sleeping { }
-}
+﻿namespace CityBuilder.Core.Components.Behaviors;
+
+public readonly struct Sleeping { }

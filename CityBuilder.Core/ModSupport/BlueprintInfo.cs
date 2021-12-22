@@ -1,14 +1,13 @@
-namespace CityBuilder.Core.ModSupport
+namespace CityBuilder.Core.ModSupport;
+
+public readonly struct BlueprintInfo
 {
-	public readonly struct BlueprintInfo
+	public BlueprintInfo(string name, string texture)
 	{
-		public BlueprintInfo(string name, string texture)
-		{
-			Name = name;
-			Texture = texture;
-		}
-		
-		public string Name { get; }
-		public string Texture { get; }
+		Name = name;
+		Texture = texture;
 	}
+		
+	public string Name { get; }
+	public string Texture { get; }
 }

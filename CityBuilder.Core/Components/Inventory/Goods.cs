@@ -1,7 +1,6 @@
-namespace CityBuilder.Core.Components.Inventory
+namespace CityBuilder.Core.Components.Inventory;
+
+public static class Goods
 {
-	public static class Goods
-	{
-		public const string Food = "Food";
-	}
+	public const string Food = "Food";
 }

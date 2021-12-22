@@ -1,12 +1,11 @@
-﻿namespace CityBuilder.Core.Components.Behaviors
+﻿namespace CityBuilder.Core.Components.Behaviors;
+
+public readonly struct Waiting
 {
-	public readonly struct Waiting
+	public Waiting(float duration)
 	{
-		public Waiting(float duration)
-		{
-			RemainingDuration = duration;
-		}
-		
-		public float RemainingDuration { get; }
+		RemainingDuration = duration;
 	}
+		
+	public float RemainingDuration { get; }
 }

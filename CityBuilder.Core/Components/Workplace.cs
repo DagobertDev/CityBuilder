@@ -1,16 +1,15 @@
-﻿namespace CityBuilder.Core.Components
-{
-	public class Workplace
-	{
-		public Workplace(int maxEmployees, int currentEmployees = 0)
-		{
-			MaxEmployees = maxEmployees;
-			CurrentEmployees = currentEmployees;
-		}
+﻿namespace CityBuilder.Core.Components;
 
-		public int MaxEmployees { get; }
-		public int CurrentEmployees { get; }
-		public int EmptyWorkspace => MaxEmployees - CurrentEmployees;
-		public bool HasEmptyWorkspace => CurrentEmployees < MaxEmployees;
+public class Workplace
+{
+	public Workplace(int maxEmployees, int currentEmployees = 0)
+	{
+		MaxEmployees = maxEmployees;
+		CurrentEmployees = currentEmployees;
 	}
+
+	public int MaxEmployees { get; }
+	public int CurrentEmployees { get; }
+	public int EmptyWorkspace => MaxEmployees - CurrentEmployees;
+	public bool HasEmptyWorkspace => CurrentEmployees < MaxEmployees;
 }

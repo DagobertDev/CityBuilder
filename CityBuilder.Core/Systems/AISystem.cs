@@ -7,122 +7,121 @@ using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Core.Systems
-{
-	[With(typeof(Idling))]
-	public sealed partial class AISystem : AEntitySetSystem<float>
-	{
-		private readonly EntitySet _markets;
-		public AISystem(World world) : base(world, true)
-		{
-			_markets = world.GetEntities().With<Market>().With<Position>()
-				.With((in Good good) => good.Name == Goods.Food)
-				.With((in Amount amount) => amount >= 1)
-				.AsSet();
-		}
+namespace CityBuilder.Core.Systems;
 
-		[Update]
-		private void Update(in Entity entity, in BehaviorQueue behaviorQueue)
+[With(typeof(Idling))]
+public sealed partial class AISystem : AEntitySetSystem<float>
+{
+	private readonly EntitySet _markets;
+	public AISystem(World world) : base(world, true)
+	{
+		_markets = world.GetEntities().With<Market>().With<Position>()
+			.With((in Good good) => good.Name == Goods.Food)
+			.With((in Amount amount) => amount >= 1)
+			.AsSet();
+	}
+
+	[Update]
+	private void Update(in Entity entity, in BehaviorQueue behaviorQueue)
+	{
+		if (behaviorQueue.Count > 0)
 		{
-			if (behaviorQueue.Count > 0)
+			entity.Remove<Idling>();
+			behaviorQueue.Dequeue()(entity);
+		}
+		else
+		{
+			// SatisfyHunger
+			if (entity.Get<Hunger>() >= 20 && _markets.Count > 0)
 			{
-				entity.Remove<Idling>();
-				behaviorQueue.Dequeue()(entity);
+				var market = FindClosest(entity.Get<Position>().Value, _markets);
+				var marketPosition = market.Get<Position>().Value;
+
+				EnqueueBehavior(entity, GoTo(_ => marketPosition), e => 
+				{
+					const int foodHungerReduction = 10;
+
+					var hunger = e.Get<Hunger>().Value;
+					var availableFood = market.Get<Amount>().Value;
+					var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
+							
+					market.Set<Amount>(availableFood - eatenFood);
+					e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
+					e.Set(new Waiting(eatenFood)); 
+				});
 			}
+
+			// SatisfyTiredness()
+			else if (entity.Get<Tiredness>().Value >= 0 && entity.Has<Resident>())
+			{
+				if (entity.Has<IsAtHome>())
+				{
+					EnqueueBehavior(entity, e => e.Set<Sleeping>());
+				}
+
+				else if (entity.Get<Tiredness>() >= 20)
+				{
+					EnqueueBehavior(entity, GoTo(e => e.Get<Resident>().Location), e => e.Set<Sleeping>());
+				}
+			}
+
+			// GoToWork
+			else if (entity.Has<Employee>())
+			{
+				EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
+					e => { e.Set(new Waiting(5)); });
+			}
+
+			// GoToRandomLocation
 			else
 			{
-				// SatisfyHunger
-				if (entity.Get<Hunger>() >= 20 && _markets.Count > 0)
+				var random = new Random();
+
+				EnqueueBehavior(entity, GoTo(e =>
 				{
-					var market = FindClosest(entity.Get<Position>().Value, _markets);
-					var marketPosition = market.Get<Position>().Value;
+					var position = e.Get<Position>().Value;
+					position += new Vector2(500 - 1000 * (float)random.NextDouble(),
+						500 - 1000 * (float)random.NextDouble());
+					return position;
+				}), e => e.Set(new Waiting(3)));
+			}
+		}
+	}
 
-					EnqueueBehavior(entity, GoTo(_ => marketPosition), e => 
-					{
-						const int foodHungerReduction = 10;
+	private static Entity FindClosest(Vector2 position, EntitySet entities)
+	{
+		var distance = float.MaxValue;
+		var closest = default(Entity);
 
-						var hunger = e.Get<Hunger>().Value;
-						var availableFood = market.Get<Amount>().Value;
-						var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
-							
-						market.Set<Amount>(availableFood - eatenFood);
-						e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
-						e.Set(new Waiting(eatenFood)); 
-					});
-				}
+		foreach (var market in entities.GetEntities())
+		{
+			var newDistance = market.Get<Position>().Value.DistanceSquaredTo(position);
 
-				// SatisfyTiredness()
-				else if (entity.Get<Tiredness>().Value >= 0 && entity.Has<Resident>())
-				{
-					if (entity.Has<IsAtHome>())
-					{
-						EnqueueBehavior(entity, e => e.Set<Sleeping>());
-					}
-
-					else if (entity.Get<Tiredness>() >= 20)
-					{
-						EnqueueBehavior(entity, GoTo(e => e.Get<Resident>().Location), e => e.Set<Sleeping>());
-					}
-				}
-
-				// GoToWork
-				else if (entity.Has<Employee>())
-				{
-					EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
-						e => { e.Set(new Waiting(5)); });
-				}
-
-				// GoToRandomLocation
-				else
-				{
-					var random = new Random();
-
-					EnqueueBehavior(entity, GoTo(e =>
-					{
-						var position = e.Get<Position>().Value;
-						position += new Vector2(500 - 1000 * (float)random.NextDouble(),
-							500 - 1000 * (float)random.NextDouble());
-						return position;
-					}), e => e.Set(new Waiting(3)));
-				}
+			if (newDistance < distance)
+			{
+				distance = newDistance;
+				closest = market;
 			}
 		}
 
-		private static Entity FindClosest(Vector2 position, EntitySet entities)
+		if (closest.IsAlive == false)
 		{
-			var distance = float.MaxValue;
-			var closest = default(Entity);
-
-			foreach (var market in entities.GetEntities())
-			{
-				var newDistance = market.Get<Position>().Value.DistanceSquaredTo(position);
-
-				if (newDistance < distance)
-				{
-					distance = newDistance;
-					closest = market;
-				}
-			}
-
-			if (closest.IsAlive == false)
-			{
-				throw new ApplicationException("Market not found");
-			}
-
-			return closest;
+			throw new ApplicationException("Market not found");
 		}
 
-		private static Action<Entity> GoTo(Func<Entity, Vector2> getLocation) =>
-			entity => entity.Set(new Destination(getLocation(entity)));
+		return closest;
+	}
 
-		private static void EnqueueBehavior(Entity entity, params Action<Entity>[] actions)
+	private static Action<Entity> GoTo(Func<Entity, Vector2> getLocation) =>
+		entity => entity.Set(new Destination(getLocation(entity)));
+
+	private static void EnqueueBehavior(Entity entity, params Action<Entity>[] actions)
+	{
+		var queue = entity.Get<BehaviorQueue>();
+
+		foreach (var action in actions)
 		{
-			var queue = entity.Get<BehaviorQueue>();
-
-			foreach (var action in actions)
-			{
-				queue.Enqueue(action);
-			}
+			queue.Enqueue(action);
 		}
 	}
 }

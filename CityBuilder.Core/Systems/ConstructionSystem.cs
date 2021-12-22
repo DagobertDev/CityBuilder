@@ -4,23 +4,22 @@ using CityBuilder.Core.ModSupport;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Core.Systems
-{
-	[With(typeof(Blueprint))]
-	public sealed partial class ConstructionSystem : AEntitySetSystem<float>
-	{
-		[Update] [UseBuffer]
-		private void Update(in Entity entity, [Added] [Changed] in WorkProgress workProgress,
-			in Construction construction)
-		{
-			if (workProgress >= construction.Duration)
-			{
-				var blueprint = entity.Get<Blueprint>();
-				var position = entity.Get<Position>();
-				entity.Dispose();
+namespace CityBuilder.Core.Systems;
 
-				World.Publish(new FinishedBuilding(blueprint, position));
-			}
+[With(typeof(Blueprint))]
+public sealed partial class ConstructionSystem : AEntitySetSystem<float>
+{
+	[Update] [UseBuffer]
+	private void Update(in Entity entity, [Added] [Changed] in WorkProgress workProgress,
+		in Construction construction)
+	{
+		if (workProgress >= construction.Duration)
+		{
+			var blueprint = entity.Get<Blueprint>();
+			var position = entity.Get<Position>();
+			entity.Dispose();
+
+			World.Publish(new FinishedBuilding(blueprint, position));
 		}
 	}
 }

@@ -1,4 +1,3 @@
-﻿namespace CityBuilder.Core.Components.Flags
-{
-	public readonly struct IsAtHome { }
-}
+﻿namespace CityBuilder.Core.Components.Flags;
+
+public readonly struct IsAtHome { }

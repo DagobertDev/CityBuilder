@@ -1,4 +1,3 @@
-﻿namespace CityBuilder.Core.Components.Behaviors
-{
-	public readonly struct Idling { }
-}
+﻿namespace CityBuilder.Core.Components.Behaviors;
+
+public readonly struct Idling { }

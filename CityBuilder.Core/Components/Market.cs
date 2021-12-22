@@ -1,4 +1,3 @@
-﻿namespace CityBuilder.Core.Components
-{
-	public readonly struct Market { }
-}
+﻿namespace CityBuilder.Core.Components;
+
+public readonly struct Market { }

@@ -1,14 +1,13 @@
 using DefaultEcs;
 
-namespace CityBuilder.Core.Components.Inventory
+namespace CityBuilder.Core.Components.Inventory;
+
+public readonly struct Owner
 {
-	public readonly struct Owner
+	public Owner(Entity value)
 	{
-		public Owner(Entity value)
-		{
-			Value = value;
-		}
-		
-		public Entity Value { get; }
+		Value = value;
 	}
+		
+	public Entity Value { get; }
 }

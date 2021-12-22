@@ -1,15 +1,14 @@
-﻿namespace CityBuilder.Core.Components
-{
-	public readonly struct Hunger
-	{
-		public Hunger(float value)
-		{
-			Value = value;
-		}
+﻿namespace CityBuilder.Core.Components;
 
-		public float Value { get; }
-		
-		public static implicit operator float(Hunger tiredness) => tiredness.Value;
-		public static implicit operator Hunger(float value) => new(value);
+public readonly struct Hunger
+{
+	public Hunger(float value)
+	{
+		Value = value;
 	}
+
+	public float Value { get; }
+		
+	public static implicit operator float(Hunger tiredness) => tiredness.Value;
+	public static implicit operator Hunger(float value) => new(value);
 }

@@ -1,17 +1,16 @@
 ﻿using CityBuilder.Core.Components;
 using CityBuilder.Core.ModSupport;
 
-namespace CityBuilder.Core.Messages
+namespace CityBuilder.Core.Messages;
+
+public readonly struct FinishedBuilding
 {
-	public readonly struct FinishedBuilding
+	public FinishedBuilding(Blueprint blueprint, Position position)
 	{
-		public FinishedBuilding(Blueprint blueprint, Position position)
-		{
-			Blueprint = blueprint;
-			Position = position;
-		}
-		
-		public Blueprint Blueprint { get; }
-		public Position Position { get; }
+		Blueprint = blueprint;
+		Position = position;
 	}
+		
+	public Blueprint Blueprint { get; }
+	public Position Position { get; }
 }

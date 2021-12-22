@@ -5,82 +5,81 @@ using CityBuilder.Core.Systems;
 using DefaultEcs;
 using NUnit.Framework;
 
-namespace CityBuilder.Tests
+namespace CityBuilder.Tests;
+
+public class CollisionTests
 {
-	public class CollisionTests
+	private World _world;
+	private CollisionSystem<SizeF> _system;
+
+	[SetUp]
+	public void Setup()
 	{
-		private World _world;
-		private CollisionSystem<SizeF> _system;
+		_world = new World();
+		_system = new CollisionSystem<SizeF>(_world, -1000, -1000, 10000, 10000,
+			value => new Vector2(value.Width, value.Height));
+	}
 
-		[SetUp]
-		public void Setup()
-		{
-			_world = new World();
-			_system = new CollisionSystem<SizeF>(_world, -1000, -1000, 10000, 10000, 
-				value => new Vector2(value.Width, value.Height));
-		}
+	[TearDown]
+	public void TearDown()
+	{
+		_world.Dispose();
+		_system.Dispose();
+	}
 
-		[TearDown]
-		public void TearDown()
-		{
-			_world.Dispose();
-			_system.Dispose();
-		}
-		
-		[Test]
-		public void Test_CollisionWithPoint()
-		{
-			var first = _world.CreateEntity();
-			first.Set<Position>();
-			first.Set(new SizeF(2, 2));
+	[Test]
+	public void Test_CollisionWithPoint()
+	{
+		var first = _world.CreateEntity();
+		first.Set<Position>();
+		first.Set(new SizeF(2, 2));
 
-			_system.Update(0);
+		_system.Update(0);
 
-			var collisions = _system.GetEntities(new Vector2(0.5f, 0.5f));
+		var collisions = _system.GetEntities(new Vector2(0.5f, 0.5f));
 
-			Assert.IsNotEmpty(collisions);
-		}
-		
-		[Test]
-		public void Test_NoCollisionWithPoint()
-		{
-			var first = _world.CreateEntity();
-			first.Set<Position>();
-			first.Set(new SizeF(2, 2));
+		Assert.IsNotEmpty(collisions);
+	}
 
-			_system.Update(0);
+	[Test]
+	public void Test_NoCollisionWithPoint()
+	{
+		var first = _world.CreateEntity();
+		first.Set<Position>();
+		first.Set(new SizeF(2, 2));
 
-			var collisions = _system.GetEntities(new Vector2(1, 1));
-			
-			Assert.IsEmpty(collisions);
-		}
-		
-		[Test]
-		public void Test_CollisionWithRectangle()
-		{
-			var first = _world.CreateEntity();
-			first.Set<Position>();
-			first.Set(new SizeF(2, 2));
+		_system.Update(0);
 
-			_system.Update(0);
+		var collisions = _system.GetEntities(new Vector2(1, 1));
 
-			var collisions = _system.GetEntities(new HitBox(Vector2.Zero, Vector2.One, _world.CreateEntity()));
+		Assert.IsEmpty(collisions);
+	}
 
-			Assert.IsNotEmpty(collisions);
-		}
-		
-		[Test]
-		public void Test_NoCollisionWithRectangle()
-		{
-			var first = _world.CreateEntity();
-			first.Set<Position>();
-			first.Set(new SizeF(2, 2));
+	[Test]
+	public void Test_CollisionWithRectangle()
+	{
+		var first = _world.CreateEntity();
+		first.Set<Position>();
+		first.Set(new SizeF(2, 2));
 
-			_system.Update(0);
+		_system.Update(0);
 
-			var collisions = _system.GetEntities(new HitBox(Vector2.One * 2, Vector2.One, _world.CreateEntity()));
-			
-			Assert.IsEmpty(collisions);
-		}
+		var collisions = _system.GetEntities(new HitBox(Vector2.Zero, Vector2.One, _world.CreateEntity()));
+
+		Assert.IsNotEmpty(collisions);
+	}
+
+	[Test]
+	public void Test_NoCollisionWithRectangle()
+	{
+		var first = _world.CreateEntity();
+		first.Set<Position>();
+		first.Set(new SizeF(2, 2));
+
+		_system.Update(0);
+
+		var collisions = _system.GetEntities(new HitBox(Vector2.One * 2, Vector2.One, _world.CreateEntity()));
+
+		Assert.IsEmpty(collisions);
 	}
 }

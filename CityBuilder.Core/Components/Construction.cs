@@ -1,14 +1,13 @@
-﻿namespace CityBuilder.Core.Components
+﻿namespace CityBuilder.Core.Components;
+
+public readonly struct Construction
 {
-	public readonly struct Construction
+	public Construction(int workers, int duration)
 	{
-		public Construction(int workers, int duration)
-		{
-			Workers = workers;
-			Duration = duration;
-		}
-		
-		public int Workers { get; }
-		public int Duration { get; }
+		Workers = workers;
+		Duration = duration;
 	}
+		
+	public int Workers { get; }
+	public int Duration { get; }
 }

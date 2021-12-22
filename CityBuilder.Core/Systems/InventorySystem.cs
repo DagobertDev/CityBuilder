@@ -4,73 +4,72 @@ using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 
-namespace CityBuilder.Core.Systems
-{
-	public class InventorySystem : IInventorySystem
-	{
-		private World World { get; }
-		private readonly EntityMap<(Owner, Good)> _ownerAndGood;
-		private readonly EntityMultiMap<Owner> _goodsByOwner;
+namespace CityBuilder.Core.Systems;
 
-		public InventorySystem(World world)
+public class InventorySystem : IInventorySystem
+{
+	private World World { get; }
+	private readonly EntityMap<(Owner, Good)> _ownerAndGood;
+	private readonly EntityMultiMap<Owner> _goodsByOwner;
+
+	public InventorySystem(World world)
+	{
+		World = world;
+		_ownerAndGood = World.GetEntities().AsMap<(Owner, Good)>();
+		_goodsByOwner = World.GetEntities().AsMultiMap<Owner>();
+	}
+
+	public Entity SetGood(Entity owner, string good, int amount)
+	{
+		if (amount < 0)
 		{
-			World = world;
-			_ownerAndGood = World.GetEntities().AsMap<(Owner, Good)>();
-			_goodsByOwner = World.GetEntities().AsMultiMap<Owner>();
+			throw new ArgumentOutOfRangeException(nameof(amount));
+		}
+			
+		var nullableEntity = GetGood(owner, good);
+
+		if (nullableEntity.HasValue)
+		{
+			nullableEntity.Value.Set<Amount>(amount);
+			return nullableEntity.Value;
+		}
+			
+		var entity = World.CreateEntity();
+		entity.Set(new Owner(owner));
+		entity.Set(new Good(good));
+		entity.Set<Amount>(amount);
+		entity.Set((new Owner(owner), new Good(good)));
+			
+		if (owner.Has<Position>())
+		{
+			entity.SetSameAs<Position>(owner);
 		}
 
-		public Entity SetGood(Entity owner, string good, int amount)
+		if (owner.Has<Market>())
 		{
-			if (amount < 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(amount));
-			}
+			entity.SetSameAs<Market>(owner);
+		}
 			
-			var nullableEntity = GetGood(owner, good);
+		return entity;
+	}
 
-			if (nullableEntity.HasValue)
-			{
-				nullableEntity.Value.Set<Amount>(amount);
-				return nullableEntity.Value;
-			}
-			
-			var entity = World.CreateEntity();
-			entity.Set(new Owner(owner));
-			entity.Set(new Good(good));
-			entity.Set<Amount>(amount);
-			entity.Set((new Owner(owner), new Good(good)));
-			
-			if (owner.Has<Position>())
-			{
-				entity.SetSameAs<Position>(owner);
-			}
-
-			if (owner.Has<Market>())
-			{
-				entity.SetSameAs<Market>(owner);
-			}
-			
+	public Entity? GetGood(Entity owner, string name)
+	{
+		if (_ownerAndGood.TryGetEntity(new (new Owner(owner), new Good(name)), out var entity))
+		{
 			return entity;
 		}
 
-		public Entity? GetGood(Entity owner, string name)
-		{
-			if (_ownerAndGood.TryGetEntity(new (new Owner(owner), new Good(name)), out var entity))
-			{
-				return entity;
-			}
-
-			return null;
-		}
+		return null;
+	}
 		
-		public ICollection<Entity> GetGoods(Entity owner)
+	public ICollection<Entity> GetGoods(Entity owner)
+	{
+		if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
 		{
-			if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
-			{
-				return entities.ToArray();
-			}
-
-			return Array.Empty<Entity>();
+			return entities.ToArray();
 		}
+
+		return Array.Empty<Entity>();
 	}
 }
