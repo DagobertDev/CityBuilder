@@ -65,6 +65,7 @@ namespace CityBuilder.ModSupport
 				"ComponentType Agent CityBuilder.Core.Components.Agent, CityBuilder.Core\n" +
 				"ComponentType Housing CityBuilder.Core.Components.Housing, CityBuilder.Core\n" +
 				"ComponentType Workplace CityBuilder.Core.Components.Workplace, CityBuilder.Core\n" +
+				"ComponentType Input CityBuilder.Core.Components.Production.Input, CityBuilder.Core\n" +
 				"ComponentType Output CityBuilder.Core.Components.Production.Output, CityBuilder.Core\n" +
 				"ComponentType Market CityBuilder.Core.Components.Market, CityBuilder.Core\n");
 			writer.Flush();

@@ -1,0 +1,25 @@
+Entity 1
+Component BlueprintInfo {
+	Name "Sawmill"
+	Texture "sawmill.png"
+}
+
+Component Construction {
+	Workers 4
+	Duration 20
+}
+
+Component Workplace {
+	MaxEmployees 4
+}
+
+Component Input {
+	Good "Wood"
+	Amount 1
+}
+
+Component Output {
+	Good "Planks"
+	Amount 2
+	Difficulty 5
+}

@@ -1,3 +1,4 @@
+using System;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Production;
@@ -25,5 +26,15 @@ public sealed partial class ProductionSystem : AEntitySetSystem<float>
 			
 		inventory.Set<Amount>(inventory.Get<Amount>() + output.Amount);
 		workplace.Set<WorkProgress>(work.Value - output.Difficulty);
+
+		if (!workplace.Has<Input>())
+		{
+			return;
+		}
+
+		var required = workplace.Get<Input>();
+		var inputInventory = _inventorySystem.GetGood(workplace, required.Good) ?? _inventorySystem.SetGood(workplace, required.Good, 0);
+		var availableAmount = inputInventory.Get<Amount>();
+		inputInventory.Set<Amount>(Math.Max(0, availableAmount - required.Amount));
 	}
 }
