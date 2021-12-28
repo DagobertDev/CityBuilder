@@ -34,7 +34,17 @@ namespace CityBuilder
 		{
 			var collisionSystem = new CollisionSystem<Sprite>(World,
 				-10000, -10000, 110000, 110000,
-				sprite => sprite.Texture.GetSize().ToNumericsVector());
+				sprite =>
+				{
+					var size = sprite.Texture.GetSize();
+
+					if (Math.Abs(sprite.RotationDegrees - 90) < 1)
+					{
+						size = new Vector2(size.y, size.x);
+					}
+
+					return size.ToNumericsVector();
+				});
 			World.SetMaxCapacity<ICollisionSystem>(1);
 			World.Set<ICollisionSystem>(collisionSystem);
 
@@ -127,11 +137,13 @@ namespace CityBuilder
 			{
 				var position = message.Position;
 				var blueprint = message.Blueprint;
+				var rotation = message.Rotation;
 				
 				if (message.Blueprint.Entity.Has<Construction>())
 				{
 					var entity = World.CreateEntity();
 					entity.Set(position);
+					entity.Set(rotation);
 					
 					entity.Set(blueprint);
 					
@@ -146,7 +158,7 @@ namespace CityBuilder
 
 				else
 				{
-					World.Publish(new FinishedBuilding(blueprint, position));
+					World.Publish(new FinishedBuilding(blueprint, position, rotation));
 				}
 			}
 		}
@@ -156,6 +168,7 @@ namespace CityBuilder
 		{
 			var entity = World.CreateEntity();
 			entity.Set(message.Position);
+			entity.Set(message.Rotation);
 			message.Blueprint.Populate(entity);
 			entity.Remove<Construction>();
 		}

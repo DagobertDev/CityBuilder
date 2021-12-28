@@ -64,6 +64,11 @@ namespace CityBuilder.GUI
 				Disable();
 				GetTree().SetInputAsHandled();
 			}
+
+			else if (@event.IsActionPressed(InputAction.RotateBuilding))
+			{
+				RotationDegrees = IsRotated ? 0 : 90;
+			}
 		}
 
 		private void Build()
@@ -73,7 +78,8 @@ namespace CityBuilder.GUI
 				throw new ArgumentNullException(nameof(Blueprint));
 			}
 
-			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, new Position(GlobalPosition.ToNumericsVector())));
+			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, new Position(GlobalPosition.ToNumericsVector()),
+				new Rotation(IsRotated)));
 		}
 
 		private void Enable(Blueprint blueprint)
@@ -98,8 +104,17 @@ namespace CityBuilder.GUI
 			var position = GetGlobalMousePosition();
 			GlobalPosition = position;
 
+			var size = Texture.GetSize().ToNumericsVector();
+
+			if (IsRotated)
+			{
+				size = new(size.Y, size.X);
+			}
+
 			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<ICollisionSystem>()
-				.GetEntities(new HitBox(position.ToNumericsVector(), Texture.GetSize().ToNumericsVector(), default)).All(entity => entity.Has<Agent>());
+				.GetEntities(new HitBox(position.ToNumericsVector(), size, default)).All(entity => entity.Has<Agent>());
 		}
+
+		private bool IsRotated => Math.Abs(RotationDegrees) > 1;
 	}
 }
