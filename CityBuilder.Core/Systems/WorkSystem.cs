@@ -77,7 +77,6 @@ public class WorkSystem : AEntitySetSystem<float>
 	private static void AddEmployee(in Entity entity, in Employee employee)
 	{
 		var work = employee.Workplace;
-		entity.SetSameAs<WorkProgress>(work);
 
 		var workplace = work.Get<Workplace>();
 		workplace = new Workplace(workplace.MaxEmployees, workplace.CurrentEmployees + 1);
@@ -87,7 +86,6 @@ public class WorkSystem : AEntitySetSystem<float>
 	private static void RemoveEmployee(in Entity entity, in Employee employee)
 	{
 		entity.Remove<IsAtWorkplace>();
-		entity.Remove<WorkProgress>();
 
 		var work = employee.Workplace;
 		var workplace = work.Get<Workplace>();
