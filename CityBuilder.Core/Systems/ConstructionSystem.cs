@@ -17,9 +17,10 @@ public sealed partial class ConstructionSystem : AEntitySetSystem<float>
 		{
 			var blueprint = entity.Get<Blueprint>();
 			var position = entity.Get<Position>();
+			var rotation = entity.Get<Rotation>();
 			entity.Dispose();
 
-			World.Publish(new FinishedBuilding(blueprint, position));
+			World.Publish(new FinishedBuilding(blueprint, position, rotation));
 		}
 	}
 }

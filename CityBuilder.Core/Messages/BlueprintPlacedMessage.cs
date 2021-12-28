@@ -3,14 +3,4 @@ using CityBuilder.Core.ModSupport;
 
 namespace CityBuilder.Core.Messages;
 
-public readonly struct BlueprintPlacedMessage
-{
-	public BlueprintPlacedMessage(Blueprint blueprint, Position position)
-	{
-		Blueprint = blueprint;
-		Position = position;
-	}
-
-	public Blueprint Blueprint { get; }
-	public Position Position { get; }
-}
+public readonly record struct BlueprintPlacedMessage(Blueprint Blueprint, Position Position, Rotation Rotation);
