@@ -47,7 +47,7 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 							
 					market.Set<Amount>(availableFood - eatenFood);
 					e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
-					e.Set(new Waiting(eatenFood)); 
+					e.Set<Waiting>(eatenFood);
 				});
 			}
 
@@ -69,7 +69,7 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 			else if (entity.Has<Employee>())
 			{
 				EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
-					e => { e.Set(new Waiting(5)); });
+					e => { e.Set<Waiting>(5); });
 			}
 
 			// GoToRandomLocation
@@ -83,7 +83,7 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 					position += new Vector2(500 - 1000 * (float)random.NextDouble(),
 						500 - 1000 * (float)random.NextDouble());
 					return position;
-				}), e => e.Set(new Waiting(3)));
+				}), e => e.Set<Waiting>(3));
 			}
 		}
 	}
