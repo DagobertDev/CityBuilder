@@ -85,6 +85,7 @@ namespace CityBuilder
 				new TirednessSystem(World, 0.5f),
 				new HousingSystem(World),
 				new SleepSystem(World, 10f),
+				new FinishedSleepSystem(World),
 				new WorkSystem(World),
 				new WorkingSystem(World),
 				new ProductionSystem(World, inventorySystem),

@@ -12,16 +12,11 @@ public sealed partial class SleepSystem : AEntitySetSystem<float>
 {
 	[ConstructorParameter] 
 	private readonly float _rate;
-		
+
 	[Update] [UseBuffer]
 	private void Update(float state, in Entity entity, ref Tiredness tiredness)
 	{
 		tiredness -= state * _rate;
-
-		if (tiredness <= 0)
-		{
-			entity.Remove<Sleeping>();
-			entity.Set<Idling>();
-		}
+		entity.NotifyChanged<Tiredness>();
 	}
 }

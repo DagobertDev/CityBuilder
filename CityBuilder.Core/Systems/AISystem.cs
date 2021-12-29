@@ -52,7 +52,7 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 			}
 
 			// SatisfyTiredness()
-			else if (entity.Get<Tiredness>().Value >= 0 && entity.Has<Resident>())
+			else if (entity.Get<Tiredness>() >= 0 && entity.Has<Resident>())
 			{
 				if (entity.Has<IsAtHome>())
 				{

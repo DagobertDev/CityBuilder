@@ -1,14 +1,7 @@
 ﻿namespace CityBuilder.Core.Components;
 
-public readonly struct Tiredness
+public readonly record struct Tiredness(float Value)
 {
-	public Tiredness(float value)
-	{
-		Value = value;
-	}
-
-	public float Value { get; }
-
 	public static implicit operator float(Tiredness tiredness) => tiredness.Value;
 	public static implicit operator Tiredness(float value) => new(value);
 }
