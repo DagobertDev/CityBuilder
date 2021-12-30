@@ -19,43 +19,44 @@ namespace CityBuilder.GUI
 		{
 			Game.World.Subscribe(this);
 
-			_commands = new List<DebugCommand>();
-			_commands.Add(new DebugCommand("print", GD.Print));
-			_commands.Add(new DebugCommand("pause", () =>
+			_commands = new List<DebugCommand>
 			{
-				var paused = GetTree().Paused;
-				GetTree().Paused = !paused;
-				GD.Print(paused ? "Game continued" : "Game paused");
-			}));
-			_commands.Add(new DebugCommand("set_inventory", args =>
-			{
-				if (!_selectedEntity.HasValue || args.Length < 2)
+				new("print", GD.Print),
+				new("pause", () =>
 				{
-					return;
-				}
+					var paused = GetTree().Paused;
+					GetTree().Paused = !paused;
+					GD.Print(paused ? "Game continued" : "Game paused");
+				}),
+				new ("set_inventory", args =>
+				{
+					if (!_selectedEntity.HasValue || args.Length < 2)
+					{
+						return;
+					}
 
-				if (!int.TryParse(args[1], out var amount))
-				{
-					return;
-				}
-				
-				var good = args[0];
-				Game.World.Get<IInventorySystem>().SetGood(_selectedEntity.Value, good, amount);
-			}));
-			
-			_commands.Add(new DebugCommand("view_inventory", () =>
-			{
-				if (!_selectedEntity.HasValue)
-				{
-					return;
-				}
+					if (!int.TryParse(args[1], out var amount))
+					{
+						return;
+					}
 
-				var inventory = Game.World.Get<IInventorySystem>().GetGoods(_selectedEntity.Value);
-				
-				GD.Print(string.Join("\n", inventory.Select(entity 
-					=> $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}" 
-					   + $"{(entity.Has<Market>() ? " - Market" : string.Empty)}")));
-			}));
+					var good = args[0];
+					Game.World.Get<IInventorySystem>().SetGood(_selectedEntity.Value, good, amount);
+				}),
+				new ("view_inventory", () =>
+				{
+					if (!_selectedEntity.HasValue)
+					{
+						return;
+					}
+
+					var inventory = Game.World.Get<IInventorySystem>().GetGoods(_selectedEntity.Value);
+
+					GD.Print(string.Join("\n", inventory.Select(entity
+						=> $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}"
+						   + $"{(entity.Has<Market>() ? " - Market" : string.Empty)}")));
+				})
+			};
 
 			Connect("text_entered", this, nameof(HandleInput));
 		}
