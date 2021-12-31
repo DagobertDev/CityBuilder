@@ -6,6 +6,7 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
+[With(typeof(Position))]
 [Without(typeof(Market))]
 public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
 {
@@ -13,7 +14,7 @@ public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
 
 	public TransportSystem(World world) : base(world, true)
 	{
-		_markets = world.GetEntities().With<Market>().AsMultiMap<Good>();
+		_markets = world.GetEntities().With<Market>().With<Position>().AsMultiMap<Good>();
 	}
 
 	protected override void Update(float state, in Good good, in Entity source)
@@ -42,8 +43,8 @@ public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
 
 		foreach (var market in markets)
 		{
-			var workplacePosition = market.Get<Position>().Value;
-			var distance = position.DistanceSquaredTo(workplacePosition);
+			var marketPosition = market.Get<Position>().Value;
+			var distance = position.DistanceSquaredTo(marketPosition);
 
 			if (distance < currentDistance)
 			{
