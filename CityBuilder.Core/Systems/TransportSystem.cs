@@ -1,3 +1,4 @@
+using System;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
@@ -22,8 +23,8 @@ public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
 			var addedAmount = source.Get<Amount>();
 			source.Set<Amount>(0);
 
-			var market = _markets[good][0];
-			market.Set<Amount>(market.Get<Amount>()+ addedAmount);
+			var market = FindBestMarket(source, markets);
+			market.Set<Amount>(market.Get<Amount>() + addedAmount);
 		}
 	}
 
@@ -31,5 +32,26 @@ public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
 	{
 		base.Dispose();
 		_markets.Dispose();
+	}
+
+	private static Entity FindBestMarket(Entity source, ReadOnlySpan<Entity> markets)
+	{
+		var position = source.Get<Position>().Value;
+		Entity bestMatch = default;
+		var currentDistance = float.MaxValue;
+
+		foreach (var market in markets)
+		{
+			var workplacePosition = market.Get<Position>().Value;
+			var distance = position.DistanceSquaredTo(workplacePosition);
+
+			if (distance < currentDistance)
+			{
+				bestMatch = market;
+				currentDistance = distance;
+			}
+		}
+
+		return bestMatch;
 	}
 }
