@@ -6,10 +6,10 @@ Component BlueprintInfo {
 
 Component Workplace {
 	MaxEmployees 1
+	Difficulty 10
 }
 
 Component Output {
 	Good "Wood"
 	Amount 5
-	Difficulty 10
 }

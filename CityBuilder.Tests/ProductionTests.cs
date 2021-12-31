@@ -35,7 +35,7 @@ public class ProductionTests
 		var output = new Output(good, amount, difficulty);
 		workplace.Set(output);
 
-		workplace.Set<WorkProgress>(difficulty);
+		workplace.Set<WorkProgress>( 1);
 		_system.Update(0);
 
 		var inventory = _inventorySystem.GetGood(workplace, good); 

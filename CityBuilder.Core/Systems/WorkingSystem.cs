@@ -12,7 +12,9 @@ public sealed partial class WorkingSystem : AEntitySetSystem<float>
 	private static void Update(float state, in Employee employee)
 	{
 		var workplace = employee.Workplace;
-		workplace.Get<WorkProgress>() += state;
+		ref var job = ref workplace.Get<WorkProgress>();
+		var difficulty = workplace.Get<Workplace>().Difficulty;
+		job = job with { Value = job.Value + state / difficulty };
 		workplace.NotifyChanged<WorkProgress>();
 	}
 }

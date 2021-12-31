@@ -13,19 +13,15 @@ public sealed partial class ProductionSystem : AEntitySetSystem<float>
 	private readonly IInventorySystem _inventorySystem;
 
 	[Update] [UseBuffer]
-	private void Update(in Entity workplace, [Added] [Changed] in WorkProgress work, in Output output)
+	private void Update(in Entity workplace, ref WorkProgress workProgress, in Output output)
 	{
-		if (work.Value < output.Difficulty)
-		{
-			return;
-		}
-			
 		var nullableInventory = _inventorySystem.GetGood(workplace, output.Good);
 			
 		var inventory = nullableInventory ?? _inventorySystem.SetGood(workplace, output.Good, 0);
 			
 		inventory.Set<Amount>(inventory.Get<Amount>() + output.Amount);
-		workplace.Set<WorkProgress>(work.Value - output.Difficulty);
+		workProgress -= 1;
+		workplace.NotifyChanged<WorkProgress>();
 
 		if (!workplace.Has<Input>())
 		{
@@ -37,4 +33,7 @@ public sealed partial class ProductionSystem : AEntitySetSystem<float>
 		var availableAmount = inputInventory.Get<Amount>();
 		inputInventory.Set<Amount>(Math.Max(0, availableAmount - required.Amount));
 	}
+
+	[WithPredicate]
+	private static bool Filter(in WorkProgress workProgress) => workProgress.Value >= 1;
 }

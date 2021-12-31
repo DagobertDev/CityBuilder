@@ -45,7 +45,7 @@ public class WorkTests
 		worker.Set<Position>();
 
 		var workplace = _world.CreateEntity();
-		workplace.Set(new Workplace(1));
+		workplace.Set(new Workplace(1, 1));
 		workplace.Set<Position>();
 			
 		_system.Update(0);
@@ -58,7 +58,7 @@ public class WorkTests
 	public void Test_NoPerson_NoWorker()
 	{
 		var work = _world.CreateEntity();
-		var workplace = new Workplace(1);
+		var workplace = new Workplace(1, 1);
 		work.Set(workplace);
 		work.Set<Position>();
 			
@@ -72,7 +72,7 @@ public class WorkTests
 	{
 		var work = _world.CreateEntity();
 		work.Set<Position>();
-		work.Set(new Workplace(1));
+		work.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
 		person.Set<Agent>();
@@ -87,7 +87,7 @@ public class WorkTests
 	public void Test_HousingDisposed_Unemployed()
 	{
 		var work = _world.CreateEntity();
-		var workplace = new Workplace(1);
+		var workplace = new Workplace(1, 1);
 		work.Set(workplace);
 		work.Set<Position>();
 			
@@ -109,7 +109,7 @@ public class WorkTests
 	{
 		var work = _world.CreateEntity();
 		work.Set<Position>();
-		work.Set(new Workplace(1));
+		work.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
 		person.Set<Agent>();
@@ -130,7 +130,7 @@ public class WorkTests
 	{
 		var workOne = _world.CreateEntity();
 		workOne.Set<Position>();
-		workOne.Set(new Workplace(1));
+		workOne.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
 		person.Set<Agent>();
@@ -142,7 +142,7 @@ public class WorkTests
 			
 		var workTwo = _world.CreateEntity();
 		workTwo.Set<Position>();
-		workTwo.Set(new Workplace(1));
+		workTwo.Set(new Workplace(1, 1));
 			
 		person.Set(new Employee(workTwo));
 

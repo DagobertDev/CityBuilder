@@ -1,13 +1,6 @@
 ﻿namespace CityBuilder.Core.Components;
 
-public readonly struct Construction
+public readonly record struct Construction(int Workers, int Duration)
 {
-	public Construction(int workers, int duration)
-	{
-		Workers = workers;
-		Duration = duration;
-	}
-		
-	public int Workers { get; }
-	public int Duration { get; }
+	public Workplace ToWorkplace() => new(Workers, Duration);
 }

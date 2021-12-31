@@ -6,21 +6,20 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-[With(typeof(Blueprint))]
+[With(typeof(Blueprint), typeof(Construction))]
 public sealed partial class ConstructionSystem : AEntitySetSystem<float>
 {
 	[Update] [UseBuffer]
-	private void Update(in Entity entity, [Added] [Changed] in WorkProgress workProgress,
-		in Construction construction)
+	private void Update(in Entity entity)
 	{
-		if (workProgress >= construction.Duration)
-		{
-			var blueprint = entity.Get<Blueprint>();
-			var position = entity.Get<Position>();
-			var rotation = entity.Get<Rotation>();
-			entity.Dispose();
+		var blueprint = entity.Get<Blueprint>();
+		var position = entity.Get<Position>();
+		var rotation = entity.Get<Rotation>();
+		entity.Dispose();
 
-			World.Publish(new FinishedBuilding(blueprint, position, rotation));
-		}
+		World.Publish(new FinishedBuilding(blueprint, position, rotation));
 	}
+
+	[WithPredicate]
+	private static bool Filter(in WorkProgress workProgress) => workProgress.Value >= 1;
 }

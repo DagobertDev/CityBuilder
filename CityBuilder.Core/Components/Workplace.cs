@@ -1,15 +1,7 @@
 ﻿namespace CityBuilder.Core.Components;
 
-public class Workplace
+public readonly record struct Workplace(int MaxEmployees, float Difficulty, int CurrentEmployees = 0)
 {
-	public Workplace(int maxEmployees, int currentEmployees = 0)
-	{
-		MaxEmployees = maxEmployees;
-		CurrentEmployees = currentEmployees;
-	}
-
-	public int MaxEmployees { get; }
-	public int CurrentEmployees { get; }
 	public int EmptyWorkspace => MaxEmployees - CurrentEmployees;
 	public bool HasEmptyWorkspace => CurrentEmployees < MaxEmployees;
 }

@@ -7,9 +7,8 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-[With(typeof(Agent))]
+[With(typeof(Agent), typeof(Position))]
 [Without(typeof(Employee))]
-[With(typeof(Position))]
 public class WorkSystem : AEntitySetSystem<float>
 {
 	private readonly EntitySet _emptyWorkplaces;
@@ -79,7 +78,7 @@ public class WorkSystem : AEntitySetSystem<float>
 		var work = employee.Workplace;
 
 		var workplace = work.Get<Workplace>();
-		workplace = new Workplace(workplace.MaxEmployees, workplace.CurrentEmployees + 1);
+		workplace = workplace with { CurrentEmployees = workplace.CurrentEmployees + 1 };
 		work.Set(workplace);
 	}
 
@@ -89,7 +88,7 @@ public class WorkSystem : AEntitySetSystem<float>
 
 		var work = employee.Workplace;
 		var workplace = work.Get<Workplace>();
-		workplace = new Workplace(workplace.MaxEmployees, workplace.CurrentEmployees - 1);
+		workplace = workplace with { CurrentEmployees = workplace.CurrentEmployees - 1 };
 		work.Set(workplace);
 	}
 

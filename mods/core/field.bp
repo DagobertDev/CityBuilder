@@ -11,10 +11,10 @@ Component Construction {
 
 Component Workplace {
 	MaxEmployees 2
+	Difficulty 5
 }
 
 Component Output {
 	Good "Food"
 	Amount 1
-	Difficulty 5
 }

@@ -154,8 +154,8 @@ namespace CityBuilder
 				
 					var texture = blueprint.Entity.Get<ManagedResource<string, Texture>>();
 					entity.Set(texture);
-				
-					entity.Set(new Workplace(construction.Workers));
+
+					entity.Set(construction.ToWorkplace());
 				}
 
 				else

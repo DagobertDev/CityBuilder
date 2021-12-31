@@ -11,6 +11,7 @@ Component Construction {
 
 Component Workplace {
 	MaxEmployees 4
+	Difficulty 5
 }
 
 Component Input {
@@ -21,5 +22,4 @@ Component Input {
 Component Output {
 	Good "Planks"
 	Amount 2
-	Difficulty 5
 }

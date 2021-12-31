@@ -6,10 +6,11 @@ using Godot;
 namespace CityBuilder.Systems.UI
 { 
 	[Without(typeof(ProgressBar))]
+	[With(typeof(Construction))]
 	public sealed partial class ConstructionProgressVisualisationInitSystem : AEntitySetSystem<float>
 	{
 		[Update] [UseBuffer]
-		private static void Update(in Entity entity, in Construction construction, in Sprite sprite)
+		private static void Update(in Entity entity, in Sprite sprite)
 		{
 			var size = new Vector2(100, 30);
 
@@ -18,7 +19,7 @@ namespace CityBuilder.Systems.UI
 			
 			var progressBar = new ProgressBar
 			{
-				MaxValue = construction.Duration,
+				MaxValue = 1,
 				RectMinSize = size,
 				RectPosition = -0.5f * size
 			};
