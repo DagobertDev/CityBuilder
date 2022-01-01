@@ -1,0 +1,10 @@
+Entity 1
+Component BlueprintInfo {
+	Name "Cart"
+	Texture "cart.png"
+}
+
+Component Agent {
+	Speed 300
+	Type Transporter
+}
