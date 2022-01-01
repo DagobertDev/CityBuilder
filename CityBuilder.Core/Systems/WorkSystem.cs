@@ -7,9 +7,9 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-[With(typeof(Agent), typeof(Position))]
+[With(typeof(Position))]
 [Without(typeof(Employee))]
-public class WorkSystem : AEntitySetSystem<float>
+public sealed partial class WorkSystem : AEntitySetSystem<float>
 {
 	private readonly EntitySet _emptyWorkplaces;
 	private readonly EntityMultiMap<Employee> _employees;
@@ -28,11 +28,15 @@ public class WorkSystem : AEntitySetSystem<float>
 				employee.Remove<Employee>();
 			}
 		});
-			
-		_emptyWorkplaces = world.GetEntities().With((in Workplace workplace) => workplace.HasEmptyWorkspace).With<Position>().AsSet();
+
+		_emptyWorkplaces = world.GetEntities().With((in Workplace workplace) => workplace.HasEmptyWorkspace)
+			.With<Position>().AsSet();
 		_employees = world.GetEntities().With<Position>().AsMultiMap<Employee>();
 	}
-		
+
+	[WithPredicate]
+	private static bool Filter(in Agent agent) => agent.Type == AIType.Worker;
+
 	private static void Initialize(in Entity entity, in Workplace workplace)
 	{
 		if (!entity.Has<WorkProgress>())
@@ -41,8 +45,8 @@ public class WorkSystem : AEntitySetSystem<float>
 		}
 	}
 
-
-	protected override void Update(float state, in Entity worker)
+	[Update]
+	private void Update(in Entity worker)
 	{
 		var workplace = FindBestWorkplace(worker, _emptyWorkplaces.GetEntities());
 
@@ -97,7 +101,7 @@ public class WorkSystem : AEntitySetSystem<float>
 		RemoveEmployee(entity, oldEmployee);
 		AddEmployee(entity, newEmployee);
 	}
-		
+
 	public ICollection<Entity> GetEmployees(Entity work)
 	{
 		if (_employees.TryGetEntities(new Employee(work), out var employees))

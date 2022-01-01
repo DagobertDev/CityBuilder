@@ -13,6 +13,7 @@ namespace CityBuilder.Core.Systems;
 public sealed partial class AISystem : AEntitySetSystem<float>
 {
 	private readonly EntitySet _markets;
+
 	public AISystem(World world) : base(world, true)
 	{
 		_markets = world.GetEntities().With<Market>().With<Position>()
@@ -31,61 +32,89 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 		}
 		else
 		{
-			// SatisfyHunger
-			if (entity.Get<Hunger>() >= 20 && _markets.Count > 0)
+			switch (entity.Get<Agent>().Type)
 			{
-				var market = FindClosest(entity.Get<Position>().Value, _markets);
-				var marketPosition = market.Get<Position>().Value;
-
-				EnqueueBehavior(entity, GoTo(_ => marketPosition), e => 
-				{
-					const int foodHungerReduction = 10;
-
-					var hunger = e.Get<Hunger>().Value;
-					var availableFood = market.Get<Amount>().Value;
-					var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
-							
-					market.Set<Amount>(availableFood - eatenFood);
-					e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
-					e.Set<Waiting>(eatenFood);
-				});
-			}
-
-			// SatisfyTiredness()
-			else if (entity.Get<Tiredness>() >= 0 && entity.Has<Resident>())
-			{
-				if (entity.Has<IsAtHome>())
-				{
-					EnqueueBehavior(entity, e => e.Set<Sleeping>());
-				}
-
-				else if (entity.Get<Tiredness>() >= 20)
-				{
-					EnqueueBehavior(entity, GoTo(e => e.Get<Resident>().Location), e => e.Set<Sleeping>());
-				}
-			}
-
-			// GoToWork
-			else if (entity.Has<Employee>())
-			{
-				EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
-					e => { e.Set<Waiting>(5); });
-			}
-
-			// GoToRandomLocation
-			else
-			{
-				var random = new Random();
-
-				EnqueueBehavior(entity, GoTo(e =>
-				{
-					var position = e.Get<Position>().Value;
-					position += new Vector2(500 - 1000 * (float)random.NextDouble(),
-						500 - 1000 * (float)random.NextDouble());
-					return position;
-				}), e => e.Set<Waiting>(3));
+				case AIType.Worker:
+					WorkerAI(entity);
+					break;
+				case AIType.Transporter:
+					TransporterAI(entity);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
+	}
+
+	private void WorkerAI(in Entity entity)
+	{
+		// SatisfyHunger
+		if (entity.Get<Hunger>() >= 20 && _markets.Count > 0)
+		{
+			var market = FindClosest(entity.Get<Position>().Value, _markets);
+			var marketPosition = market.Get<Position>().Value;
+
+			EnqueueBehavior(entity, GoTo(_ => marketPosition), e =>
+			{
+				const int foodHungerReduction = 10;
+
+				var hunger = e.Get<Hunger>().Value;
+				var availableFood = market.Get<Amount>().Value;
+				var eatenFood = Math.Min((int)hunger / foodHungerReduction, availableFood);
+
+				market.Set<Amount>(availableFood - eatenFood);
+				e.Set(new Hunger(hunger - eatenFood * foodHungerReduction));
+				e.Set<Waiting>(eatenFood);
+			});
+		}
+
+		// SatisfyTiredness()
+		else if (entity.Get<Tiredness>() >= 0 && entity.Has<Resident>())
+		{
+			if (entity.Has<IsAtHome>())
+			{
+				EnqueueBehavior(entity, e => e.Set<Sleeping>());
+			}
+
+			else if (entity.Get<Tiredness>() >= 20)
+			{
+				EnqueueBehavior(entity, GoTo(e => e.Get<Resident>().Location), e => e.Set<Sleeping>());
+			}
+		}
+
+		// GoToWork
+		else if (entity.Has<Employee>())
+		{
+			EnqueueBehavior(entity, e => { e.Set(new Destination(e.Get<Employee>().Location)); },
+				e => { e.Set<Waiting>(5); });
+		}
+
+		// GoToRandomLocation
+		else
+		{
+			var random = new Random();
+
+			EnqueueBehavior(entity, GoTo(e =>
+			{
+				var position = e.Get<Position>().Value;
+				position += new Vector2(500 - 1000 * (float)random.NextDouble(),
+					500 - 1000 * (float)random.NextDouble());
+				return position;
+			}), e => e.Set<Waiting>(3));
+		}
+	}
+
+	private void TransporterAI(in Entity entity)
+	{
+		var random = new Random();
+
+		EnqueueBehavior(entity, GoTo(e =>
+		{
+			var position = e.Get<Position>().Value;
+			position += new Vector2(500 - 1000 * (float)random.NextDouble(),
+				500 - 1000 * (float)random.NextDouble());
+			return position;
+		}), e => e.Set<Waiting>(3));
 	}
 
 	private static Entity FindClosest(Vector2 position, EntitySet entities)

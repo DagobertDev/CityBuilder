@@ -7,10 +7,9 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-[With(typeof(Agent))]
 [Without(typeof(Resident))]
 [With(typeof(Position))]
-public class HousingSystem : AEntitySetSystem<float>
+public sealed partial class HousingSystem : AEntitySetSystem<float>
 {
 	private readonly EntitySet _emptyHouses;
 	private readonly EntityMultiMap<Resident> _residents;
@@ -32,8 +31,9 @@ public class HousingSystem : AEntitySetSystem<float>
 		_emptyHouses = world.GetEntities().With((in Housing housing) => housing.HasEmptyBeds).With<Position>().AsSet();
 		_residents = world.GetEntities().With<Position>().AsMultiMap<Resident>();
 	}
-		
-	protected override void Update(float state, in Entity resident)
+
+	[Update]
+	private void Update(in Entity resident)
 	{
 		var house = FindBestHouse(resident, _emptyHouses.GetEntities());
 
@@ -42,6 +42,9 @@ public class HousingSystem : AEntitySetSystem<float>
 			resident.Set(new Resident(house));
 		}
 	}
+
+	[WithPredicate]
+	private static bool Filter(in Agent agent) => agent.Type == AIType.Worker;
 
 	private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
 	{
@@ -82,7 +85,7 @@ public class HousingSystem : AEntitySetSystem<float>
 		housing = new Housing(housing.MaxBeds, housing.UsedBeds - 1);
 		house.Set(housing);
 	}
-		
+
 	private static void ChangeResident(in Entity entity, in Resident oldResident, in Resident newResident)
 	{
 		RemoveResident(entity, oldResident);

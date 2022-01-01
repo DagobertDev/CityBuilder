@@ -56,17 +56,21 @@ namespace CityBuilder
 
 			World.SubscribeComponentAdded((in Entity entity, in Market _) =>
 			{
-				if (!entity.Has<Good>() && inventorySystem.GetGood(entity, Goods.Food) is not {IsAlive: true})
+				if (!entity.Has<Good>() && inventorySystem.GetGood(entity, Goods.Food) is not { IsAlive: true })
 				{
 					inventorySystem.SetGood(entity, Goods.Food, 0);
 				}
 			});
 
-			World.SubscribeComponentAdded((in Entity entity, in Agent _) =>
+			World.SubscribeComponentAdded((in Entity entity, in Agent agent) =>
 			{
+				if (agent.Type == AIType.Worker)
+				{
+					entity.Set<Hunger>();
+					entity.Set<Tiredness>();
+				}
+
 				entity.Set<Idling>();
-				entity.Set<Hunger>();
-				entity.Set<Tiredness>();
 				entity.Set(new BehaviorQueue());
 			});
 
@@ -95,7 +99,7 @@ namespace CityBuilder
 
 			var textureManager = new TextureManager();
 			textureManager.Manage(World);
-			
+
 			var modLoader = new ModLoader(textureManager, ProjectSettings.GlobalizePath("res://mods"));
 			modLoader.LoadMods();
 		}
@@ -110,8 +114,9 @@ namespace CityBuilder
 			if (@event.IsActionPressed(InputAction.MouseclickLeft))
 			{
 				var mousePosition = GetGlobalMousePosition();
-				
-				var selected = World.Get<ICollisionSystem>().GetEntities(mousePosition.ToNumericsVector()).FirstOrDefault();
+
+				var selected = World.Get<ICollisionSystem>().GetEntities(mousePosition.ToNumericsVector())
+					.FirstOrDefault();
 
 				if (selected.IsAlive)
 				{
@@ -130,7 +135,8 @@ namespace CityBuilder
 				for (var i = 0; i < 1000; i++)
 				{
 					var entity = World.CreateEntity();
-					var position  = new System.Numerics.Vector2(100000 * (float)random.NextDouble(), 100000 * (float)random.NextDouble());
+					var position = new System.Numerics.Vector2(100000 * (float)random.NextDouble(),
+						100000 * (float)random.NextDouble());
 					entity.Set(new Position(position));
 				}
 			}
@@ -140,18 +146,18 @@ namespace CityBuilder
 				var position = message.Position;
 				var blueprint = message.Blueprint;
 				var rotation = message.Rotation;
-				
+
 				if (message.Blueprint.Entity.Has<Construction>())
 				{
 					var entity = World.CreateEntity();
 					entity.Set(position);
 					entity.Set(rotation);
-					
+
 					entity.Set(blueprint);
-					
+
 					var construction = blueprint.Entity.Get<Construction>();
 					entity.Set(construction);
-				
+
 					var texture = blueprint.Entity.Get<ManagedResource<string, Texture>>();
 					entity.Set(texture);
 
