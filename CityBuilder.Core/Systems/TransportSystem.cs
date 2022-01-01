@@ -6,33 +6,55 @@ using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
+[Without(typeof(Agent))]
 [With(typeof(Position))]
-[Without(typeof(Market))]
-public sealed class TransportSystem : AEntityMultiMapSystem<float, Good>
+public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 {
-	private readonly EntityMultiMap<Good> _markets;
+	private readonly EntityMultiMap<Good> _highPriority;
+	private readonly EntityMultiMap<Good> _mediumPriority;
 
 	public TransportSystem(World world) : base(world, true)
 	{
-		_markets = world.GetEntities().With<Market>().With<Position>().AsMultiMap<Good>();
+		_highPriority = world.GetEntities().With<Position>().Without<Agent>()
+			.With((in InventoryPriority value) => value == Priority.High).AsMultiMap<Good>();
+		_mediumPriority = world.GetEntities().With<Position>().Without<Agent>()
+			.With((in InventoryPriority value) => value == Priority.Medium).AsMultiMap<Good>();
 	}
 
-	protected override void Update(float state, in Good good, in Entity source)
+	[Update]
+	private void Update(in Good good, in Entity source, in InventoryPriority priority)
 	{
-		if (_markets.TryGetEntities(good, out var markets) && !markets.IsEmpty)
+		if (_highPriority.TryGetEntities(good, out var highDemand) && !highDemand.IsEmpty)
 		{
 			var addedAmount = source.Get<Amount>();
 			source.Set<Amount>(0);
 
-			var market = FindBestMarket(source, markets);
-			market.Set<Amount>(market.Get<Amount>() + addedAmount);
+			var demand = FindBestMarket(source, highDemand);
+			demand.Set<Amount>(demand.Get<Amount>() + addedAmount);
+		}
+
+		else if (priority == Priority.Low && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
+				 !mediumDemand.IsEmpty)
+		{
+			var addedAmount = source.Get<Amount>();
+			source.Set<Amount>(0);
+
+			var demand = FindBestMarket(source, mediumDemand);
+			demand.Set<Amount>(demand.Get<Amount>() + addedAmount);
 		}
 	}
+
+	[WithPredicate]
+	private static bool Filter(in InventoryPriority priority) => priority != Priority.High;
+
+	[WithPredicate]
+	private static bool Filter(in Amount amount) => amount > 0;
 
 	public override void Dispose()
 	{
 		base.Dispose();
-		_markets.Dispose();
+		_highPriority.Dispose();
+		_mediumPriority.Dispose();
 	}
 
 	private static Entity FindBestMarket(Entity source, ReadOnlySpan<Entity> markets)

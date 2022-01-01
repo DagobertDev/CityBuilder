@@ -34,7 +34,8 @@ public class TransportTests
 		var source = _world.CreateEntity();
 		source.Set<Position>();
 
-		_inventorySystem.SetGood(source, good, amount);
+		var sourceInventory = _inventorySystem.SetGood(source, good, amount);
+		sourceInventory.Set<InventoryPriority>(Priority.Low);
 
 		var market = _world.CreateEntity();
 		market.Set<Position>();
@@ -53,7 +54,8 @@ public class TransportTests
 		var source = _world.CreateEntity();
 		source.Set<Position>();
 
-		_inventorySystem.SetGood(source, good, amount);
+		var sourceInventory = _inventorySystem.SetGood(source, good, amount);
+		sourceInventory.Set<InventoryPriority>(Priority.Low);
 
 		var market = _world.CreateEntity();
 		market.Set<Position>();
@@ -82,7 +84,8 @@ public class TransportTests
 		var source = _world.CreateEntity();
 		source.Set(new Position(Vector2.Zero));
 
-		_inventorySystem.SetGood(source, good, amount);
+		var sourceInventory = _inventorySystem.SetGood(source, good, amount);
+		sourceInventory.Set<InventoryPriority>(Priority.Low);
 
 		var firstMarket = _world.CreateEntity();
 		firstMarket.Set(new Position(Vector2.Zero));

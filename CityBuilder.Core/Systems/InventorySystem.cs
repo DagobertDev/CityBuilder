@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 
 namespace CityBuilder.Core.Systems;
@@ -25,7 +26,7 @@ public class InventorySystem : IInventorySystem
 		{
 			throw new ArgumentOutOfRangeException(nameof(amount));
 		}
-			
+
 		var nullableEntity = GetGood(owner, good);
 
 		if (nullableEntity.HasValue)
@@ -33,36 +34,44 @@ public class InventorySystem : IInventorySystem
 			nullableEntity.Value.Set<Amount>(amount);
 			return nullableEntity.Value;
 		}
-			
+
 		var entity = World.CreateEntity();
 		entity.Set(new Owner(owner));
 		entity.Set(new Good(good));
 		entity.Set<Amount>(amount);
 		entity.Set((new Owner(owner), new Good(good)));
-			
+
 		if (owner.Has<Position>())
 		{
 			entity.SetSameAs<Position>(owner);
 		}
 
-		if (owner.Has<Market>())
+		if (owner.Has<Input>() && owner.Get<Input>().Good == good)
 		{
-			entity.SetSameAs<Market>(owner);
+			entity.Set<InventoryPriority>(Priority.High);
 		}
-			
+		else if (owner.Has<Output>() && owner.Get<Output>().Good == good)
+		{
+			entity.Set<InventoryPriority>(Priority.Low);
+		}
+		else
+		{
+			entity.Set<InventoryPriority>(Priority.Medium);
+		}
+
 		return entity;
 	}
 
 	public Entity? GetGood(Entity owner, string name)
 	{
-		if (_ownerAndGood.TryGetEntity(new (new Owner(owner), new Good(name)), out var entity))
+		if (_ownerAndGood.TryGetEntity(new ValueTuple<Owner, Good>(new Owner(owner), new Good(name)), out var entity))
 		{
 			return entity;
 		}
 
 		return null;
 	}
-		
+
 	public ICollection<Entity> GetGoods(Entity owner)
 	{
 		if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
