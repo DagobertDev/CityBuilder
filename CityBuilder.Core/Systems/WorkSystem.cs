@@ -16,6 +16,7 @@ public sealed partial class WorkSystem : AEntitySetSystem<float>
 
 	public WorkSystem(World world) : base(world, true)
 	{
+		World.Set(this);
 		World.SubscribeComponentAdded<Workplace>(Initialize);
 		World.SubscribeComponentAdded<Employee>(AddEmployee);
 		World.SubscribeComponentChanged<Employee>(ChangeEmployee);

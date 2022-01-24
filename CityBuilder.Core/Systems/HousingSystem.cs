@@ -16,6 +16,7 @@ public sealed partial class HousingSystem : AEntitySetSystem<float>
 
 	public HousingSystem(World world) : base(world, true)
 	{
+		World.Set(this);
 		World.SubscribeComponentAdded<Resident>(AddResident);
 		World.SubscribeComponentChanged<Resident>(ChangeResident);
 		World.SubscribeComponentRemoved<Resident>(RemoveResident);

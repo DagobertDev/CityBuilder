@@ -12,5 +12,6 @@
 		public const string MouseclickRight = "mouseclick_right";
 		public const string ToggleDebug = "doggle_debug";
 		public const string RotateBuilding = "rotate_building";
+		public const string Control = "control";
 	}
 }

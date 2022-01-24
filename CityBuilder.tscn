@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://GUI/Blueprints.cs" type="Script" id=1]
 [ext_resource path="res://Camera.cs" type="Script" id=2]
@@ -6,8 +6,10 @@
 [ext_resource path="res://Game.cs" type="Script" id=4]
 [ext_resource path="res://GUI/BlueprintGhost.cs" type="Script" id=5]
 [ext_resource path="res://GUI/JsonTree.cs" type="Script" id=6]
-[ext_resource path="res://GUI/EntityInspector.cs" type="Script" id=7]
+[ext_resource path="res://GUI/EntityDebugInspector.cs" type="Script" id=7]
 [ext_resource path="res://GUI/DebugConsole.cs" type="Script" id=8]
+[ext_resource path="res://GUI/EntityInspector.cs" type="Script" id=9]
+[ext_resource path="res://GUI/InventoryInspector.cs" type="Script" id=10]
 
 [node name="CityBuilder" type="Control"]
 script = ExtResource( 4 )
@@ -47,6 +49,31 @@ __meta__ = {
 BlueprintButton = ExtResource( 3 )
 
 [node name="EntityInspector" type="WindowDialog" parent="GUI"]
+visible = true
+margin_right = 400.0
+margin_bottom = 400.0
+resizable = true
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="GUI/EntityInspector"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Inventory" type="ItemList" parent="GUI/EntityInspector/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EntityDebugInspector" type="WindowDialog" parent="GUI"]
 margin_right = 200.0
 margin_bottom = 200.0
 window_title = "Entity Inspector"
@@ -54,7 +81,7 @@ resizable = true
 script = ExtResource( 7 )
 JsonTreePath = NodePath("Panel/EntityInspectorView")
 
-[node name="Panel" type="Panel" parent="GUI/EntityInspector"]
+[node name="Panel" type="Panel" parent="GUI/EntityDebugInspector"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 15
@@ -63,7 +90,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EntityInspectorView" type="Tree" parent="GUI/EntityInspector/Panel"]
+[node name="EntityInspectorView" type="Tree" parent="GUI/EntityDebugInspector/Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 columns = 2

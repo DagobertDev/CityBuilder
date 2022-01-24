@@ -14,15 +14,17 @@ public sealed partial class CollisionSystem<T> : AEntitySetSystem<float>, IColli
 	private readonly QuadTree<HitBox> _quadTree;
 	private readonly Func<T, Vector2> _hitBoxFactory;
 
-	public CollisionSystem(World world, int x, int y, int width, int height, Func<T, Vector2> hitBoxFactory) : base(world, CreateEntityContainer, true)
+	public CollisionSystem(World world, int x, int y, int width, int height, Func<T, Vector2> hitBoxFactory) : base(
+		world, CreateEntityContainer, true)
 	{
-		_quadTree = new(x, y, width, height, new Bounds());
+		_quadTree = new QuadTree<HitBox>(x, y, width, height, new Bounds());
 		_hitBoxFactory = hitBoxFactory;
-			
+
 		World.SubscribeComponentRemoved((in Entity _, in HitBox hitBox) => _quadTree.Remove(hitBox));
 	}
 
-	[Update] [UseBuffer]
+	[Update]
+	[UseBuffer]
 	private void Update(in Entity entity, [Added] [Changed] in Position transform,
 		[Added] [Changed] in T sprite)
 	{
