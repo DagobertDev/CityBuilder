@@ -148,12 +148,18 @@ namespace CityBuilder.GUI
 
 		private void AddTransport(Entity entity)
 		{
+			if (entity.Has<TransportCapacity>())
+			{
+				AddHeading("Transporter");
+				AddItem($"Max capacity: {entity.Get<TransportCapacity>().Value}");
+			}
+
 			if (entity.Has<Transport>())
 			{
-				var (from, to, good, amount) = entity.Get<Transport>();
+				var (from, to, good, amount, delivering) = entity.Get<Transport>();
 				AddHeading("Transport");
-				AddItem($"Transporting {amount.Value} {good.Name} " +
-						$"from {from} to {to}.");
+				AddItem($"Transporting {amount.Value} {good.Name} from {from} to {to}.");
+				AddItem($"Currently going to the {(delivering ? "end" : "start")} of the route.");
 			}
 		}
 

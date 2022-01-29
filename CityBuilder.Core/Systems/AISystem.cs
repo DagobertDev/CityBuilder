@@ -141,8 +141,7 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 			var transportedAmount = Math.Min(requestedAmount, availableAmount);
 
 			from.Set<Amount>(availableAmount - transportedAmount);
-			transport = transport with { Amount = transportedAmount };
-			e.Set(transport);
+			e.Set(transport with { Amount = transportedAmount, Delivering = true });
 
 			e.Set<Waiting>(1);
 		});

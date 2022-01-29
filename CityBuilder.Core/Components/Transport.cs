@@ -3,4 +3,4 @@ using DefaultEcs;
 
 namespace CityBuilder.Core.Components;
 
-public record Transport(Entity From, Entity To, Good Good, Amount Amount);
+public record Transport(Entity From, Entity To, Good Good, Amount Amount, bool Delivering = false);
