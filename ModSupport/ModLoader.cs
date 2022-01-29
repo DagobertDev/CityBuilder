@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CityBuilder.Core.Components;
 using CityBuilder.Core.ModSupport;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
 using DefaultEcs.Serialization;
-using Texture = Godot.Texture;
+using Godot;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
+using Path = System.IO.Path;
+using World = DefaultEcs.World;
 
 namespace CityBuilder.ModSupport
 {
@@ -37,8 +42,8 @@ namespace CityBuilder.ModSupport
 			}
 
 			foreach (var file in Directory.EnumerateFiles(path,
-				$"*.{BlueprintFileExtension}",
-				SearchOption.AllDirectories))
+						 $"*.{BlueprintFileExtension}",
+						 SearchOption.AllDirectories))
 			{
 				var blueprint = ParseBlueprint(file);
 
@@ -56,18 +61,12 @@ namespace CityBuilder.ModSupport
 			var serializer = new TextSerializer(new TextSerializationContext());
 
 			Entity entity;
-			
+
 			var str = new MemoryStream();
 			var writer = new StreamWriter(str);
-			writer.Write("ComponentType BlueprintInfo CityBuilder.Core.ModSupport.BlueprintInfo, CityBuilder.Core\n" +
-				"ComponentType Construction CityBuilder.Core.Components.Construction, CityBuilder.Core\n" +
-				"ComponentType RemoveRequest CityBuilder.Core.Components.Flags.RemoveRequest, CityBuilder.Core\n" +
-				"ComponentType Agent CityBuilder.Core.Components.Agent, CityBuilder.Core\n" +
-				"ComponentType Housing CityBuilder.Core.Components.Housing, CityBuilder.Core\n" +
-				"ComponentType Workplace CityBuilder.Core.Components.Workplace, CityBuilder.Core\n" +
-				"ComponentType Input CityBuilder.Core.Components.Production.Input, CityBuilder.Core\n" +
-				"ComponentType Output CityBuilder.Core.Components.Production.Output, CityBuilder.Core\n" +
-				"ComponentType Market CityBuilder.Core.Components.Market, CityBuilder.Core\n");
+
+			WriteTypes(writer, typeof(Position).Assembly.GetTypes()
+				.Where(t => t.Namespace != null && t.Namespace.Contains("Components")));
 			writer.Flush();
 			str.Position = 0;
 
@@ -86,10 +85,15 @@ namespace CityBuilder.ModSupport
 			var texturePath = path.Replace(Path.GetFileName(path), info.Texture);
 			entity.Set(ManagedResource<Texture>.Create(texturePath));
 
-			return new Blueprint(info.Name, entity, newEntity =>
+			return new Blueprint(info.Name, entity, newEntity => { new ComponentCloner().Clone(entity, newEntity); });
+		}
+
+		private static void WriteTypes(TextWriter writer, IEnumerable<Type> types)
+		{
+			foreach (var type in types)
 			{
-				new ComponentCloner().Clone(entity, newEntity);
-			});
+				writer.WriteLine($"ComponentType {type.Name} {type.FullName}, {type.Assembly.GetName().Name}");
+			}
 		}
 
 		private class ConcatenatedStream : Stream
