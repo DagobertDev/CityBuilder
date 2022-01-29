@@ -49,7 +49,6 @@ __meta__ = {
 BlueprintButton = ExtResource( 3 )
 
 [node name="EntityInspector" type="WindowDialog" parent="GUI"]
-visible = true
 margin_right = 400.0
 margin_bottom = 400.0
 resizable = true

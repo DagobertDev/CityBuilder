@@ -1,4 +1,5 @@
 ﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
@@ -7,12 +8,12 @@ namespace CityBuilder.Core.Systems;
 
 public sealed partial class MovementSystem : AEntitySetSystem<float>
 {
-	[Update] [UseBuffer]
+	[Update]
+	[UseBuffer]
 	private static void Update(float state, in Entity entity, in Destination destinationComponent,
-		ref Position transform, in Agent agent)
+		ref Position transform, in Speed speed)
 	{
 		var destination = destinationComponent.Position;
-		var speed = agent.Speed;
 
 		transform = new Position(transform.Value.MoveToward(destination, state * speed));
 

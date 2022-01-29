@@ -5,6 +5,9 @@ Component BlueprintInfo {
 }
 
 Component Agent {
-	Speed 100
 	Type Worker
+}
+
+Component Speed {
+	Value 100
 }

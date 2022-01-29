@@ -1,6 +1,6 @@
 ﻿namespace CityBuilder.Core.Components;
 
-public readonly record struct Agent(float Speed, AIType Type);
+public readonly record struct Agent(AIType Type);
 
 public enum AIType
 {
