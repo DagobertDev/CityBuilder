@@ -11,3 +11,7 @@ Component Agent {
 Component Speed {
 	Value 300
 }
+
+Component TransportCapacity {
+	Value 10
+}

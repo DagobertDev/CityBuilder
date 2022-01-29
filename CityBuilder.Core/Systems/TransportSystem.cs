@@ -20,7 +20,7 @@ public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 			.With((in InventoryPriority value) => value == Priority.High).AsMultiMap<Good>();
 		_mediumPriority = world.GetEntities().With<Position>().Without<Agent>()
 			.With((in InventoryPriority value) => value == Priority.Medium).AsMultiMap<Good>();
-		_transporters = world.GetEntities().With((in Agent agent) => agent.Type == AIType.Transporter)
+		_transporters = world.GetEntities().With<TransportCapacity>()
 			.Without<Transport>().AsSet();
 	}
 
@@ -36,7 +36,8 @@ public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 		{
 			var demand = FindBestMarket(source, highDemand);
 			var transporter = FindBestTransporter(source, _transporters.GetEntities());
-			transporter.Set(new Transport(source, demand, good, int.MaxValue));
+			var capacity = transporter.Get<TransportCapacity>().Value;
+			transporter.Set(new Transport(source, demand, good, capacity));
 		}
 
 		else if (priority == Priority.Low && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
@@ -44,7 +45,8 @@ public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 		{
 			var demand = FindBestMarket(source, mediumDemand);
 			var transporter = FindBestTransporter(source, _transporters.GetEntities());
-			transporter.Set(new Transport(source, demand, good, int.MaxValue));
+			var capacity = transporter.Get<TransportCapacity>().Value;
+			transporter.Set(new Transport(source, demand, good, capacity));
 		}
 	}
 
