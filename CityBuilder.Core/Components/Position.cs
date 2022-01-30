@@ -3,14 +3,10 @@ using System.Numerics;
 
 namespace CityBuilder.Core.Components;
 
-public readonly struct Position
+public readonly record struct Position(Vector2 Value)
 {
-	public Position(Vector2 value)
-	{
-		Value = value;
-	}
-
-	public Vector2 Value { get; }
+	public static implicit operator Vector2(Position position) => position.Value;
+	public static implicit operator Position(Vector2 value) => new(value);
 }
 
 public static class Vector2Extensions
