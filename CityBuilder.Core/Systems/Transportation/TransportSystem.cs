@@ -4,7 +4,7 @@ using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Core.Systems;
+namespace CityBuilder.Core.Systems.Transportation;
 
 [Without(typeof(Agent))]
 [With(typeof(Position))]

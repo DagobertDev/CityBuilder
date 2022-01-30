@@ -38,7 +38,6 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 					WorkerAI(entity);
 					break;
 				case AIType.Transporter:
-					TransporterAI(entity);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -102,82 +101,6 @@ public sealed partial class AISystem : AEntitySetSystem<float>
 				return position;
 			}), e => e.Set<Waiting>(3));
 		}
-	}
-
-	private void TransporterAI(in Entity entity)
-	{
-		if (!entity.Has<Transport>())
-		{
-			EnqueueBehavior(entity, e => e.Set<Waiting>(5));
-			return;
-		}
-
-		// Go to start
-		EnqueueBehavior(entity, GoTo(e =>
-		{
-			var from = e.Get<Transport>().From;
-
-			if (!from.IsAlive)
-			{
-				throw new ApplicationException("Transport starting point is not alive.");
-			}
-
-			return from.Get<Position>().Value;
-		}));
-
-		// Pick goods
-		EnqueueBehavior(entity, e =>
-		{
-			var transport = e.Get<Transport>();
-			var from = transport.From;
-
-			if (!from.IsAlive)
-			{
-				throw new ApplicationException("Transport start point is not alive.");
-			}
-
-			var requestedAmount = transport.Amount;
-			var availableAmount = from.Get<Amount>();
-			var transportedAmount = Math.Min(requestedAmount, availableAmount);
-
-			from.Set<Amount>(availableAmount - transportedAmount);
-			e.Set(transport with { Amount = transportedAmount, Delivering = true });
-
-			e.Set<Waiting>(1);
-		});
-
-		// Go to end
-		EnqueueBehavior(entity, GoTo(e =>
-		{
-			var transport = e.Get<Transport>();
-			var to = transport.To;
-
-			if (!to.IsAlive)
-			{
-				throw new ApplicationException("Transport end point is not alive.");
-			}
-
-			return to.Get<Position>().Value;
-		}));
-
-		// Drop goods
-		EnqueueBehavior(entity, e =>
-		{
-			var transport = e.Get<Transport>();
-			var to = transport.To;
-
-			if (!to.IsAlive)
-			{
-				throw new ApplicationException("Transport end point is not alive.");
-			}
-
-			var addedAmount = transport.Amount;
-			to.Get<Amount>() += addedAmount;
-			to.NotifyChanged<Amount>();
-
-			e.Remove<Transport>();
-			e.Set<Waiting>(1);
-		});
 	}
 
 	private static Entity FindClosest(Vector2 position, EntitySet entities)

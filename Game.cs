@@ -6,6 +6,7 @@ using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
+using CityBuilder.Core.Systems.Transportation;
 using CityBuilder.GUI;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems.UI;
@@ -84,6 +85,7 @@ namespace CityBuilder
 				new AISystem(World),
 				new WaitingSystem(World),
 				new TransportSystem(World),
+				new TransportStateSystem(World),
 				new HungerSystem(World, 0.1f),
 				new TirednessSystem(World, 0.5f),
 				new HousingSystem(World),

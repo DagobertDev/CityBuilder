@@ -2,6 +2,7 @@ using System.Numerics;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Systems;
+using CityBuilder.Core.Systems.Transportation;
 using DefaultEcs;
 using NUnit.Framework;
 
