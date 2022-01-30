@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Flags;
+using CityBuilder.Core.Components.Needs;
 using DefaultEcs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
 [Without(typeof(Resident))]
+[With(typeof(WantsHousing))]
 [With(typeof(Position))]
 public sealed partial class HousingSystem : AEntitySetSystem<float>
 {
@@ -43,9 +45,6 @@ public sealed partial class HousingSystem : AEntitySetSystem<float>
 			resident.Set(new Resident(house));
 		}
 	}
-
-	[WithPredicate]
-	private static bool Filter(in Agent agent) => agent.Type == AIType.Worker;
 
 	private static Entity FindBestHouse(Entity resident, ReadOnlySpan<Entity> houses)
 	{

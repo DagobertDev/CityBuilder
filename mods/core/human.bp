@@ -11,3 +11,20 @@ Component Agent {
 Component Speed {
 	Value 100
 }
+
+Component HungerRate {
+	Value 0,1
+}
+
+Component TirednessRate {
+	Value 0,5
+}
+
+Component WantsHousing {
+}
+
+Component WantsWork {
+}
+
+Component WantsRecreation {
+}

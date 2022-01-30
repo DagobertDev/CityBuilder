@@ -1,20 +1,14 @@
 ﻿using CityBuilder.Core.Components;
-using DefaultEcs;
+using CityBuilder.Core.Components.Needs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-public class TirednessSystem : AComponentSystem<float, Tiredness>
+public sealed partial class TirednessSystem : AEntitySetSystem<float>
 {
-	private readonly float _rate;
-		
-	public TirednessSystem(World world, float rate) : base(world)
+	[Update]
+	private static void Update(float state, ref Tiredness tiredness, in TirednessRate rate)
 	{
-		_rate = rate;
-	}
-
-	protected override void Update(float state, ref Tiredness component)
-	{
-		component += state * _rate;
+		tiredness += state * rate;
 	}
 }

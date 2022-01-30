@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Flags;
+using CityBuilder.Core.Components.Needs;
 using DefaultEcs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
 [With(typeof(Position))]
+[With(typeof(WantsWork))]
 [Without(typeof(Employee))]
 public sealed partial class WorkSystem : AEntitySetSystem<float>
 {
@@ -34,9 +36,6 @@ public sealed partial class WorkSystem : AEntitySetSystem<float>
 			.With<Position>().AsSet();
 		_employees = world.GetEntities().With<Position>().AsMultiMap<Employee>();
 	}
-
-	[WithPredicate]
-	private static bool Filter(in Agent agent) => agent.Type == AIType.Worker;
 
 	private static void Initialize(in Entity entity, in Workplace workplace)
 	{

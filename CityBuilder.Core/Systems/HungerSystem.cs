@@ -1,20 +1,14 @@
 ﻿using CityBuilder.Core.Components;
-using DefaultEcs;
+using CityBuilder.Core.Components.Needs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems;
 
-public sealed class HungerSystem : AComponentSystem<float, Hunger>
+public sealed partial class HungerSystem : AEntitySetSystem<float>
 {
-	private readonly float _rate;
-
-	public HungerSystem(World world, float rate) : base(world)
+	[Update]
+	private static void Update(float state, ref Hunger hunger, in HungerRate rate)
 	{
-		_rate = rate;
-	}
-
-	protected override void Update(float state, ref Hunger hunger)
-	{
-		hunger += state * _rate;
+		hunger += state * rate;
 	}
 }

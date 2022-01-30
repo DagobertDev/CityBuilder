@@ -2,12 +2,14 @@ using System;
 using System.Numerics;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.Needs;
 using DefaultEcs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems.AI;
 
 [With(typeof(Idling))]
+[With(typeof(WantsRecreation))]
 public sealed partial class WanderAroundSystem : AEntitySetSystem<float>
 {
 	private const float DownTime = 3;
@@ -26,9 +28,6 @@ public sealed partial class WanderAroundSystem : AEntitySetSystem<float>
 		entity.Set<Destination>(destination);
 		behaviorQueue.Enqueue(Wait);
 	}
-
-	[WithPredicate]
-	private static bool Filter(in Agent agent) => agent.Type == AIType.Worker;
 
 	private static void Wait(Entity entity) => entity.Set<Waiting>(DownTime);
 }

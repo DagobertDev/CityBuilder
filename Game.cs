@@ -4,6 +4,7 @@ using CityBuilder.Components;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Inventory;
+using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
 using CityBuilder.Core.Systems.AI;
@@ -64,17 +65,14 @@ namespace CityBuilder
 				}
 			});
 
-			World.SubscribeComponentAdded((in Entity entity, in Agent agent) =>
+			World.SubscribeComponentAdded((in Entity entity, in Agent _) =>
 			{
-				if (agent.Type == AIType.Worker)
-				{
-					entity.Set<Hunger>();
-					entity.Set<Tiredness>();
-				}
-
 				entity.Set<Idling>();
 				entity.Set(new BehaviorQueue());
 			});
+
+			World.SubscribeComponentAdded((in Entity entity, in HungerRate _) => entity.Set<Hunger>());
+			World.SubscribeComponentAdded((in Entity entity, in TirednessRate _) => entity.Set<Tiredness>());
 
 			World.SubscribeComponentAdded((in Entity entity, in Destination _) => entity.Remove<Idling>());
 			World.SubscribeComponentAdded((in Entity entity, in Waiting _) => entity.Remove<Idling>());
@@ -91,8 +89,8 @@ namespace CityBuilder
 				new WaitingSystem(World),
 				new TransportSystem(World),
 				new TransportStateSystem(World),
-				new HungerSystem(World, 0.1f),
-				new TirednessSystem(World, 0.5f),
+				new HungerSystem(World),
+				new TirednessSystem(World),
 				new HousingSystem(World),
 				new SleepSystem(World, 10f),
 				new WorkSystem(World),

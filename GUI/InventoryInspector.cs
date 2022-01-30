@@ -67,7 +67,7 @@ namespace CityBuilder.GUI
 
 		private void AddWorker(Entity entity)
 		{
-			if (entity.Has<Agent>() && entity.Get<Agent>().Type == AIType.Worker)
+			if (entity.Has<Agent>() && entity.Has<Hunger>() && entity.Has<Tiredness>())
 			{
 				AddHeading("Needs");
 				AddItem($"Hunger: {entity.Get<Hunger>().Value:N0}");
