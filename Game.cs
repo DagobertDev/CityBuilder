@@ -6,6 +6,7 @@ using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
+using CityBuilder.Core.Systems.AI;
 using CityBuilder.Core.Systems.Transportation;
 using CityBuilder.GUI;
 using CityBuilder.ModSupport;
@@ -75,6 +76,10 @@ namespace CityBuilder
 				entity.Set(new BehaviorQueue());
 			});
 
+			World.SubscribeComponentAdded((in Entity entity, in Destination _) => entity.Remove<Idling>());
+			World.SubscribeComponentAdded((in Entity entity, in Waiting _) => entity.Remove<Idling>());
+			World.SubscribeComponentAdded((in Entity entity, in Sleeping _) => entity.Remove<Idling>());
+
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, Map),
@@ -82,7 +87,7 @@ namespace CityBuilder
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
-				new AISystem(World),
+				AISystem.GetSystems(World),
 				new WaitingSystem(World),
 				new TransportSystem(World),
 				new TransportStateSystem(World),
