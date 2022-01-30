@@ -2,12 +2,8 @@
 
 namespace CityBuilder.Core.Components;
 
-public readonly struct Destination
+public readonly record struct Destination(Vector2 Position)
 {
-	public Destination(Vector2 position)
-	{
-		Position = position;
-	}
-
-	public Vector2 Position { get; }
+	public static implicit operator Vector2(Destination destination) => destination.Position;
+	public static implicit operator Destination(Vector2 position) => new(position);
 }
