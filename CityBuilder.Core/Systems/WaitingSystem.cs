@@ -6,10 +6,20 @@ namespace CityBuilder.Core.Systems;
 
 public sealed partial class WaitingSystem : AEntitySetSystem<float>
 {
-	[Update] [UseBuffer]
+	[Update, UseBuffer]
 	private static void Update(float state, in Entity entity, ref Waiting waiting)
 	{
-		waiting -= state;
-		entity.NotifyChanged<Waiting>();
+		var value = waiting.RemainingDuration;
+		value -= state;
+
+		if (value > 0)
+		{
+			entity.Set<Waiting>(value);
+		}
+		else
+		{
+			entity.Remove<Waiting>();
+			entity.Set<Idling>();
+		}
 	}
 }

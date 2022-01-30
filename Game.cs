@@ -83,7 +83,6 @@ namespace CityBuilder
 				new LocationSensorSystem(World),
 				new AISystem(World),
 				new WaitingSystem(World),
-				new FinishedWaitingSystem(World),
 				new TransportSystem(World),
 				new HungerSystem(World, 0.1f),
 				new TirednessSystem(World, 0.5f),
