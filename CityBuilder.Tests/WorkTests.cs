@@ -1,4 +1,5 @@
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Systems;
 using DefaultEcs;
 using DefaultEcs.System;
@@ -24,16 +25,16 @@ public class WorkTests
 		_world.Dispose();
 		_system.Dispose();
 	}
-		
+
 	[Test]
 	public void Test_NoWork_NoEmployee()
 	{
 		var worker = _world.CreateEntity();
-		worker.Set<Agent>();
+		worker.Set<WantsWork>();
 		worker.Set<Position>();
 
 		_system.Update(0);
-			
+
 		Assert.IsFalse(worker.Has<Employee>());
 	}
 
@@ -41,19 +42,19 @@ public class WorkTests
 	public void Test_Work_Employee()
 	{
 		var worker = _world.CreateEntity();
-		worker.Set<Agent>();
+		worker.Set<WantsWork>();
 		worker.Set<Position>();
 
 		var workplace = _world.CreateEntity();
 		workplace.Set(new Workplace(1, 1));
 		workplace.Set<Position>();
-			
+
 		_system.Update(0);
-			
+
 		Assert.IsTrue(worker.Has<Employee>());
 		Assert.AreEqual(worker.Get<Employee>().Workplace, workplace);
 	}
-		
+
 	[Test]
 	public void Test_NoPerson_NoWorker()
 	{
@@ -61,12 +62,12 @@ public class WorkTests
 		var workplace = new Workplace(1, 1);
 		work.Set(workplace);
 		work.Set<Position>();
-			
+
 		_system.Update(0);
-			
+
 		Assert.IsTrue(workplace.HasEmptyWorkspace);
 	}
-		
+
 	[Test]
 	public void Test_Person_Employee()
 	{
@@ -75,14 +76,14 @@ public class WorkTests
 		work.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
-		person.Set<Agent>();
+		person.Set<WantsWork>();
 		person.Set<Position>();
 
 		_system.Update(0);
-			
+
 		Assert.That(work.Get<Workplace>().HasEmptyWorkspace, Is.False);
 	}
-		
+
 	[Test]
 	public void Test_HousingDisposed_Unemployed()
 	{
@@ -90,20 +91,20 @@ public class WorkTests
 		var workplace = new Workplace(1, 1);
 		work.Set(workplace);
 		work.Set<Position>();
-			
+
 		var resident = _world.CreateEntity();
-		resident.Set<Agent>();
+		resident.Set<WantsWork>();
 		resident.Set<Position>();
 
 		_system.Update(0);
-			
+
 		work.Dispose();
-			
+
 		_system.Update(0);
-			
+
 		Assert.IsFalse(resident.Has<Employee>());
 	}
-		
+
 	[Test]
 	public void Test_ResidentDisposed_EmptyHousing()
 	{
@@ -112,19 +113,19 @@ public class WorkTests
 		work.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
-		person.Set<Agent>();
+		person.Set<WantsWork>();
 		person.Set<Position>();
 
 		_system.Update(0);
-			
+
 		Assert.That(work.Get<Workplace>().HasEmptyWorkspace, Is.False);
 		person.Dispose();
-			
+
 		_system.Update(0);
-			
+
 		Assert.That(work.Get<Workplace>().HasEmptyWorkspace);
 	}
-		
+
 	[Test]
 	public void Test_ChangeEmployee()
 	{
@@ -133,17 +134,17 @@ public class WorkTests
 		workOne.Set(new Workplace(1, 1));
 
 		var person = _world.CreateEntity();
-		person.Set<Agent>();
+		person.Set<WantsWork>();
 		person.Set<Position>();
 
 		_system.Update(0);
-			
+
 		Assume.That(workOne.Get<Workplace>().HasEmptyWorkspace, Is.False);
-			
+
 		var workTwo = _world.CreateEntity();
 		workTwo.Set<Position>();
 		workTwo.Set(new Workplace(1, 1));
-			
+
 		person.Set(new Employee(workTwo));
 
 		Assert.Multiple(() =>
