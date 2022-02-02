@@ -1,4 +1,5 @@
-﻿using CityBuilder.Core.Components.Behaviors;
+﻿using CityBuilder.Core.Components.AI;
+using CityBuilder.Core.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -19,7 +20,8 @@ public sealed partial class WaitingSystem : AEntitySetSystem<float>
 		else
 		{
 			entity.Remove<Waiting>();
-			entity.Set<Idling>();
+			entity.Get<BehaviorState>().Next(out var next);
+			entity.Set(next);
 		}
 	}
 }

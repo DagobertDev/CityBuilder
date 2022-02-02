@@ -2,13 +2,12 @@
 using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Core.Components;
-using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
 using CityBuilder.Core.Systems.AI;
-using CityBuilder.Core.Systems.Transportation;
 using CityBuilder.GUI;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems.UI;
@@ -65,18 +64,10 @@ namespace CityBuilder
 				}
 			});
 
-			World.SubscribeComponentAdded((in Entity entity, in Agent _) =>
-			{
-				entity.Set<Idling>();
-				entity.Set(new BehaviorQueue());
-			});
+			World.SubscribeComponentAdded((in Entity entity, in Agent _) => entity.Set(BehaviorState.Deciding));
 
 			World.SubscribeComponentAdded((in Entity entity, in HungerRate _) => entity.Set<Hunger>());
 			World.SubscribeComponentAdded((in Entity entity, in TirednessRate _) => entity.Set<Tiredness>());
-
-			World.SubscribeComponentAdded((in Entity entity, in Destination _) => entity.Remove<Idling>());
-			World.SubscribeComponentAdded((in Entity entity, in Waiting _) => entity.Remove<Idling>());
-			World.SubscribeComponentAdded((in Entity entity, in Sleeping _) => entity.Remove<Idling>());
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
@@ -85,10 +76,8 @@ namespace CityBuilder
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
-				AISystem.GetSystems(World),
+				new AISystem(World),
 				new WaitingSystem(World),
-				new TransportSystem(World),
-				new TransportStateSystem(World),
 				new HungerSystem(World),
 				new TirednessSystem(World),
 				new HousingSystem(World),

@@ -1,26 +1,28 @@
 using System;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Core.Systems.Transportation;
+namespace CityBuilder.Core.Systems.AI;
 
 [Without(typeof(Agent))]
 [With(typeof(Position))]
-public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
+public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<float, Good>
 {
 	private readonly EntityMultiMap<Good> _highPriority;
 	private readonly EntityMultiMap<Good> _mediumPriority;
 	private readonly EntitySet _transporters;
 
-	public TransportSystem(World world) : base(world, true)
+	public TransportDecisionSystem(World world) : base(world, true)
 	{
 		_highPriority = world.GetEntities().With<Position>().Without<Agent>()
 			.With((in InventoryPriority value) => value == Priority.High).AsMultiMap<Good>();
 		_mediumPriority = world.GetEntities().With<Position>().Without<Agent>()
 			.With((in InventoryPriority value) => value == Priority.Medium).AsMultiMap<Good>();
 		_transporters = world.GetEntities().With<TransportCapacity>()
+			.With((in BehaviorState state) => state.HasNotDecided)
 			.Without<Transport>().AsSet();
 	}
 
@@ -38,6 +40,7 @@ public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 			var transporter = FindBestTransporter(source, _transporters.GetEntities());
 			var capacity = transporter.Get<TransportCapacity>().Value;
 			transporter.Set(new Transport(source, demand, good, capacity));
+			transporter.Set(BehaviorState.Starting);
 		}
 
 		else if (priority == Priority.Low && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
@@ -47,6 +50,7 @@ public sealed partial class TransportSystem : AEntityMultiMapSystem<float, Good>
 			var transporter = FindBestTransporter(source, _transporters.GetEntities());
 			var capacity = transporter.Get<TransportCapacity>().Value;
 			transporter.Set(new Transport(source, demand, good, capacity));
+			transporter.Set(BehaviorState.Starting);
 		}
 	}
 

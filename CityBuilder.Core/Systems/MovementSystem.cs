@@ -1,6 +1,5 @@
 ﻿using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
-using CityBuilder.Core.Components.Behaviors;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -20,7 +19,8 @@ public sealed partial class MovementSystem : AEntitySetSystem<float>
 		if (transform.Value == destination)
 		{
 			entity.Remove<Destination>();
-			entity.Set<Idling>();
+			entity.Get<BehaviorState>().Next(out var next);
+			entity.Set(next);
 		}
 
 		entity.Set(transform);

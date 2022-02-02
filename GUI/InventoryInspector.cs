@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
@@ -156,10 +157,9 @@ namespace CityBuilder.GUI
 
 			if (entity.Has<Transport>())
 			{
-				var (from, to, good, amount, delivering) = entity.Get<Transport>();
+				var (from, to, good, amount) = entity.Get<Transport>();
 				AddHeading("Transport");
 				AddItem($"Transporting {amount.Value} {good.Name} from {from} to {to}.");
-				AddItem($"Currently {delivering.ToString().ToLower()}.");
 			}
 		}
 

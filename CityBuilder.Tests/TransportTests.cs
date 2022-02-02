@@ -2,7 +2,7 @@ using System.Numerics;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Systems;
-using CityBuilder.Core.Systems.Transportation;
+using CityBuilder.Core.Systems.AI;
 using DefaultEcs;
 using NUnit.Framework;
 
@@ -13,14 +13,14 @@ namespace CityBuilder.Tests;
 public class TransportTests
 {
 	private World _world;
-	private TransportSystem _transportSystem;
+	private TransportDecisionSystem _transportDecisionSystem;
 	private IInventorySystem _inventorySystem;
 
 	[SetUp]
 	public void Setup()
 	{
 		_world = new World();
-		_transportSystem = new TransportSystem(_world);
+		_transportDecisionSystem = new TransportDecisionSystem(_world);
 		_inventorySystem = new InventorySystem(_world);
 	}
 
@@ -28,7 +28,7 @@ public class TransportTests
 	public void TearDown()
 	{
 		_world.Dispose();
-		_transportSystem.Dispose();
+		_transportDecisionSystem.Dispose();
 	}
 
 	[Test]
@@ -45,7 +45,7 @@ public class TransportTests
 		market.Set<Market>();
 		var marketInventory = _inventorySystem.SetGood(market, good, 0);
 
-		_transportSystem.Update(0);
+		_transportDecisionSystem.Update(0);
 
 		Assert.That(marketInventory.Get<Amount>().Value, Is.EqualTo(amount));
 	}
@@ -65,7 +65,7 @@ public class TransportTests
 		market.Set<Market>();
 		var marketInventory = _inventorySystem.SetGood(market, good, startAmount);
 
-		_transportSystem.Update(0);
+		_transportDecisionSystem.Update(0);
 
 		Assert.That(marketInventory.Get<Amount>().Value, Is.EqualTo(amount + startAmount));
 	}
@@ -78,7 +78,7 @@ public class TransportTests
 
 		_inventorySystem.SetGood(source, good, amount);
 
-		Assert.That(() => _transportSystem.Update(0), Throws.Nothing);
+		Assert.That(() => _transportDecisionSystem.Update(0), Throws.Nothing);
 	}
 
 	[Test]
@@ -101,7 +101,7 @@ public class TransportTests
 		secondMarket.Set<Market>();
 		var secondMarketInventory = _inventorySystem.SetGood(secondMarket, good, 0);
 
-		_transportSystem.Update(0);
+		_transportDecisionSystem.Update(0);
 
 		Assert.That(firstMarketInventory.Get<Amount>().Value, Is.EqualTo(amount));
 		Assert.That(secondMarketInventory.Get<Amount>().Value, Is.Zero);

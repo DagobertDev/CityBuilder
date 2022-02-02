@@ -1,4 +1,5 @@
 ﻿using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Flags;
 using DefaultEcs;
@@ -26,7 +27,8 @@ public sealed partial class SleepSystem : AEntitySetSystem<float>
 		else
 		{
 			entity.Remove<Sleeping>();
-			entity.Set<Idling>();
+			entity.Get<BehaviorState>().Next(out var next);
+			entity.Set(next);
 		}
 	}
 }

@@ -1,44 +1,44 @@
 using System;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Behaviors;
 using CityBuilder.Core.Components.Inventory;
 using DefaultEcs;
 using DefaultEcs.System;
 
-namespace CityBuilder.Core.Systems.Transportation;
+namespace CityBuilder.Core.Systems.AI;
 
-[With(typeof(Idling))]
 public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 {
-	private const int LoadTime = 1;
-	private const int UnloadTime = 1;
+	private const int LoadTime = 5;
+	private const int UnloadTime = 5;
 
 	[Update, UseBuffer]
-	private static void Update(in Entity entity, ref Transport transport)
+	private static void Update(in Entity entity, ref Transport transport, [Changed] in BehaviorState state)
 	{
-		entity.Remove<Idling>();
-
-		switch (transport)
+		switch (state)
 		{
-			case { State: TransportState.Fetching }:
-				Fetch(in entity, ref transport);
+			case Starting:
+				GoToStart(in entity, in transport);
 				break;
-			case { State: TransportState.Loading }:
+			case Fetching:
+				StartLoading(in entity);
+				break;
+			case Loading:
 				Load(in entity, ref transport);
 				break;
-			case { State: TransportState.Delivering }:
+			case Delivering:
 				Deliver(in entity, ref transport);
 				break;
-			case { State: TransportState.Unloading }:
-				Unload(in entity, ref transport);
+			case Unloading:
+				Unload(in entity, in transport);
 				break;
 			default: throw new NotImplementedException();
 		}
 	}
 
-	private static void Fetch(in Entity entity, ref Transport transport)
+	private static void GoToStart(in Entity entity, in Transport transport)
 	{
-		var position = entity.Get<Position>();
 		var from = transport.From;
 
 		if (!from.IsAlive)
@@ -47,16 +47,12 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 		}
 
 		var destination = from.Get<Position>();
+		entity.Set<Destination>(destination.Value);
+	}
 
-		if (position.Value == destination.Value)
-		{
-			transport = transport with { State = TransportState.Loading };
-			entity.Set<Waiting>(LoadTime);
-		}
-		else
-		{
-			entity.Set(new Destination(destination.Value));
-		}
+	private static void StartLoading(in Entity entity)
+	{
+		entity.Set<Waiting>(LoadTime);
 	}
 
 	private static void Load(in Entity entity, ref Transport transport)
@@ -73,7 +69,7 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 		var transportedAmount = Math.Min(requestedAmount, availableAmount);
 
 		from.Set<Amount>(availableAmount - transportedAmount);
-		entity.Set(transport with { Amount = transportedAmount, State = TransportState.Delivering });
+		entity.Set(transport with { Amount = transportedAmount });
 
 		var to = transport.To;
 
@@ -100,11 +96,10 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 			throw new ApplicationException("Transporter did not reach destination.");
 		}
 
-		entity.Set(transport with { State = TransportState.Unloading });
 		entity.Set<Waiting>(UnloadTime);
 	}
 
-	private static void Unload(in Entity entity, ref Transport transport)
+	private static void Unload(in Entity entity, in Transport transport)
 	{
 		var to = transport.To;
 
@@ -118,6 +113,12 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 		to.NotifyChanged<Amount>();
 
 		entity.Remove<Transport>();
-		entity.Set<Idling>();
+		entity.Set(BehaviorState.Deciding);
 	}
+
+	private const int Starting = BehaviorState.StartingValue;
+	private const int Fetching = Starting + 1;
+	private const int Loading = Fetching + 1;
+	private const int Delivering = Loading + 1;
+	private const int Unloading = Delivering + 1;
 }
