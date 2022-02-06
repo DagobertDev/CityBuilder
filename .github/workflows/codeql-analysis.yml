@@ -63,7 +63,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-       dotnet build CityBuilder.Core
+       dotnet build CityBuilder.Core/CityBuilder.Core.csproj
     #   make bootstrap
     #   make release
 
