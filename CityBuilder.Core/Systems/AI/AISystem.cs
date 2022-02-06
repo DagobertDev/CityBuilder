@@ -19,6 +19,9 @@ public sealed class AISystem : ISystem<float>
 			new WanderAroundDecisionSystem(world),
 			new DoNothingDecisionSystem(world),
 
+			// Validation
+			new ValidateWorkingDecisionSystem(world),
+
 			// State Systems
 			new EatStateSystem(world),
 			new SleepStateSystem(world),

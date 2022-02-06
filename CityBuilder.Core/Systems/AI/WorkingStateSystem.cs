@@ -50,6 +50,13 @@ public sealed partial class WorkingStateSystem : AEntitySetSystem<float>
 		entity.Remove<Behavior>();
 	}
 
+	public static void Cancel(Entity entity)
+	{
+		entity.Remove<Destination>();
+		entity.Remove<Waiting>();
+		OnFinished(entity);
+	}
+
 	private const int Starting = BehaviorState.StartingValue;
 	private const int Arrived = Starting + 1;
 	private const int Finished = Arrived + 1;
