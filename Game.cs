@@ -15,6 +15,7 @@ using DefaultEcs;
 using DefaultEcs.Resource;
 using DefaultEcs.System;
 using Godot;
+using Input = CityBuilder.Core.Components.Production.Input;
 using World = DefaultEcs.World;
 
 namespace CityBuilder
@@ -69,6 +70,18 @@ namespace CityBuilder
 			World.SubscribeComponentAdded((in Entity entity, in HungerRate _) => entity.Set<Hunger>());
 			World.SubscribeComponentAdded((in Entity entity, in TirednessRate _) => entity.Set<Tiredness>());
 
+			World.SubscribeComponentAdded((in Entity entity, in Input _) =>
+			{
+				if (entity.Has<CanNotWorkReason>())
+				{
+					entity.Set(entity.Get<CanNotWorkReason>() | CanNotWorkReason.NoInput );
+				}
+				else
+				{
+					entity.Set(CanNotWorkReason.NoInput);
+				}
+			});
+
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, Map),
@@ -84,7 +97,9 @@ namespace CityBuilder
 				new SleepSystem(World, 10f),
 				new WorkSystem(World),
 				new WorkingSystem(World),
+				new ProductionWithInputSystem(World, inventorySystem),
 				new ProductionSystem(World, inventorySystem),
+				new CheckInputSystem(World, inventorySystem),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
 				new ConstructionProgressVisualisationSystem(World));
