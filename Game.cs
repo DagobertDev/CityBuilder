@@ -70,8 +70,13 @@ namespace CityBuilder
 			World.SubscribeComponentAdded((in Entity entity, in HungerRate _) => entity.Set<Hunger>());
 			World.SubscribeComponentAdded((in Entity entity, in TirednessRate _) => entity.Set<Tiredness>());
 
-			World.SubscribeComponentAdded((in Entity entity, in Input _) =>
+			World.SubscribeComponentAdded((in Entity entity, in Input input) =>
 			{
+				if (!inventorySystem.GetGood(entity, input.Good).HasValue)
+				{
+					inventorySystem.SetGood(entity, input.Good, 0);
+				}
+
 				if (entity.Has<CanNotWorkReason>())
 				{
 					entity.Set(entity.Get<CanNotWorkReason>() | CanNotWorkReason.NoInput );
