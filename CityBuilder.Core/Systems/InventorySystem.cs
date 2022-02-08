@@ -27,12 +27,12 @@ public class InventorySystem : IInventorySystem
 			throw new ArgumentOutOfRangeException(nameof(amount));
 		}
 
-		var nullableEntity = GetGood(owner, good);
-
-		if (nullableEntity.HasValue)
+		if (_ownerAndGood.ContainsKey((new Owner(owner), new Good(good))))
 		{
-			nullableEntity.Value.Set<Amount>(amount);
-			return nullableEntity.Value;
+			var existingEntity = GetGood(owner, good);
+
+			existingEntity.Set<Amount>(amount);
+			return existingEntity;
 		}
 
 		var entity = World.CreateEntity();
@@ -62,15 +62,8 @@ public class InventorySystem : IInventorySystem
 		return entity;
 	}
 
-	public Entity? GetGood(Entity owner, string name)
-	{
-		if (_ownerAndGood.TryGetEntity(new ValueTuple<Owner, Good>(new Owner(owner), new Good(name)), out var entity))
-		{
-			return entity;
-		}
-
-		return null;
-	}
+	public Entity GetGood(Entity owner, string name) =>
+		_ownerAndGood[new ValueTuple<Owner, Good>(new Owner(owner), new Good(name))];
 
 	public ICollection<Entity> GetGoods(Entity owner)
 	{
@@ -80,5 +73,13 @@ public class InventorySystem : IInventorySystem
 		}
 
 		return Array.Empty<Entity>();
+	}
+
+	public void EnsureCreated(Entity owner, string good)
+	{
+		if (!_ownerAndGood.ContainsKey((new Owner(owner), new Good(good))))
+		{
+			SetGood(owner, good, 0);
+		}
 	}
 }

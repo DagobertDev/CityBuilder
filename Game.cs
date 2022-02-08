@@ -5,6 +5,7 @@ using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Needs;
+using CityBuilder.Core.Components.Production;
 using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
 using CityBuilder.Core.Systems.AI;
@@ -59,9 +60,9 @@ namespace CityBuilder
 
 			World.SubscribeComponentAdded((in Entity entity, in Market _) =>
 			{
-				if (!entity.Has<Good>() && inventorySystem.GetGood(entity, Goods.Food) is not { IsAlive: true })
+				if (!entity.Has<Good>())
 				{
-					inventorySystem.SetGood(entity, Goods.Food, 0);
+					inventorySystem.EnsureCreated(entity, Goods.Food);
 				}
 			});
 
@@ -72,20 +73,20 @@ namespace CityBuilder
 
 			World.SubscribeComponentAdded((in Entity entity, in Input input) =>
 			{
-				if (!inventorySystem.GetGood(entity, input.Good).HasValue)
-				{
-					inventorySystem.SetGood(entity, input.Good, 0);
-				}
+				inventorySystem.EnsureCreated(entity, input.Good);
 
 				if (entity.Has<CanNotWorkReason>())
 				{
-					entity.Set(entity.Get<CanNotWorkReason>() | CanNotWorkReason.NoInput );
+					entity.Set(entity.Get<CanNotWorkReason>() | CanNotWorkReason.NoInput);
 				}
 				else
 				{
 					entity.Set(CanNotWorkReason.NoInput);
 				}
 			});
+
+			World.SubscribeComponentAdded((in Entity entity, in Output output)
+				=> inventorySystem.EnsureCreated(entity, output.Good));
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),

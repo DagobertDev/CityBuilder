@@ -16,12 +16,7 @@ public sealed partial class CheckInputSystem : AEntitySetSystem<float>
 	{
 		var inventory = _inventorySystem.GetGood(entity, input.Good);
 
-		if (!inventory.HasValue)
-		{
-			return;
-		}
-
-		if (inventory.Value.Get<Amount>() >= input.Amount)
+		if (inventory.Get<Amount>() >= input.Amount)
 		{
 			var newReason = reason & ~CanNotWorkReason.NoInput;
 
