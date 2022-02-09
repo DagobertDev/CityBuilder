@@ -66,6 +66,13 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 
 		var requestedAmount = transport.Amount;
 		var availableAmount = from.Get<Amount>();
+
+		if (availableAmount == 0)
+		{
+			Cancel(entity);
+			return;
+		}
+
 		var transportedAmount = Math.Min(requestedAmount, availableAmount);
 
 		from.Set<Amount>(availableAmount - transportedAmount);
@@ -112,6 +119,11 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 		to.Get<Amount>() += addedAmount;
 		to.NotifyChanged<Amount>();
 
+		Cancel(entity);
+	}
+
+	public static void Cancel(Entity entity)
+	{
 		entity.Remove<Transport>();
 		entity.Set(BehaviorState.Deciding);
 	}
