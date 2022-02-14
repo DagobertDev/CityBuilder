@@ -46,7 +46,7 @@ public class InventorySystem : IInventorySystem
 			entity.SetSameAs<Position>(owner);
 		}
 
-		if (owner.Has<Input>() && owner.Get<Input>().Good == good)
+		if (owner.Has<Input>() && owner.Get<Input>().Value.ContainsKey(good))
 		{
 			entity.Set<InventoryPriority>(Priority.High);
 		}

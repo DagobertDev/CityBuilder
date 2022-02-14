@@ -73,7 +73,10 @@ namespace CityBuilder
 
 			World.SubscribeComponentAdded((in Entity entity, in Input input) =>
 			{
-				inventorySystem.EnsureCreated(entity, input.Good);
+				foreach (var good in input.Value.Keys)
+				{
+					inventorySystem.EnsureCreated(entity, good);
+				}
 
 				if (entity.Has<CanNotWorkReason>())
 				{

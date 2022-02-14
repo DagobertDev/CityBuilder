@@ -15,8 +15,12 @@ Component Workplace {
 }
 
 Component Input {
-	Good "Wood"
-	Amount 1
+	Value [
+		{
+			key "Wood"
+			value 1
+		}
+	]
 }
 
 Component Output {

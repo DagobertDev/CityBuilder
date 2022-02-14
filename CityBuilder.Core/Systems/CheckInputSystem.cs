@@ -14,20 +14,28 @@ public sealed partial class CheckInputSystem : AEntitySetSystem<float>
 	[Update, UseBuffer]
 	private void Update(in Entity entity, in Input input, in CanNotWorkReason reason)
 	{
-		var inventory = _inventorySystem.GetGood(entity, input.Good);
-
-		if (inventory.Get<Amount>() >= input.Amount)
+		foreach (var goodAndAmount in input.Value)
 		{
-			var newReason = reason & ~CanNotWorkReason.NoInput;
+			var good = goodAndAmount.Key;
+			var requiredAmount = goodAndAmount.Value;
 
-			if (newReason == CanNotWorkReason.None)
+			var inventory = _inventorySystem.GetGood(entity, good);
+
+			if (inventory.Get<Amount>() <= requiredAmount)
 			{
-				entity.Remove<CanNotWorkReason>();
+				return;
 			}
-			else
-			{
-				entity.Set(newReason);
-			}
+		}
+
+		var newReason = reason & ~CanNotWorkReason.NoInput;
+
+		if (newReason == CanNotWorkReason.None)
+		{
+			entity.Remove<CanNotWorkReason>();
+		}
+		else
+		{
+			entity.Set(newReason);
 		}
 	}
 

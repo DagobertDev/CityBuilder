@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace CityBuilder.Core.Components.Production;
 
-public readonly record struct Input(string Good, int Amount);
+public readonly record struct Input(Dictionary<string, int> Value);

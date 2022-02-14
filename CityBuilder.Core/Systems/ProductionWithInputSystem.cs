@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Production;
@@ -21,17 +22,29 @@ public sealed partial class ProductionWithInputSystem : AEntitySetSystem<float>
 		workProgress -= 1;
 		workplace.NotifyChanged<WorkProgress>();
 
-		var inputInventory = _inventorySystem.GetGood(workplace, required.Good);
-		var availableAmount = inputInventory.Get<Amount>();
-		var remainingAmount = availableAmount - required.Amount;
+		var newAmount = new List<(Entity, int)>(required.Value.Count);
 
-		if (remainingAmount >= 0)
+		foreach (var goodAndAmount in required.Value)
+		{
+			var good = goodAndAmount.Key;
+			var requiredAmount = goodAndAmount.Value;
+
+			var inputInventory = _inventorySystem.GetGood(workplace, good);
+			var availableAmount = inputInventory.Get<Amount>();
+			var remainingAmount = availableAmount - requiredAmount;
+
+			if (remainingAmount < 0)
+			{
+				workplace.Set(CanNotWorkReason.NoInput);
+				return;
+			}
+
+			newAmount.Add((inputInventory, remainingAmount));
+		}
+
+		foreach (var (inputInventory, remainingAmount) in newAmount)
 		{
 			inputInventory.Set<Amount>(remainingAmount);
-		}
-		else
-		{
-			workplace.Set(CanNotWorkReason.NoInput);
 		}
 	}
 
