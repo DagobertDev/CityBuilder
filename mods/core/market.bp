@@ -19,3 +19,12 @@ Component Workplace {
 	MaxEmployees 5
 	Difficulty 20
 }
+
+Component Input {
+	Value [
+		{
+			key "Wood"
+			value 20
+		}
+	]
+}
