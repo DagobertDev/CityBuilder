@@ -4,11 +4,6 @@ Component BlueprintInfo {
 	Texture "sawmill.png"
 }
 
-Component Construction {
-	Workers 4
-	Duration 20
-}
-
 Component Workplace {
 	MaxEmployees 4
 	Difficulty 5
@@ -26,4 +21,13 @@ Component Input {
 Component Output {
 	Good "Planks"
 	Amount 2
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 4
+	Difficulty 20
 }

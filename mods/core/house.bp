@@ -4,11 +4,15 @@ Component BlueprintInfo {
 	Texture "house.png"
 }
 
-Component Construction {
-	Workers 4
-	Duration 10
-}
-
 Component Housing {
 	MaxBeds 4
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 4
+	Difficulty 10
 }

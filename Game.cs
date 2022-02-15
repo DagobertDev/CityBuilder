@@ -163,21 +163,21 @@ namespace CityBuilder
 				var blueprint = message.Blueprint;
 				var rotation = message.Rotation;
 
-				if (message.Blueprint.Entity.Has<Construction>())
+				if (message.Blueprint.Entity.Has<ConstructionReference>())
 				{
+					var construction = message.Blueprint.Entity.Get<ConstructionReference>().Value;
 					var entity = World.CreateEntity();
+					new ComponentCloner().Clone(construction, entity);
+
 					entity.Set(position);
 					entity.Set(rotation);
 
 					entity.Set(blueprint);
 
-					var construction = blueprint.Entity.Get<Construction>();
-					entity.Set(construction);
+					entity.Set<Construction>();
 
 					var texture = blueprint.Entity.Get<ManagedResource<string, Texture>>();
 					entity.Set(texture);
-
-					entity.Set(construction.ToWorkplace());
 				}
 
 				else

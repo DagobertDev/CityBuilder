@@ -4,11 +4,6 @@ Component BlueprintInfo {
 	Texture "field.png"
 }
 
-Component Construction {
-	Workers 2
-	Duration 2
-}
-
 Component Workplace {
 	MaxEmployees 2
 	Difficulty 5
@@ -17,4 +12,13 @@ Component Workplace {
 Component Output {
 	Good "Food"
 	Amount 1
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 2
+	Difficulty 2
 }

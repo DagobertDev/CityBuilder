@@ -60,8 +60,6 @@ namespace CityBuilder.ModSupport
 		{
 			var serializer = new TextSerializer(new TextSerializationContext());
 
-			Entity entity;
-
 			var str = new MemoryStream();
 			var writer = new StreamWriter(str);
 
@@ -71,12 +69,17 @@ namespace CityBuilder.ModSupport
 			writer.Flush();
 			str.Position = 0;
 
+			Entity entity;
+			Entity construction;
+
 			using (var stream = new ConcatenatedStream(str, File.OpenRead(path)))
 			{
-				entity = serializer.Deserialize(stream, _world).FirstOrDefault();
+				var entities = serializer.Deserialize(stream, _world);
+				entity = entities.FirstOrDefault(e => e.Has<BlueprintInfo>());
+				construction = entities.FirstOrDefault(e => e.Has<Construction>());
 			}
 
-			if (entity == default || !entity.Has<BlueprintInfo>())
+			if (entity == default)
 			{
 				return null;
 			}
@@ -86,7 +89,12 @@ namespace CityBuilder.ModSupport
 			var texturePath = path.Replace(Path.GetFileName(path), info.Texture);
 			entity.Set(ManagedResource<Texture>.Create(texturePath));
 
-			return new Blueprint(info.Name, entity, newEntity => { new ComponentCloner().Clone(entity, newEntity); });
+			if (construction != default)
+			{
+				entity.Set(new ConstructionReference(construction));
+			}
+
+			return new Blueprint(info.Name, entity, newEntity => new ComponentCloner().Clone(entity, newEntity));
 		}
 
 		private static void WriteTypes(TextWriter writer, IEnumerable<Type> types)

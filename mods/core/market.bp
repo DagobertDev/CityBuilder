@@ -4,14 +4,18 @@ Component BlueprintInfo {
 	Texture "market.png"
 }
 
-Component Construction {
-	Workers 5
-	Duration 20
-}
-
 Component Workplace {
 	MaxEmployees 1
 }
 
 Component Market {
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 5
+	Difficulty 20
 }
