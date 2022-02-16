@@ -115,8 +115,9 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 			throw new ApplicationException("Transport end point is not alive.");
 		}
 
-		var addedAmount = transport.Amount;
-		to.Get<Amount>() += addedAmount;
+		ref var currentAmount = ref to.Get<Amount>();
+		var addedAmount = Math.Min(transport.Amount, to.Get<Capacity>() - currentAmount);
+		currentAmount += addedAmount;
 		to.NotifyChanged<Amount>();
 
 		Cancel(entity);

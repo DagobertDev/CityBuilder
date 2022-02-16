@@ -1,14 +1,7 @@
 namespace CityBuilder.Core.Components.Inventory;
 
-public readonly struct Amount
+public readonly record struct Amount(int Value)
 {
-	public Amount(int value)
-	{
-		Value = value;
-	}
-		
-	public int Value { get; }
-		
-	public static implicit operator int(Amount tiredness) => tiredness.Value;
+	public static implicit operator int(Amount amount) => amount.Value;
 	public static implicit operator Amount(int value) => new(value);
 }

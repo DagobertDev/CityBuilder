@@ -9,6 +9,7 @@ namespace CityBuilder.Core.Systems;
 
 public class InventorySystem : IInventorySystem
 {
+	private const int DefaultInventoryCapacity = 100;
 	private World World { get; }
 	private readonly EntityMap<(Owner, Good)> _ownerAndGood;
 	private readonly EntityMultiMap<Owner> _goodsByOwner;
@@ -66,14 +67,25 @@ public class InventorySystem : IInventorySystem
 		if (owner.Has<Input>() && owner.Get<Input>().Value.ContainsKey(good))
 		{
 			entity.Set<InventoryPriority>(Priority.High);
+
+			if (owner.Has<Construction>())
+			{
+				entity.Set<Capacity>(owner.Get<Input>().Value[good]);
+			}
+			else
+			{
+				entity.Set<Capacity>(DefaultInventoryCapacity);
+			}
 		}
 		else if (owner.Has<Output>() && owner.Get<Output>().Good == good)
 		{
 			entity.Set<InventoryPriority>(Priority.Low);
+			entity.Set<Capacity>(DefaultInventoryCapacity);
 		}
 		else
 		{
 			entity.Set<InventoryPriority>(Priority.Medium);
+			entity.Set<Capacity>(DefaultInventoryCapacity);
 		}
 	}
 }
