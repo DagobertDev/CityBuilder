@@ -29,6 +29,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		var result = _system.SetGood(owner, good, amount);
 
 		Assert.AreEqual(good, result.Get<Good>().Name);
@@ -39,6 +40,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		var result = _system.SetGood(owner, good, amount);
 
 		Assert.AreEqual(amount, result.Get<Amount>().Value);
@@ -48,6 +50,7 @@ public class InventoryTests
 	public void Test_SetNegativeAmountThrows(int amount)
 	{
 		var owner = _world.CreateEntity();
+		_system.EnsureCreated(owner, "");
 
 		Assert.Throws<ArgumentOutOfRangeException>(() => _system.SetGood(owner, "", amount));
 	}
@@ -58,6 +61,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		_system.SetGood(owner, good, amount);
 		var result = _system.SetGood(owner, good, newAmount);
 
@@ -69,6 +73,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		_system.SetGood(owner, good, amount);
 		var result = _system.GetGood(owner, good);
 
@@ -80,6 +85,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		var result = _system.SetGood(owner, good, amount);
 
 		Assert.AreEqual(good, result.Get<Good>().Name);
@@ -90,6 +96,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		_system.SetGood(owner, good, amount);
 		var result = _system.GetGood(owner, good);
 
@@ -101,6 +108,7 @@ public class InventoryTests
 	{
 		var owner = _world.CreateEntity();
 
+		_system.EnsureCreated(owner, good);
 		_system.SetGood(owner, good, amount);
 		var result = _system.GetGood(owner, good);
 
@@ -116,6 +124,7 @@ public class InventoryTests
 		for (var i = 1; i <= totalOwners; i++)
 		{
 			var entity = _world.CreateEntity();
+			_system.EnsureCreated(entity, good);
 			_system.SetGood(entity, good, amount);
 
 			if (i == ownerToGet)
