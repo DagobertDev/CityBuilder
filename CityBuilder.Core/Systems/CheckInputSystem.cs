@@ -21,7 +21,7 @@ public sealed partial class CheckInputSystem : AEntitySetSystem<float>
 
 			var inventory = _inventorySystem.GetGood(entity, good);
 
-			if (inventory.Get<Amount>() <= requiredAmount)
+			if (inventory.Get<Amount>() < requiredAmount)
 			{
 				return;
 			}
