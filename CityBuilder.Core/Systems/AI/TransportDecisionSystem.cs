@@ -18,9 +18,13 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 	public TransportDecisionSystem(World world) : base(world, true)
 	{
 		_highPriority = world.GetEntities().With<Position>().Without<Agent>()
-			.With((in InventoryPriority value) => value == Priority.High).AsMultiMap<Good>();
+			.With((in InventoryPriority value) => value == Priority.High)
+			.With((in FutureUnusedCapacity capacity) => capacity > 0)
+			.AsMultiMap<Good>();
 		_mediumPriority = world.GetEntities().With<Position>().Without<Agent>()
-			.With((in InventoryPriority value) => value == Priority.Medium).AsMultiMap<Good>();
+			.With((in InventoryPriority value) => value == Priority.Medium)
+			.With((in FutureUnusedCapacity capacity) => capacity > 0)
+			.AsMultiMap<Good>();
 		_transporters = world.GetEntities().With<TransportCapacity>()
 			.With((in BehaviorState state) => state.HasNotDecided)
 			.Without<Transport>().AsSet();
@@ -36,20 +40,22 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 
 		if (_highPriority.TryGetEntities(good, out var highDemand) && !highDemand.IsEmpty)
 		{
-			var demand = FindBestMarket(source, highDemand);
-			var transporter = FindBestTransporter(source, _transporters.GetEntities());
-			var capacity = transporter.Get<TransportCapacity>().Value;
-			transporter.Set(new Transport(source, demand, good, capacity));
-			transporter.Set(BehaviorState.Starting);
+			StartTransport(source, good, highDemand);
 		}
 
 		else if (priority == Priority.Low && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
 				 !mediumDemand.IsEmpty)
 		{
-			var demand = FindBestMarket(source, mediumDemand);
-			var transporter = FindBestTransporter(source, _transporters.GetEntities());
+			StartTransport(source, good, mediumDemand);
+		}
+
+		void StartTransport(in Entity src, in Good gd, in ReadOnlySpan<Entity> demanders)
+		{
+			var demand = FindBestMarket(src, demanders);
+			var transporter = FindBestTransporter(src, _transporters.GetEntities());
 			var capacity = transporter.Get<TransportCapacity>().Value;
-			transporter.Set(new Transport(source, demand, good, capacity));
+			var transportedAmount = Math.Min(capacity, demand.Get<FutureUnusedCapacity>());
+			transporter.Set(new Transport(src, demand, gd, transportedAmount));
 			transporter.Set(BehaviorState.Starting);
 		}
 	}

@@ -99,6 +99,7 @@ namespace CityBuilder
 				collisionSystem,
 				new LocationSensorSystem(World),
 				new AISystem(World),
+				new TransportReservationSystem(World),
 				new WaitingSystem(World),
 				new HungerSystem(World),
 				new TirednessSystem(World),

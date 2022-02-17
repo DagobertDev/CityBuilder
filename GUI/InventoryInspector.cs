@@ -129,7 +129,7 @@ namespace CityBuilder.GUI
 			{
 				var workplace = entity.Get<Workplace>();
 				AddHeading("Workplace");
-				AddItem($"Workers: {workplace.CurrentEmployees}, Total workplaces: {workplace.MaxEmployees}");
+				AddItem($"Workers: {workplace.CurrentEmployees} / {workplace.MaxEmployees}");
 
 				if (workplace.CurrentEmployees > 0)
 				{
@@ -175,7 +175,8 @@ namespace CityBuilder.GUI
 
 				foreach (var good in goods)
 				{
-					AddItem($"{good.Get<Good>().Name}: {good.Get<Amount>().Value}");
+					AddItem($"{good.Get<Good>().Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
+							$"Remaining: {good.Get<UnusedCapacity>().Value} ({good.Get<FutureUnusedCapacity>().Value})");
 				}
 			}
 		}
