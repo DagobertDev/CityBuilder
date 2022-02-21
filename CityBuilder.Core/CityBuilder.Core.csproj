@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="DefaultEcs" Version="0.17.1" />
+      <PackageReference Include="DefaultEcs" Version="0.17.2" />
       <PackageReference Include="DefaultEcs.Analyzer" Version="0.17.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
