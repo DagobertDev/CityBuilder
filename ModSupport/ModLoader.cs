@@ -64,7 +64,7 @@ namespace CityBuilder.ModSupport
 			var writer = new StreamWriter(str);
 
 			WriteTypes(writer, typeof(Position).Assembly.GetTypes()
-				.Where(t => t.Namespace != null && t.Namespace.Contains("Components"))
+				.Where(t => t.Namespace != null && t.Namespace.Contains("Components") && !t.IsAbstract)
 				.Concat(new[] { typeof(BlueprintInfo) }));
 			writer.Flush();
 			str.Position = 0;
