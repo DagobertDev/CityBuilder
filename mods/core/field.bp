@@ -10,7 +10,7 @@ Component Workplace {
 }
 
 Component Output {
-	Good "Food"
+	Good "Wheat"
 	Amount 1
 }
 

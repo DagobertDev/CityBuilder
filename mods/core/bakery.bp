@@ -1,0 +1,42 @@
+Entity 1
+Component BlueprintInfo {
+	Name "Bakery"
+	Texture "bakery.png"
+}
+
+Component Workplace {
+	MaxEmployees 3
+	Difficulty 10
+}
+
+Component Input {
+	Value [
+		{
+			key "Flour"
+			value 3
+		}
+	]
+}
+
+Component Output {
+	Good "Food"
+	Amount 5
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 2
+	Difficulty 10
+}
+
+Component Input {
+	Value [
+		{
+			key "Wood"
+			value 8
+		}
+	]
+}

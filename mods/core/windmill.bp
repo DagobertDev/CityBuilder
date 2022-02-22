@@ -1,0 +1,42 @@
+Entity 1
+Component BlueprintInfo {
+	Name "Windmill"
+	Texture "windmill.png"
+}
+
+Component Workplace {
+	MaxEmployees 3
+	Difficulty 5
+}
+
+Component Input {
+	Value [
+		{
+			key "Wheat"
+			value 1
+		}
+	]
+}
+
+Component Output {
+	Good "Flour"
+	Amount 3
+}
+
+Entity 2
+Component Construction {
+}
+
+Component Workplace {
+	MaxEmployees 2
+	Difficulty 20
+}
+
+Component Input {
+	Value [
+		{
+			key "Wood"
+			value 8
+		}
+	]
+}
