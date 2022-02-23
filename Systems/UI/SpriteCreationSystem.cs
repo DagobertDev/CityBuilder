@@ -11,7 +11,7 @@ namespace CityBuilder.Systems.UI
 		[ConstructorParameter]
 		private readonly Node _node;
 
-		[Update] [UseBuffer]
+		[Update, UseBuffer]
 		private void Update(in Entity entity, in Texture texture, in Position position, in Rotation rotation)
 		{
 			if (entity.Has<Sprite>())
@@ -23,7 +23,7 @@ namespace CityBuilder.Systems.UI
 			{
 				Texture = texture,
 				Position = position.Value.ToGodotVector(),
-				RotationDegrees = rotation.Value ? 90 : 0
+				RotationDegrees = rotation,
 			};
 
 			if (entity.Has<Agent>())

@@ -8,6 +8,7 @@ using CityBuilder.Core.ModSupport;
 using CityBuilder.Core.Systems;
 using DefaultEcs;
 using Godot;
+using Vector2 = System.Numerics.Vector2;
 
 namespace CityBuilder.GUI
 {
@@ -67,7 +68,7 @@ namespace CityBuilder.GUI
 
 			else if (@event.IsActionPressed(InputAction.RotateBuilding))
 			{
-				RotationDegrees = IsRotated ? 0 : 90;
+				RotationDegrees = (RotationDegrees + 90) % 360;
 			}
 		}
 
@@ -78,8 +79,9 @@ namespace CityBuilder.GUI
 				throw new ArgumentNullException(nameof(Blueprint));
 			}
 
-			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint, new Position(GlobalPosition.ToNumericsVector()),
-				new Rotation(IsRotated)));
+			Game.Publisher.Publish(new BlueprintPlacedMessage(Blueprint,
+				new Position(GlobalPosition.ToNumericsVector()),
+				SteppedRotation));
 		}
 
 		private void Enable(Blueprint blueprint)
@@ -97,6 +99,7 @@ namespace CityBuilder.GUI
 			Visible = false;
 			SetProcess(false);
 			SetProcessInput(false);
+			RotationDegrees = 0;
 		}
 
 		public override void _Process(float delta)
@@ -106,15 +109,22 @@ namespace CityBuilder.GUI
 
 			var size = Texture.GetSize().ToNumericsVector();
 
-			if (IsRotated)
+			if (SteppedRotation.Value is 90 or 270)
 			{
-				size = new(size.Y, size.X);
+				size = new Vector2(size.Y, size.X);
 			}
 
 			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<ICollisionSystem>()
 				.GetEntities(new HitBox(position.ToNumericsVector(), size, default)).All(entity => entity.Has<Agent>());
 		}
 
-		private bool IsRotated => Math.Abs(RotationDegrees) > 1;
+		private Rotation SteppedRotation =>
+			RotationDegrees switch
+			{
+				> 89 and < 91 => 90,
+				> 179 and < 181 => 180,
+				> 269 and < 271 => 270,
+				_ => 0,
+			};
 	}
 }

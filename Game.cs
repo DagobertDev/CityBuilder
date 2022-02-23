@@ -171,9 +171,9 @@ namespace CityBuilder
 					var entity = World.CreateEntity();
 					entity.Set(position);
 					entity.Set<Construction>();
+					entity.Set(rotation);
 
 					new ComponentCloner().Clone(construction, entity);
-					entity.Set(rotation);
 
 					entity.Set(blueprint);
 
