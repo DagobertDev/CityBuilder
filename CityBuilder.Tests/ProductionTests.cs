@@ -29,12 +29,11 @@ public class ProductionTests
 	}
 
 	[Test]
-	public void Test_Production([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount,
-		[Range(1, 3)] int difficulty)
+	public void Test_Production([Values("Iron", "Wood")] string good, [Range(0, 2)] int amount)
 	{
 		var workplace = _world.CreateEntity();
 		_inventorySystem.EnsureCreated(workplace, good);
-		var output = new Output(good, amount, difficulty);
+		var output = new Output(good, amount);
 		workplace.Set(output);
 
 		workplace.Set<WorkProgress>(1);

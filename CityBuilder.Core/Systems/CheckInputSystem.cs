@@ -1,4 +1,5 @@
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Flags;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Production;
 using DefaultEcs;
@@ -12,7 +13,7 @@ public sealed partial class CheckInputSystem : AEntitySetSystem<float>
 	private readonly IInventorySystem _inventorySystem;
 
 	[Update, UseBuffer]
-	private void Update(in Entity entity, in Input input, in CanNotWorkReason reason)
+	private void Update(in Entity entity, in Input input)
 	{
 		foreach (var goodAndAmount in input.Value)
 		{
@@ -27,16 +28,7 @@ public sealed partial class CheckInputSystem : AEntitySetSystem<float>
 			}
 		}
 
-		var newReason = reason & ~CanNotWorkReason.NoInput;
-
-		if (newReason == CanNotWorkReason.None)
-		{
-			entity.Remove<CanNotWorkReason>();
-		}
-		else
-		{
-			entity.Set(newReason);
-		}
+		entity.RemoveFlag(CanNotWorkReason.NoInput);
 	}
 
 	[WithPredicate]

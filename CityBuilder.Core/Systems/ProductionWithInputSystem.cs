@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Components.Flags;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Production;
 using DefaultEcs;
@@ -19,6 +20,12 @@ public sealed partial class ProductionWithInputSystem : AEntitySetSystem<float>
 		var inventory = _inventorySystem.GetGood(workplace, output.Good);
 
 		inventory.Set<Amount>(inventory.Get<Amount>() + output.Amount);
+
+		if (inventory.Get<UnusedCapacity>() < output.Amount)
+		{
+			workplace.AddFlag(CanNotWorkReason.InventoryFull);
+		}
+
 		workProgress -= 1;
 		workplace.NotifyChanged<WorkProgress>();
 
@@ -35,7 +42,7 @@ public sealed partial class ProductionWithInputSystem : AEntitySetSystem<float>
 
 			if (remainingAmount < 0)
 			{
-				workplace.Set(CanNotWorkReason.NoInput);
+				workplace.AddFlag(CanNotWorkReason.NoInput);
 				return;
 			}
 

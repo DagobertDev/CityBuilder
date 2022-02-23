@@ -6,5 +6,6 @@ namespace CityBuilder.Core.Components;
 public enum CanNotWorkReason
 {
 	None = 0,
-	NoInput = 1,
+	NoInput = 1 << 0,
+	InventoryFull = 1 << 1,
 }

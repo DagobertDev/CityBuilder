@@ -129,6 +129,12 @@ namespace CityBuilder.GUI
 			{
 				var workplace = entity.Get<Workplace>();
 				AddHeading("Workplace");
+
+				if (entity.Has<CanNotWorkReason>())
+				{
+					AddItem($"Problems: {entity.Get<CanNotWorkReason>()}");
+				}
+
 				AddItem($"Workers: {workplace.CurrentEmployees} / {workplace.MaxEmployees}");
 
 				if (workplace.CurrentEmployees > 0)

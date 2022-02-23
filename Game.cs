@@ -110,6 +110,7 @@ namespace CityBuilder
 				new ProductionWithInputSystem(World, inventorySystem),
 				new ProductionSystem(World, inventorySystem),
 				new CheckInputSystem(World, inventorySystem),
+				new CheckOutputSystem(World, inventorySystem),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
 				new ConstructionProgressVisualisationSystem(World));
