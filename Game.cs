@@ -169,6 +169,7 @@ namespace CityBuilder
 					var construction = message.Blueprint.Entity.Get<ConstructionReference>().Value;
 					var entity = World.CreateEntity();
 					entity.Set(position);
+					entity.Set<Construction>();
 
 					new ComponentCloner().Clone(construction, entity);
 					entity.Set(rotation);
