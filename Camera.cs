@@ -59,6 +59,11 @@ namespace CityBuilder
 			{
 				Zoom /= 1 - ZoomStep;
 			}
+
+			else if (@event is InputEventMouseMotion motion && Input.IsActionPressed(InputAction.MouseclickRight))
+			{
+				GlobalPosition -= motion.Relative * Zoom;
+			}
 		}
 
 		public override void _Process(float delta)
