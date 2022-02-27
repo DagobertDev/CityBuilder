@@ -65,6 +65,8 @@ namespace CityBuilder
 					inventorySystem.EnsureCreated(entity, Goods.Food);
 				}
 			});
+			World.SubscribeComponentRemoved((in Entity entity, in Market _) =>
+				inventorySystem.GetGood(entity, Goods.Food).Dispose());
 
 			World.SubscribeComponentAdded((in Entity entity, in Agent _) => entity.Set(BehaviorState.Deciding));
 
@@ -88,8 +90,19 @@ namespace CityBuilder
 				}
 			});
 
+			World.SubscribeComponentRemoved((in Entity entity, in Input input) =>
+			{
+				foreach (var good in input.Value.Keys)
+				{
+					inventorySystem.GetGood(entity, good).Dispose();
+				}
+			});
+
 			World.SubscribeComponentAdded((in Entity entity, in Output output)
 				=> inventorySystem.EnsureCreated(entity, output.Good));
+
+			World.SubscribeComponentRemoved((in Entity entity, in Output output)
+				=> inventorySystem.GetGood(entity, output.Good).Dispose());
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
