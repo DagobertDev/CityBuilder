@@ -22,7 +22,7 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 				GoToStart(in entity, in transport);
 				break;
 			case Fetching:
-				StartLoading(in entity);
+				StartLoading(in entity, in transport);
 				break;
 			case Loading:
 				Load(in entity, ref transport);
@@ -39,30 +39,37 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 
 	private static void GoToStart(in Entity entity, in Transport transport)
 	{
-		var from = transport.From;
-
-		if (!from.IsAlive)
+		if (transport is not { From.IsAlive: true, To.IsAlive: true })
 		{
-			throw new ApplicationException("Transport start point is not alive.");
+			Cancel(entity);
+			return;
 		}
 
+		var from = transport.From;
 		var destination = from.Get<Position>();
 		entity.Set<Destination>(destination.Value);
 	}
 
-	private static void StartLoading(in Entity entity)
+	private static void StartLoading(in Entity entity, in Transport transport)
 	{
+		if (transport is not { From.IsAlive: true, To.IsAlive: true })
+		{
+			Cancel(entity);
+			return;
+		}
+
 		entity.Set<Waiting>(LoadTime);
 	}
 
 	private static void Load(in Entity entity, ref Transport transport)
 	{
-		var from = transport.From;
-
-		if (!from.IsAlive)
+		if (transport is not { From.IsAlive: true, To.IsAlive: true })
 		{
-			throw new ApplicationException("Transport start point is not alive.");
+			Cancel(entity);
+			return;
 		}
+
+		var from = transport.From;
 
 		var requestedAmount = transport.Amount;
 		var availableAmount = from.Get<Amount>();
@@ -80,11 +87,6 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 
 		var to = transport.To;
 
-		if (!to.IsAlive)
-		{
-			throw new ApplicationException("Transport end point is not alive.");
-		}
-
 		var destination = to.Get<Position>().Value;
 		entity.Set(new Destination(destination));
 	}
@@ -95,7 +97,8 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 
 		if (!to.IsAlive)
 		{
-			throw new ApplicationException("Transport end point is not alive.");
+			Cancel(entity);
+			return;
 		}
 
 		if (entity.Get<Position>().Value != to.Get<Position>().Value)
@@ -112,7 +115,8 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 
 		if (!to.IsAlive)
 		{
-			throw new ApplicationException("Transport end point is not alive.");
+			Cancel(entity);
+			return;
 		}
 
 		ref var currentAmount = ref to.Get<Amount>();
