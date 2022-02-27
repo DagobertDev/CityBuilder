@@ -41,6 +41,11 @@ public sealed class TransportReservationSystem : ISystem<float>
 
 		void UpdateFutureUnusedCapacity(in Entity to)
 		{
+			if (!to.IsAlive)
+			{
+				return;
+			}
+
 			var unusedCapacity = to.Get<UnusedCapacity>();
 
 			if (!toMap.TryGetEntities(new Transport(default, to, default, default), out var transports))
