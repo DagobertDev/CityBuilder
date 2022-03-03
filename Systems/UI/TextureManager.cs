@@ -14,7 +14,7 @@ namespace CityBuilder.Systems.UI
 
 			if (image.Load(texturePath) == Error.Ok)
 			{
-				texture.CreateFromImage(image);
+				texture.CreateFromImage(image, 3);
 			}
 
 			return texture;
