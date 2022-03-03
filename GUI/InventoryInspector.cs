@@ -182,7 +182,8 @@ namespace CityBuilder.GUI
 				foreach (var good in goods)
 				{
 					AddItem($"{good.Get<Good>().Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
-							$"Remaining: {good.Get<UnusedCapacity>().Value} ({good.Get<FutureUnusedCapacity>().Value})");
+							$"Incoming: {good.Get<UnusedCapacity>() - good.Get<FutureUnusedCapacity>()} " +
+							$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}");
 				}
 			}
 		}

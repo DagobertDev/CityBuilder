@@ -64,7 +64,7 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 	private static bool Filter(in InventoryPriority priority) => priority != Priority.High;
 
 	[WithPredicate]
-	private static bool Filter(in Amount amount) => amount > 0;
+	private static bool Filter(in FutureAmount amount) => amount > 0;
 
 	public override void Dispose()
 	{

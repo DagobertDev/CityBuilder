@@ -10,15 +10,58 @@ public sealed class TransportReservationSystem : ISystem<float>
 {
 	public TransportReservationSystem(World world)
 	{
+		var fromMap = world.GetEntities().AsMultiMap(new FromComparer());
 		var toMap = world.GetEntities().AsMultiMap(new ToComparer());
 
-		world.SubscribeComponentAdded((in Entity entity, in Amount _) => UpdateCapacity(entity));
-		world.SubscribeComponentChanged((in Entity entity, in Amount _, in Amount _) => UpdateCapacity(entity));
+		world.SubscribeComponentAdded((in Entity entity, in Amount _) => UpdateFutureAmount(entity));
+		world.SubscribeComponentChanged((in Entity entity, in Amount _, in Amount _) => UpdateFutureAmount(entity));
 
-		world.SubscribeComponentAdded((in Entity entity, in Capacity _) => UpdateCapacity(entity));
-		world.SubscribeComponentChanged((in Entity entity, in Capacity _, in Capacity _) => UpdateCapacity(entity));
+		world.SubscribeComponentAdded((in Entity _, in Transport transport) =>
+			UpdateAmountAndCapacity(transport));
+		world.SubscribeComponentChanged((in Entity _, in Transport transport, in Transport _) =>
+			UpdateAmountAndCapacity(transport));
+		world.SubscribeComponentRemoved((in Entity _, in Transport transport) =>
+			UpdateAmountAndCapacity(transport));
 
-		void UpdateCapacity(in Entity entity)
+		void UpdateAmountAndCapacity(Transport transport)
+		{
+			UpdateFutureAmount(transport.From);
+			UpdateFutureUnusedCapacity(transport.To);
+		}
+
+		void UpdateFutureAmount(in Entity inventory)
+		{
+			if (!inventory.IsAlive)
+			{
+				return;
+			}
+
+			var amount = inventory.Get<Amount>();
+
+			if (!fromMap.TryGetEntities(new Transport(inventory, default, default, default), out var transports))
+			{
+				inventory.Set<FutureAmount>((int)amount);
+				return;
+			}
+
+			var removedAmount = 0;
+
+			foreach (var t in transports)
+			{
+				removedAmount += t.Get<Transport>().Amount;
+			}
+
+			inventory.Set<FutureAmount>(amount - removedAmount);
+		}
+
+		world.SubscribeComponentAdded((in Entity entity, in Amount _) => UpdateUnusedCapacity(entity));
+		world.SubscribeComponentChanged((in Entity entity, in Amount _, in Amount _) => UpdateUnusedCapacity(entity));
+
+		world.SubscribeComponentAdded((in Entity entity, in Capacity _) => UpdateUnusedCapacity(entity));
+		world.SubscribeComponentChanged(
+			(in Entity entity, in Capacity _, in Capacity _) => UpdateUnusedCapacity(entity));
+
+		void UpdateUnusedCapacity(in Entity entity)
 		{
 			if (entity.Has<Capacity>())
 			{
@@ -31,13 +74,6 @@ public sealed class TransportReservationSystem : ISystem<float>
 
 			UpdateFutureUnusedCapacity(entity);
 		}
-
-		world.SubscribeComponentAdded((in Entity _, in Transport transport) =>
-			UpdateFutureUnusedCapacity(transport.To));
-		world.SubscribeComponentChanged((in Entity _, in Transport transport, in Transport _) =>
-			UpdateFutureUnusedCapacity(transport.To));
-		world.SubscribeComponentRemoved((in Entity _, in Transport transport) =>
-			UpdateFutureUnusedCapacity(transport.To));
 
 		void UpdateFutureUnusedCapacity(in Entity to)
 		{
@@ -63,6 +99,12 @@ public sealed class TransportReservationSystem : ISystem<float>
 
 			to.Set<FutureUnusedCapacity>(unusedCapacity - addedAmount);
 		}
+	}
+
+	private class FromComparer : IEqualityComparer<Transport>
+	{
+		public bool Equals(Transport x, Transport y) => x.From == y.From;
+		public int GetHashCode(Transport obj) => obj.From.GetHashCode();
 	}
 
 	private class ToComparer : IEqualityComparer<Transport>
