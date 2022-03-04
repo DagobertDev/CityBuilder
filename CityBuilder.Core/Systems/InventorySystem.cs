@@ -19,6 +19,14 @@ public class InventorySystem : IInventorySystem
 		World = world;
 		_ownerAndGood = World.GetEntities().AsMap<(Owner, Good)>();
 		_goodsByOwner = World.GetEntities().AsMultiMap<Owner>();
+
+		world.SubscribeEntityDisposed((in Entity entity) =>
+		{
+			foreach (var inventory in GetGoods(entity))
+			{
+				inventory.Dispose();
+			}
+		});
 	}
 
 	public Entity SetGood(Entity owner, string good, int amount)
