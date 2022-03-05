@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CityBuilder.Components;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.ModSupport;
 using CityBuilder.Systems.UI;
@@ -9,6 +10,7 @@ using DefaultEcs;
 using DefaultEcs.Resource;
 using DefaultEcs.Serialization;
 using Godot;
+using Newtonsoft.Json;
 using Directory = System.IO.Directory;
 using File = System.IO.File;
 using Path = System.IO.Path;
@@ -19,6 +21,7 @@ namespace CityBuilder.ModSupport
 	public class ModLoader
 	{
 		private const string BlueprintFileExtension = "bp";
+		private const string GoodsFile = "goods.json";
 
 		private string ModDirectory { get; }
 		private readonly World _world = new();
@@ -39,6 +42,25 @@ namespace CityBuilder.ModSupport
 			if (!Directory.Exists(path))
 			{
 				Directory.CreateDirectory(path);
+			}
+
+			foreach (var file in Directory.EnumerateFiles(path, GoodsFile,
+						 SearchOption.AllDirectories))
+			{
+				var textureConverter = new StringToTextureConverter(Path.GetDirectoryName(file) ?? string.Empty);
+				var data = File.ReadAllText(file);
+
+				var goods = JsonConvert.DeserializeObject<IEnumerable<GoodDescription>>(data, textureConverter);
+
+				if (goods is null)
+				{
+					continue;
+				}
+
+				foreach (var good in goods)
+				{
+					Global.GoodDescriptions[good.Id] = good;
+				}
 			}
 
 			foreach (var file in Directory.EnumerateFiles(path,
@@ -156,6 +178,44 @@ namespace CityBuilder.ModSupport
 			public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
 			public override void SetLength(long value) => throw new NotImplementedException();
 			public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+		}
+
+		private class StringToTextureConverter : JsonConverter<Texture>
+		{
+			private readonly string _baseDirectory;
+
+			public StringToTextureConverter(string baseDirectory)
+			{
+				_baseDirectory = baseDirectory;
+			}
+
+			public override void WriteJson(JsonWriter writer, Texture? value, JsonSerializer serializer)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override Texture? ReadJson(JsonReader reader, Type objectType, Texture? existingValue,
+				bool hasExistingValue,
+				JsonSerializer serializer)
+			{
+				if (reader.Value is not string path)
+				{
+					return null;
+				}
+
+				var fullPath = Path.Combine(_baseDirectory, path);
+
+				var image = new Image();
+
+				if (image.Load(fullPath) != Error.Ok)
+				{
+					return null;
+				}
+
+				var texture = new ImageTexture();
+				texture.CreateFromImage(image);
+				return texture;
+			}
 		}
 	}
 }

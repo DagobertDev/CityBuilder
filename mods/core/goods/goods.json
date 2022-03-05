@@ -1,0 +1,22 @@
+[
+    {
+        "Id": "Food",
+        "Icon": "food.png"
+    },
+    {
+        "Id": "Wood",
+        "Icon": "wood.png"
+    },
+    {
+        "Id": "Plank",
+        "Icon": "plank.png"
+    },
+    {
+        "Id": "Wheat",
+        "Icon": "wheat.png"
+    },
+    {
+        "Id": "Flour",
+        "Icon": "flour.png"
+    }
+]

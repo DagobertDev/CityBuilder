@@ -19,7 +19,7 @@ Component Input {
 }
 
 Component Output {
-	Good "Planks"
+	Good "Plank"
 	Amount 2
 }
 

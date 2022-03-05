@@ -181,9 +181,11 @@ namespace CityBuilder.GUI
 
 				foreach (var good in goods)
 				{
-					AddItem($"{good.Get<Good>().Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
+					var description = Global.GoodDescriptions[good.Get<Good>().Name];
+
+					AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
 							$"Incoming: {good.Get<UnusedCapacity>() - good.Get<FutureUnusedCapacity>()} " +
-							$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}");
+							$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}", description.Icon);
 				}
 			}
 		}
