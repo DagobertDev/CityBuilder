@@ -1,14 +1,17 @@
 Entity 1
 Component BlueprintInfo {
-	Name "Market"
-	Texture "market.png"
+	Name "Quarry"
+	Texture "quarry.png"
 }
 
 Component Workplace {
-	MaxEmployees 1
+	MaxEmployees 2
+	Difficulty 5
 }
 
-Component Market {
+Component Output {
+	Good "Stone"
+	Amount 2
 }
 
 Entity 2
@@ -16,19 +19,15 @@ Component Construction {
 }
 
 Component Workplace {
-	MaxEmployees 5
-	Difficulty 20
+	MaxEmployees 4
+	Difficulty 10
 }
 
 Component Input {
 	Value [
 		{
 			key "Wood"
-			value 20
-		}
-		{
-			key "Stone"
-			value 10
+			value 5
 		}
 	]
 }

@@ -1,9 +1,5 @@
 [
     {
-        "Id": "Food",
-        "Icon": "food.png"
-    },
-    {
         "Id": "Wood",
         "Icon": "wood.png"
     },
@@ -12,11 +8,19 @@
         "Icon": "plank.png"
     },
     {
+        "Id": "Stone",
+        "Icon": "stone.png"
+    },
+    {
         "Id": "Wheat",
         "Icon": "wheat.png"
     },
     {
         "Id": "Flour",
         "Icon": "flour.png"
-    }
+    },
+    {
+        "Id": "Food",
+        "Icon": "food.png"
+    },
 ]
