@@ -2,6 +2,7 @@ Entity 1
 Component BlueprintInfo {
 	Name "Bakery"
 	Texture "bakery.png"
+	Category "Food"
 }
 
 Component Workplace {

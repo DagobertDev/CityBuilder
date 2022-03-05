@@ -107,7 +107,6 @@ namespace CityBuilder.ModSupport
 			}
 
 			var info = entity.Get<BlueprintInfo>();
-			entity.Remove<BlueprintInfo>();
 			var texturePath = path.Replace(Path.GetFileName(path), info.Texture);
 			entity.Set(ManagedResource<Texture>.Create(texturePath));
 

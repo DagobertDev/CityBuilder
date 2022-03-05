@@ -2,6 +2,7 @@ Entity 1
 Component BlueprintInfo {
 	Name "Quarry"
 	Texture "quarry.png"
+	Category "Production"
 }
 
 Component Workplace {

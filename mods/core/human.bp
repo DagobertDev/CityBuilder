@@ -2,6 +2,7 @@ Entity 1
 Component BlueprintInfo {
 	Name "Human"
 	Texture "human.png"
+	Category "Debug"
 }
 
 Component Agent {
