@@ -3,6 +3,7 @@ using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
+using CityBuilder.Core.Components.Flags;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Components.Production;
@@ -78,14 +79,7 @@ namespace CityBuilder
 					inventorySystem.EnsureCreated(entity, good);
 				}
 
-				if (entity.Has<CanNotWorkReason>())
-				{
-					entity.Set(entity.Get<CanNotWorkReason>() | CanNotWorkReason.NoInput);
-				}
-				else
-				{
-					entity.Set(CanNotWorkReason.NoInput);
-				}
+				entity.AddFlag(CanNotWorkReason.NoInput);
 			});
 
 			World.SubscribeComponentAdded((in Entity entity, in Output output)
