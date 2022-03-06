@@ -7,22 +7,20 @@ namespace CityBuilder.Core.Systems;
 
 public sealed partial class MovementSystem : AEntitySetSystem<float>
 {
-	[Update]
-	[UseBuffer]
-	private static void Update(float state, in Entity entity, in Destination destinationComponent,
-		ref Position transform, in Speed speed)
+	[Update, UseBuffer]
+	private static void Update(float state, in Entity entity, in Waypoint destinationComponent,
+		ref Position position, in Speed speed)
 	{
-		var destination = destinationComponent.Position;
+		var waypoint = destinationComponent.Position;
 
-		transform = new Position(transform.Value.MoveToward(destination, state * speed));
+		position = new Position(position.Value.MoveToward(waypoint, state * speed));
 
-		if (transform.Value == destination)
+		if (position.Value == waypoint)
 		{
-			entity.Remove<Destination>();
-			entity.Get<BehaviorState>().Next(out var next);
-			entity.Set(next);
+			position = waypoint;
+			entity.Remove<Waypoint>();
 		}
 
-		entity.Set(transform);
+		entity.Set(position);
 	}
 }

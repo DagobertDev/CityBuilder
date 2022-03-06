@@ -105,3 +105,4 @@ script = ExtResource( 5 )
 [node name="YSort" type="YSort" parent="."]
 
 [node name="Navigation" type="Navigation2D" parent="YSort"]
+cell_size = 64.0

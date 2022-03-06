@@ -12,6 +12,7 @@ using CityBuilder.Core.Systems;
 using CityBuilder.Core.Systems.AI;
 using CityBuilder.GUI;
 using CityBuilder.ModSupport;
+using CityBuilder.Systems;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
 using DefaultEcs.Resource;
@@ -24,7 +25,7 @@ namespace CityBuilder
 {
 	public class Game : Control
 	{
-		private const int MapSize = 64 * 10000;
+		private const int MapSize = 64 * 1000;
 
 		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
@@ -39,6 +40,22 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
+			var navigationPolygon = new NavigationPolygon();
+			navigationPolygon.AddOutline(new[]
+			{
+				Vector2.Zero,
+				Vector2.Right * MapSize,
+				Vector2.One * MapSize,
+				Vector2.Down * MapSize,
+			});
+
+			navigationPolygon.MakePolygonsFromOutlines();
+
+			EntityRoot.AddChild(new NavigationPolygonInstance
+			{
+				Navpoly = navigationPolygon,
+			});
+
 			var collisionSystem = new CollisionSystem<Sprite>(World,
 				0, 0, MapSize, MapSize,
 				sprite =>
@@ -91,6 +108,9 @@ namespace CityBuilder
 				new RemoveSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, EntityRoot),
 				new SpritePositionSystem(World),
+				new NavigationInitSystem(World),
+				new NavigationDestinationSystem(World),
+				new NavigationSystem(World),
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
