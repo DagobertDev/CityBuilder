@@ -15,6 +15,9 @@ public sealed partial class WanderAroundStateSystem : AEntitySetSystem<float>
 
 	private readonly Random _random = new();
 
+	[ConstructorParameter]
+	private readonly Vector2 _mapSize;
+
 	[Update, UseBuffer]
 	private void Update(in Entity entity, [Changed] in BehaviorState state)
 	{
@@ -48,6 +51,7 @@ public sealed partial class WanderAroundStateSystem : AEntitySetSystem<float>
 		);
 
 		var destination = position + offset;
+		destination = Vector2.Clamp(destination, Vector2.Zero, _mapSize);
 		entity.Set<Destination>(destination);
 	}
 

@@ -1,4 +1,5 @@
-﻿using DefaultEcs;
+﻿using System.Numerics;
+using DefaultEcs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems.AI;
@@ -7,7 +8,7 @@ public sealed class AISystem : ISystem<float>
 {
 	private readonly ISystem<float> _system;
 
-	public AISystem(World world)
+	public AISystem(World world, Vector2 mapSize)
 	{
 		_system = new SequentialSystem<float>
 		(
@@ -27,7 +28,7 @@ public sealed class AISystem : ISystem<float>
 			new SleepStateSystem(world),
 			new WorkingStateSystem(world),
 			new TransportStateSystem(world),
-			new WanderAroundStateSystem(world),
+			new WanderAroundStateSystem(world, mapSize),
 			new DoNothingStateSystem(world)
 		);
 	}

@@ -24,6 +24,8 @@ namespace CityBuilder
 {
 	public class Game : Control
 	{
+		private const int MapSize = 64 * 10000;
+
 		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
 		private Node2D EntityRoot => GetNode<Node2D>("YSort/Navigation");
@@ -38,7 +40,7 @@ namespace CityBuilder
 		public override void _Ready()
 		{
 			var collisionSystem = new CollisionSystem<Sprite>(World,
-				-10000, -10000, 110000, 110000,
+				0, 0, MapSize, MapSize,
 				sprite =>
 				{
 					var size = sprite.Texture.GetSize();
@@ -92,7 +94,7 @@ namespace CityBuilder
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
-				new AISystem(World),
+				new AISystem(World, System.Numerics.Vector2.One * MapSize),
 				new TransportReservationSystem(World),
 				new WaitingSystem(World),
 				new HungerSystem(World),
