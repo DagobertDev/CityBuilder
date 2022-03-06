@@ -26,7 +26,7 @@ namespace CityBuilder
 	{
 		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
-		private Node2D Map => GetNode<Node2D>("Map");
+		private Node2D EntityRoot => GetNode<Node2D>("YSort/Navigation");
 
 		private ISystem<float> _system = null!;
 
@@ -87,7 +87,7 @@ namespace CityBuilder
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
-				new SpriteCreationSystem(World, Map),
+				new SpriteCreationSystem(World, EntityRoot),
 				new SpritePositionSystem(World),
 				new MovementSystem(World),
 				collisionSystem,
@@ -114,6 +114,9 @@ namespace CityBuilder
 
 			var modLoader = new ModLoader(textureManager, ProjectSettings.GlobalizePath("res://mods"));
 			modLoader.LoadMods();
+
+			var map = GD.Load<PackedScene>("user://map.scn").Instance();
+			EntityRoot.AddChild(map);
 		}
 
 		public override void _Process(float delta)

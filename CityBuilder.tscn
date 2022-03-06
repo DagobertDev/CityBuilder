@@ -102,4 +102,6 @@ __meta__ = {
 z_index = 1024
 script = ExtResource( 5 )
 
-[node name="Map" type="YSort" parent="."]
+[node name="YSort" type="YSort" parent="."]
+
+[node name="Navigation" type="Navigation2D" parent="YSort"]
