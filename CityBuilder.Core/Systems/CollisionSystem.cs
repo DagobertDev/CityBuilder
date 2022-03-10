@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using CityBuilder.Core.Components;
@@ -9,32 +8,31 @@ using UltimateQuadTree;
 
 namespace CityBuilder.Core.Systems;
 
-public sealed partial class CollisionSystem<T> : AEntitySetSystem<float>, ICollisionSystem
+public sealed partial class CollisionSystem : AEntitySetSystem<float>, ICollisionSystem
 {
 	private readonly QuadTree<HitBox> _quadTree;
-	private readonly Func<T, Vector2> _hitBoxFactory;
 
-	public CollisionSystem(World world, int x, int y, int width, int height, Func<T, Vector2> hitBoxFactory) : base(
+	public CollisionSystem(World world, int x, int y, int width, int height) : base(
 		world, CreateEntityContainer, true)
 	{
 		_quadTree = new QuadTree<HitBox>(x, y, width, height, new Bounds());
-		_hitBoxFactory = hitBoxFactory;
 
 		World.SubscribeComponentRemoved((in Entity _, in HitBox hitBox) => _quadTree.Remove(hitBox));
 	}
 
-	[Update]
-	[UseBuffer]
-	private void Update(in Entity entity, [Added] [Changed] in Position transform,
-		[Added] [Changed] in T sprite)
+	[Update, UseBuffer]
+	private void Update(in Entity entity, [Added, Changed] in Position position,
+		[Added, Changed] in Size size, [Added, Changed] Rotation rotation)
 	{
-		var hitBox = new HitBox(transform.Value, _hitBoxFactory(sprite), entity);
-
 		if (entity.Has<HitBox>())
 		{
 			var oldHitBox = entity.Get<HitBox>();
 			_quadTree.Remove(oldHitBox);
 		}
+
+		var hitBox = rotation.Value is 90 or 270
+			? new HitBox(position.Value, new Vector2(size.Value.Y, size.Value.X), entity)
+			: new HitBox(position.Value, size, entity);
 
 		_quadTree.Insert(hitBox);
 		entity.Set(hitBox);

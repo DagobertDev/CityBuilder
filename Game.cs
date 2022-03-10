@@ -56,19 +56,12 @@ namespace CityBuilder
 				Navpoly = navigationPolygon,
 			});
 
-			var collisionSystem = new CollisionSystem<Sprite>(World,
-				0, 0, MapSize, MapSize,
-				sprite =>
-				{
-					var size = sprite.Texture.GetSize();
+			World.SubscribeComponentAdded((in Entity entity, in Sprite sprite) =>
+			{
+				entity.Set<Size>(sprite.Texture.GetSize().ToNumericsVector());
+			});
 
-					if (Math.Abs(sprite.RotationDegrees - 90) < 1)
-					{
-						size = new Vector2(size.y, size.x);
-					}
-
-					return size.ToNumericsVector();
-				});
+			var collisionSystem = new CollisionSystem(World, 0, 0, MapSize, MapSize);
 			World.SetMaxCapacity<ICollisionSystem>(1);
 			World.Set<ICollisionSystem>(collisionSystem);
 

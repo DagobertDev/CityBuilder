@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Numerics;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Systems;
@@ -10,14 +9,13 @@ namespace CityBuilder.Tests;
 public class CollisionTests
 {
 	private World _world;
-	private CollisionSystem<SizeF> _system;
+	private CollisionSystem _system;
 
 	[SetUp]
 	public void Setup()
 	{
 		_world = new World();
-		_system = new CollisionSystem<SizeF>(_world, -1000, -1000, 10000, 10000,
-			value => new Vector2(value.Width, value.Height));
+		_system = new CollisionSystem(_world, 0, 0, 10000, 10000);
 	}
 
 	[TearDown]
@@ -32,7 +30,8 @@ public class CollisionTests
 	{
 		var first = _world.CreateEntity();
 		first.Set<Position>();
-		first.Set(new SizeF(2, 2));
+		first.Set(new Size(2, 2));
+		first.Set<Rotation>(0);
 
 		_system.Update(0);
 
@@ -46,7 +45,8 @@ public class CollisionTests
 	{
 		var first = _world.CreateEntity();
 		first.Set<Position>();
-		first.Set(new SizeF(2, 2));
+		first.Set(new Size(2, 2));
+		first.Set<Rotation>(0);
 
 		_system.Update(0);
 
@@ -60,7 +60,8 @@ public class CollisionTests
 	{
 		var first = _world.CreateEntity();
 		first.Set<Position>();
-		first.Set(new SizeF(2, 2));
+		first.Set(new Size(2, 2));
+		first.Set<Rotation>(0);
 
 		_system.Update(0);
 
@@ -74,7 +75,8 @@ public class CollisionTests
 	{
 		var first = _world.CreateEntity();
 		first.Set<Position>();
-		first.Set(new SizeF(2, 2));
+		first.Set(new Size(2, 2));
+		first.Set<Rotation>(0);
 
 		_system.Update(0);
 
