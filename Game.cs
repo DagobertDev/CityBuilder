@@ -7,15 +7,14 @@ using CityBuilder.Core.Components.Flags;
 using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Components.Production;
-using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
 using CityBuilder.Core.Systems.AI;
 using CityBuilder.GUI;
+using CityBuilder.Messages;
 using CityBuilder.ModSupport;
 using CityBuilder.Systems;
 using CityBuilder.Systems.UI;
 using DefaultEcs;
-using DefaultEcs.Resource;
 using DefaultEcs.System;
 using Godot;
 using Input = CityBuilder.Core.Components.Production.Input;
@@ -177,20 +176,13 @@ namespace CityBuilder
 				var blueprint = message.Blueprint;
 				var rotation = message.Rotation;
 
-				if (message.Blueprint.Entity.Has<ConstructionReference>())
+				if (message.Blueprint.Construction is not null)
 				{
-					var construction = message.Blueprint.Entity.Get<ConstructionReference>().Value;
 					var entity = World.CreateEntity();
 					entity.Set(position);
-					entity.Set<Construction>();
 					entity.Set(rotation);
 
-					new ComponentCloner().Clone(construction, entity);
-
-					entity.Set(blueprint);
-
-					var texture = blueprint.Entity.Get<ManagedResource<string, Texture>>();
-					entity.Set(texture);
+					blueprint.PopulateConstruction(entity);
 				}
 
 				else
@@ -207,7 +199,6 @@ namespace CityBuilder
 			entity.Set(message.Position);
 			entity.Set(message.Rotation);
 			message.Blueprint.Populate(entity);
-			entity.Remove<Construction>();
 		}
 	}
 }

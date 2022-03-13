@@ -1,7 +1,7 @@
 using System;
 using CityBuilder;
-using CityBuilder.Core.Messages;
 using CityBuilder.GUI;
+using CityBuilder.Messages;
 using DefaultEcs;
 using Godot;
 

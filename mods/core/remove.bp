@@ -1,8 +1,0 @@
-Entity 1
-Component BlueprintInfo {
-	Name "Remove"
-	Texture "remove.png"
-	Category "Tools"
-}
-Component RemoveRequest {
-}

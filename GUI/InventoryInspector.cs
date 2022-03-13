@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
-using CityBuilder.Core.Messages;
 using CityBuilder.Core.Systems;
+using CityBuilder.Messages;
 using DefaultEcs;
 using Godot;
 

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CityBuilder.Core.Messages;
+using CityBuilder.Messages;
 using DefaultEcs;
 using DefaultEcs.Serialization;
 using Godot;

@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CityBuilder.Components;
-using CityBuilder.Core.Components;
-using CityBuilder.Core.ModSupport;
 using CityBuilder.Systems.UI;
-using DefaultEcs;
-using DefaultEcs.Resource;
-using DefaultEcs.Serialization;
 using Godot;
 using Newtonsoft.Json;
 using Directory = System.IO.Directory;
@@ -20,7 +15,7 @@ namespace CityBuilder.ModSupport
 {
 	public class ModLoader
 	{
-		private const string BlueprintFileExtension = "bp";
+		private const string BuildingsFile = "buildings.json";
 		private const string GoodsFile = "goods.json";
 
 		private string ModDirectory { get; }
@@ -63,120 +58,30 @@ namespace CityBuilder.ModSupport
 				}
 			}
 
-			foreach (var file in Directory.EnumerateFiles(path,
-						 $"*.{BlueprintFileExtension}",
-						 SearchOption.AllDirectories))
+			foreach (var blueprint in Directory.EnumerateFiles(path, BuildingsFile, SearchOption.AllDirectories)
+						 .SelectMany(ParseBlueprints))
 			{
-				var blueprint = ParseBlueprint(file);
-
-				if (blueprint == null)
-				{
-					continue;
-				}
-
 				Game.Publisher.Publish(blueprint);
 			}
 		}
 
-		private Blueprint? ParseBlueprint(string path)
+		private static IEnumerable<Blueprint> ParseBlueprints(string path)
 		{
-			var serializer = new TextSerializer(new TextSerializationContext());
+			var data = File.ReadAllText(path);
 
-			var str = new MemoryStream();
-			var writer = new StreamWriter(str);
-
-			WriteTypes(writer, typeof(Position).Assembly.GetTypes()
-				.Where(t => t.Namespace != null && t.Namespace.Contains("Components") && !t.IsAbstract)
-				.Concat(new[] { typeof(BlueprintInfo) }));
-			writer.Flush();
-			str.Position = 0;
-
-			Entity entity;
-			Entity construction;
-
-			using (var stream = new ConcatenatedStream(str, File.OpenRead(path)))
+			var settings = new JsonSerializerSettings
 			{
-				var entities = serializer.Deserialize(stream, _world);
-				entity = entities.FirstOrDefault(e => e.Has<BlueprintInfo>());
-				construction = entities.FirstOrDefault(e => e.Has<Construction>());
-			}
-
-			if (entity == default)
-			{
-				return null;
-			}
-
-			var info = entity.Get<BlueprintInfo>();
-			var texturePath = path.Replace(Path.GetFileName(path), info.Texture);
-			entity.Set(ManagedResource<Texture>.Create(texturePath));
-
-			if (construction != default)
-			{
-				entity.Set(new ConstructionReference(construction));
-			}
-
-			return new Blueprint(info.Name, entity, newEntity => new ComponentCloner().Clone(entity, newEntity));
-		}
-
-		private static void WriteTypes(TextWriter writer, IEnumerable<Type> types)
-		{
-			foreach (var type in types)
-			{
-				writer.WriteLine($"ComponentType {type.Name} {type.FullName}, {type.Assembly.GetName().Name}");
-			}
-		}
-
-		private class ConcatenatedStream : Stream
-		{
-			private readonly Queue<Stream> _streams;
-
-			public ConcatenatedStream(params Stream[] streams)
-			{
-				_streams = new Queue<Stream>(streams);
-			}
-
-			public override bool CanRead => true;
-
-			public override int Read(byte[] buffer, int offset, int count)
-			{
-				var totalBytesRead = 0;
-
-				while (count > 0 && _streams.Count > 0)
+				Converters = new List<JsonConverter>
 				{
-					var bytesRead = _streams.Peek().Read(buffer, offset, count);
-					if (bytesRead == 0)
-					{
-						_streams.Dequeue().Dispose();
-						continue;
-					}
+					new StringToTextureConverter(Path.GetDirectoryName(path) ?? string.Empty),
+				},
+				MissingMemberHandling = MissingMemberHandling.Error,
+				MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+			};
 
-					totalBytesRead += bytesRead;
-					offset += bytesRead;
-					count -= bytesRead;
-				}
+			var buildings = JsonConvert.DeserializeObject<IDictionary<string, Blueprint>>(data, settings);
 
-				return totalBytesRead;
-			}
-
-			public override bool CanSeek => false;
-			public override bool CanWrite => false;
-
-			public override void Flush()
-			{
-				throw new NotImplementedException();
-			}
-
-			public override long Length => throw new NotImplementedException();
-
-			public override long Position
-			{
-				get => throw new NotImplementedException();
-				set => throw new NotImplementedException();
-			}
-
-			public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
-			public override void SetLength(long value) => throw new NotImplementedException();
-			public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+			return buildings?.Values ?? Enumerable.Empty<Blueprint>();
 		}
 
 		private class StringToTextureConverter : JsonConverter<Texture>
@@ -208,7 +113,7 @@ namespace CityBuilder.ModSupport
 
 				if (image.Load(fullPath) != Error.Ok)
 				{
-					return null;
+					throw new FileNotFoundException($"Could not find image {fullPath}");
 				}
 
 				var texture = new ImageTexture();

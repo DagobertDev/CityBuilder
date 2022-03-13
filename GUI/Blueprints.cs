@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using CityBuilder.Core.Messages;
-using CityBuilder.Core.ModSupport;
+using CityBuilder.Messages;
+using CityBuilder.ModSupport;
 using Godot;
 
 namespace CityBuilder.GUI
@@ -16,25 +16,16 @@ namespace CityBuilder.GUI
 
 		private void On(in Blueprint blueprint)
 		{
-			var category = blueprint.Entity.Get<BlueprintInfo>().Category;
-			var categoryNode = GetOrCreateCategory(category ?? "Common");
+			var categoryNode = GetOrCreateCategory(blueprint.Category ?? "Common");
 
 			var id = _blueprintInfos.Count;
 			_blueprintInfos[id] = blueprint;
 
-			var texture = blueprint.Entity.Get<Texture>();
+			var texture = blueprint.Texture;
 
-			if (texture is ImageTexture imageTexture)
-			{
-				var textureCopy = (ImageTexture)imageTexture.Duplicate();
-				textureCopy.SetSizeOverride(new Vector2(32, 32));
-
-				categoryNode.GetPopup().AddIconItem(textureCopy, blueprint.Name, id);
-			}
-			else
-			{
-				categoryNode.GetPopup().AddItem(blueprint.Name, id);
-			}
+			var textureCopy = (ImageTexture)texture.Duplicate();
+			textureCopy.SetSizeOverride(new Vector2(32, 32));
+			categoryNode.GetPopup().AddIconItem(textureCopy, blueprint.Name, id);
 		}
 
 		private MenuButton GetOrCreateCategory(string category)

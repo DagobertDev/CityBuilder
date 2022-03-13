@@ -2,10 +2,9 @@ using System;
 using System.Linq;
 using CityBuilder.Components;
 using CityBuilder.Core.Components;
-using CityBuilder.Core.Components.Flags;
-using CityBuilder.Core.Messages;
-using CityBuilder.Core.ModSupport;
 using CityBuilder.Core.Systems;
+using CityBuilder.Messages;
+using CityBuilder.ModSupport;
 using DefaultEcs;
 using Godot;
 using Vector2 = System.Numerics.Vector2;
@@ -87,7 +86,7 @@ namespace CityBuilder.GUI
 		private void Enable(Blueprint blueprint)
 		{
 			Blueprint = blueprint;
-			Texture = blueprint.Entity.Has<Texture>() ? blueprint.Entity.Get<Texture>() : null;
+			Texture = blueprint.Texture;
 			Visible = true;
 			SetProcess(true);
 			SetProcessInput(true);
@@ -114,7 +113,7 @@ namespace CityBuilder.GUI
 				size = new Vector2(size.Y, size.X);
 			}
 
-			CanBuild = Blueprint!.Entity.Has<RemoveRequest>() || Game.World.Get<ICollisionSystem>()
+			CanBuild = Blueprint is { RemoveRequest: { } } || Game.World.Get<ICollisionSystem>()
 				.GetEntities(new HitBox(position.ToNumericsVector(), size, default)).All(entity => entity.Has<Agent>());
 		}
 
