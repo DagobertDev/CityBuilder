@@ -16,14 +16,17 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="CityBuilder.Core\**" />
-    <Compile Remove="CityBuilder.Tests\**" />
+    <Compile Remove="CityBuilder.Core\**"/>
+    <Compile Remove="CityBuilder.Tests\**"/>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="CityBuilder.Core\**" />
-    <EmbeddedResource Remove="CityBuilder.Tests\**" />
+    <EmbeddedResource Remove="CityBuilder.Core\**"/>
+    <EmbeddedResource Remove="CityBuilder.Tests\**"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="CityBuilder.Core\CityBuilder.Core.csproj" />
+    <ProjectReference Include="CityBuilder.Core\CityBuilder.Core.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mods\core\buildings\buildings.json"/>
   </ItemGroup>
 </Project>

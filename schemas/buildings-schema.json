@@ -1,0 +1,126 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "definitions": {
+        "nonNegativeNumber": {
+            "type": "number",
+            "minimum": 0
+        },
+        "nonNegativeInteger": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "emptyObject": {
+            "type": "object",
+            "additionalProperties": false
+        },
+        "goods": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "number",
+                "minimum": 0
+            }
+        },
+        "workplace": {
+            "properties": {
+                "MaxEmployees": {
+                    "$ref": "#/definitions/nonNegativeInteger"
+                },
+                "Difficulty": {
+                    "$ref": "#/definitions/nonNegativeInteger"
+                }
+            },
+            "required": [
+                "MaxEmployees",
+                "Difficulty"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "$schema": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": {
+        "type": "object",
+        "properties": {
+            "Name": {
+                "type": "string"
+            },
+            "Texture": {
+                "type": "string"
+            },
+            "Category": {
+                "type": "string"
+            },
+            "Input": {
+                "$ref": "#/definitions/goods"
+            },
+            "Output": {
+                "$ref": "#/definitions/goods"
+            },
+            "Workplace": {
+                "$ref": "#/definitions/workplace"
+            },
+            "Construction": {
+                "properties": {
+                    "Workplace": {
+                        "$ref": "#/definitions/workplace"
+                    },
+                    "Input": {
+                        "$ref": "#/definitions/goods"
+                    }
+                },
+                "required": [
+                    "Workplace"
+                ],
+                "additionalProperties": false
+            },
+            "Market": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "RemoveRequest": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "Agent": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "Speed": {
+                "$ref": "#/definitions/nonNegativeNumber"
+            },
+            "Housing": {
+                "properties": {
+                    "MaxBeds": {
+                        "$ref": "#/definitions/nonNegativeInteger"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "HungerRate": {
+                "$ref": "#/definitions/nonNegativeNumber"
+            },
+            "TirednessRate": {
+                "$ref": "#/definitions/nonNegativeNumber"
+            },
+            "TransportCapacity": {
+                "$ref": "#/definitions/nonNegativeInteger"
+            },
+            "WantsHousing": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "WantsWork": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "WantsRecreation": {
+                "$ref": "#/definitions/emptyObject"
+            },
+            "additionalProperties": false
+        },
+        "required": [
+            "Name",
+            "Texture"
+        ],
+        "additionalProperties": false
+    }
+}

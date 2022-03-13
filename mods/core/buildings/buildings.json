@@ -1,4 +1,5 @@
 {
+    "$schema": "../../../schemas/buildings-schema.json",
     "Bakery": {
         "Name": "Bakery",
         "Texture": "bakery.png",
