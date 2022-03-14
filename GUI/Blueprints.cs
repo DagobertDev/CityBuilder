@@ -9,9 +9,12 @@ namespace CityBuilder.GUI
 	{
 		private readonly Dictionary<int, Blueprint> _blueprintInfos = new();
 
-		public override void _EnterTree()
+		public override void _Ready()
 		{
-			Game.Publisher.Subscribe<Blueprint>(On);
+			foreach (var blueprint in Global.Blueprints.Values)
+			{
+				On(blueprint);
+			}
 		}
 
 		private void On(in Blueprint blueprint)

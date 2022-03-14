@@ -28,7 +28,17 @@ namespace CityBuilder
 
 		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
-		private Node2D EntityRoot => GetNode<Node2D>("YSort/Navigation");
+
+		private Node2D? _entityRoot;
+		private Node2D EntityRoot => _entityRoot ??= GetNode<Node2D>("YSort/Navigation");
+
+		private CanvasItem? _mainMenu;
+		public CanvasItem MainMenu => _mainMenu ??= FindNode<CanvasItem>("MainMenu");
+
+		private CanvasItem? _inGameMenu;
+		public CanvasItem InGameMenu => _inGameMenu ??= FindNode<CanvasItem>("InGameMenu");
+
+		private Node? inGameUI;
 
 		private ISystem<float> _system = null!;
 
@@ -128,9 +138,6 @@ namespace CityBuilder
 
 			var modLoader = new ModLoader(textureManager, ProjectSettings.GlobalizePath("res://mods"));
 			modLoader.LoadMods();
-
-			var map = GD.Load<PackedScene>("user://map.scn").Instance();
-			EntityRoot.AddChild(map);
 		}
 
 		public override void _Process(float delta)
@@ -200,5 +207,45 @@ namespace CityBuilder
 			entity.Set(message.Rotation);
 			message.Blueprint.Populate(entity);
 		}
+
+		[Subscribe]
+		private void On(in StartNewGameMessage message)
+		{
+			MainMenu.Visible = false;
+
+			foreach (var entity in World)
+			{
+				entity.Dispose();
+			}
+
+			var map = GD.Load<PackedScene>("user://map.scn").Instance();
+			map.Name = "Map";
+
+			if (EntityRoot.GetNodeOrNull("Map") is { } oldMap)
+			{
+				EntityRoot.RemoveChild(oldMap);
+				oldMap.Free();
+			}
+
+			EntityRoot.AddChild(map);
+
+			inGameUI = GD.Load<PackedScene>("res://GUI/InGameUI.tscn").Instance();
+			GetNode("GUI").AddChild(inGameUI);
+		}
+
+		[Subscribe]
+		private void On(in CloseInGameMenuMessage message)
+		{
+			InGameMenu.Visible = false;
+		}
+
+		[Subscribe]
+		private void On(in OpenMainMenuMessage message)
+		{
+			GetNode("GUI").RemoveChild(inGameUI);
+			MainMenu.Visible = true;
+		}
+
+		private T FindNode<T>(NodePath nodePath) where T : Node => (T)FindNode(nodePath, owned: false);
 	}
 }

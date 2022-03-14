@@ -61,7 +61,7 @@ namespace CityBuilder.ModSupport
 			foreach (var blueprint in Directory.EnumerateFiles(path, BuildingsFile, SearchOption.AllDirectories)
 						 .SelectMany(ParseBlueprints))
 			{
-				Game.Publisher.Publish(blueprint);
+				Global.Blueprints.Add(blueprint.Name, blueprint);
 			}
 		}
 
