@@ -79,10 +79,13 @@ namespace CityBuilder.ModSupport
 				MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
 			};
 
-			var buildings = JsonConvert.DeserializeObject<IDictionary<string, Blueprint>>(data, settings);
+			var buildings = JsonConvert.DeserializeObject<SerializedBuildings>(data, settings);
 
-			return buildings?.Values ?? Enumerable.Empty<Blueprint>();
+			return buildings?.Data.Values ?? Enumerable.Empty<Blueprint>();
 		}
+
+		private record SerializedBuildings([JsonProperty("$schema")] string? Schema,
+			IDictionary<string, Blueprint> Data);
 
 		private class StringToTextureConverter : JsonConverter<Texture>
 		{

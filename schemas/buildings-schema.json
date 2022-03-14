@@ -40,87 +40,89 @@
     "properties": {
         "$schema": {
             "type": "string"
-        }
-    },
-    "additionalProperties": {
-        "type": "object",
-        "properties": {
-            "Name": {
-                "type": "string"
-            },
-            "Texture": {
-                "type": "string"
-            },
-            "Category": {
-                "type": "string"
-            },
-            "Input": {
-                "$ref": "#/definitions/goods"
-            },
-            "Output": {
-                "$ref": "#/definitions/goods"
-            },
-            "Workplace": {
-                "$ref": "#/definitions/workplace"
-            },
-            "Construction": {
+        },
+        "data": {
+            "additionalProperties": {
+                "type": "object",
                 "properties": {
-                    "Workplace": {
-                        "$ref": "#/definitions/workplace"
+                    "Name": {
+                        "type": "string"
+                    },
+                    "Texture": {
+                        "type": "string"
+                    },
+                    "Category": {
+                        "type": "string"
                     },
                     "Input": {
                         "$ref": "#/definitions/goods"
-                    }
+                    },
+                    "Output": {
+                        "$ref": "#/definitions/goods"
+                    },
+                    "Workplace": {
+                        "$ref": "#/definitions/workplace"
+                    },
+                    "Construction": {
+                        "properties": {
+                            "Workplace": {
+                                "$ref": "#/definitions/workplace"
+                            },
+                            "Input": {
+                                "$ref": "#/definitions/goods"
+                            }
+                        },
+                        "required": [
+                            "Workplace"
+                        ],
+                        "additionalProperties": false
+                    },
+                    "Market": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "RemoveRequest": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "Agent": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "Speed": {
+                        "$ref": "#/definitions/nonNegativeNumber"
+                    },
+                    "Housing": {
+                        "properties": {
+                            "MaxBeds": {
+                                "$ref": "#/definitions/nonNegativeInteger"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "HungerRate": {
+                        "$ref": "#/definitions/nonNegativeNumber"
+                    },
+                    "TirednessRate": {
+                        "$ref": "#/definitions/nonNegativeNumber"
+                    },
+                    "TransportCapacity": {
+                        "$ref": "#/definitions/nonNegativeInteger"
+                    },
+                    "WantsHousing": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "WantsWork": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "WantsRecreation": {
+                        "$ref": "#/definitions/emptyObject"
+                    },
+                    "additionalProperties": false
                 },
                 "required": [
-                    "Workplace"
+                    "Name",
+                    "Texture"
                 ],
                 "additionalProperties": false
-            },
-            "Market": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "RemoveRequest": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "Agent": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "Speed": {
-                "$ref": "#/definitions/nonNegativeNumber"
-            },
-            "Housing": {
-                "properties": {
-                    "MaxBeds": {
-                        "$ref": "#/definitions/nonNegativeInteger"
-                    }
-                },
-                "additionalProperties": false
-            },
-            "HungerRate": {
-                "$ref": "#/definitions/nonNegativeNumber"
-            },
-            "TirednessRate": {
-                "$ref": "#/definitions/nonNegativeNumber"
-            },
-            "TransportCapacity": {
-                "$ref": "#/definitions/nonNegativeInteger"
-            },
-            "WantsHousing": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "WantsWork": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "WantsRecreation": {
-                "$ref": "#/definitions/emptyObject"
-            },
-            "additionalProperties": false
-        },
-        "required": [
-            "Name",
-            "Texture"
-        ],
-        "additionalProperties": false
+            }
+        }
     }
 }

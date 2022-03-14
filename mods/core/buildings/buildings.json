@@ -1,187 +1,189 @@
 {
-    "$schema": "../../../schemas/buildings-schema.json",
+  "$schema": "../../../schemas/buildings-schema.json",
+  "data": {
     "Bakery": {
-        "Name": "Bakery",
-        "Texture": "bakery.png",
-        "Category": "Food",
+      "Name": "Bakery",
+      "Texture": "bakery.png",
+      "Category": "Food",
+      "Workplace": {
+        "MaxEmployees": 3,
+        "Difficulty": 10
+      },
+      "Input": {
+        "Flour": 3
+      },
+      "Output": {
+        "Food": 5
+      },
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 3,
-            "Difficulty": 10
+          "MaxEmployees": 2,
+          "Difficulty": 10
         },
         "Input": {
-            "Flour": 3
-        },
-        "Output": {
-            "Food": 5
-        },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 2,
-                "Difficulty": 10
-            },
-            "Input": {
-                "Wood": 8
-            }
+          "Wood": 8
         }
+      }
     },
     "Cart": {
-        "Name": "Cart",
-        "Texture": "cart.png",
-        "Category": "Transportation",
-        "Agent": {},
-        "Speed": 300,
-        "TransportCapacity": 10
+      "Name": "Cart",
+      "Texture": "cart.png",
+      "Category": "Transportation",
+      "Agent": {},
+      "Speed": 300,
+      "TransportCapacity": 10
     },
     "Field": {
-        "Name": "Field",
-        "Texture": "field.png",
-        "Category": "Food",
+      "Name": "Field",
+      "Texture": "field.png",
+      "Category": "Food",
+      "Workplace": {
+        "MaxEmployees": 2,
+        "Difficulty": 5
+      },
+      "Output": {
+        "Wheat": 1
+      },
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 2,
-            "Difficulty": 5
-        },
-        "Output": {
-            "Wheat": 1
-        },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 2,
-                "Difficulty": 2
-            }
+          "MaxEmployees": 2,
+          "Difficulty": 2
         }
+      }
     },
     "House": {
-        "Name": "House",
-        "Texture": "house.png",
-        "Housing": {
-            "MaxBeds": 4
+      "Name": "House",
+      "Texture": "house.png",
+      "Housing": {
+        "MaxBeds": 4
+      },
+      "Construction": {
+        "Workplace": {
+          "MaxEmployees": 4,
+          "Difficulty": 10
         },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 4,
-                "Difficulty": 10
-            },
-            "Input": {
-                "Wood": 5
-            }
+        "Input": {
+          "Wood": 5
         }
+      }
     },
     "Human": {
-        "Name": "Human",
-        "Texture": "human.png",
-        "Category": "Debug",
-        "Agent": {},
-        "Speed": 100,
-        "HungerRate": 0.1,
-        "TirednessRate": 0.5,
-        "WantsHousing": {},
-        "WantsWork": {},
-        "WantsRecreation": {}
+      "Name": "Human",
+      "Texture": "human.png",
+      "Category": "Debug",
+      "Agent": {},
+      "Speed": 100,
+      "HungerRate": 0.1,
+      "TirednessRate": 0.5,
+      "WantsHousing": {},
+      "WantsWork": {},
+      "WantsRecreation": {}
     },
     "Market": {
-        "Name": "Market",
-        "Texture": "market.png",
+      "Name": "Market",
+      "Texture": "market.png",
+      "Workplace": {
+        "MaxEmployees": 1,
+        "Difficulty": 1
+      },
+      "Market": {},
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 1,
-            "Difficulty": 1
+          "MaxEmployees": 5,
+          "Difficulty": 20
         },
-        "Market": {},
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 5,
-                "Difficulty": 20
-            },
-            "Input": {
-                "Wood": 20,
-                "Stone": 10
-            }
+        "Input": {
+          "Wood": 20,
+          "Stone": 10
         }
+      }
     },
     "Quarry": {
-        "Name": "Quarry",
-        "Texture": "quarry.png",
-        "Category": "Production",
+      "Name": "Quarry",
+      "Texture": "quarry.png",
+      "Category": "Production",
+      "Workplace": {
+        "MaxEmployees": 2,
+        "Difficulty": 5
+      },
+      "Output": {
+        "Stone": 2
+      },
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 2,
-            "Difficulty": 5
+          "MaxEmployees": 4,
+          "Difficulty": 10
         },
-        "Output": {
-            "Stone": 2
-        },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 4,
-                "Difficulty": 10
-            },
-            "Input": {
-                "Wood": 5
-            }
+        "Input": {
+          "Wood": 5
         }
+      }
     },
     "Remove": {
-        "Name": "Remove",
-        "Texture": "remove.png",
-        "Category": "Tools",
-        "RemoveRequest": {}
+      "Name": "Remove",
+      "Texture": "remove.png",
+      "Category": "Tools",
+      "RemoveRequest": {}
     },
     "Sawmill": {
-        "Name": "Sawmill",
-        "Texture": "sawmill.png",
-        "Category": "Production",
+      "Name": "Sawmill",
+      "Texture": "sawmill.png",
+      "Category": "Production",
+      "Workplace": {
+        "MaxEmployees": 4,
+        "Difficulty": 5
+      },
+      "Input": {
+        "Wood": 1
+      },
+      "Output": {
+        "Plank": 1
+      },
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 4,
-            "Difficulty": 5
+          "MaxEmployees": 4,
+          "Difficulty": 20
         },
         "Input": {
-            "Wood": 1
-        },
-        "Output": {
-            "Plank": 1
-        },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 4,
-                "Difficulty": 20
-            },
-            "Input": {
-                "Wood": 10
-            }
+          "Wood": 10
         }
+      }
     },
     "Tree": {
-        "Name": "Tree",
-        "Texture": "tree.png",
-        "Category": "Debug",
-        "Workplace": {
-            "MaxEmployees": 1,
-            "Difficulty": 10
-        },
-        "Output": {
-            "Wood": 5
-        }
+      "Name": "Tree",
+      "Texture": "tree.png",
+      "Category": "Debug",
+      "Workplace": {
+        "MaxEmployees": 1,
+        "Difficulty": 10
+      },
+      "Output": {
+        "Wood": 5
+      }
     },
     "Windmill": {
-        "Name": "Windmill",
-        "Texture": "windmill.png",
-        "Category": "Food",
+      "Name": "Windmill",
+      "Texture": "windmill.png",
+      "Category": "Food",
+      "Workplace": {
+        "MaxEmployees": 3,
+        "Difficulty": 5
+      },
+      "Input": {
+        "Wheat": 1
+      },
+      "Output": {
+        "Flour": 3
+      },
+      "Construction": {
         "Workplace": {
-            "MaxEmployees": 3,
-            "Difficulty": 5
+          "MaxEmployees": 2,
+          "Difficulty": 20
         },
         "Input": {
-            "Wheat": 1
-        },
-        "Output": {
-            "Flour": 3
-        },
-        "Construction": {
-            "Workplace": {
-                "MaxEmployees": 2,
-                "Difficulty": 20
-            },
-            "Input": {
-                "Wood": 8
-            }
+          "Wood": 8
         }
+      }
     }
+  }
 }
