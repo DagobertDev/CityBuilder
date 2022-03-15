@@ -243,6 +243,7 @@ namespace CityBuilder
 		private void On(in OpenMainMenuMessage message)
 		{
 			GetNode("GUI").RemoveChild(inGameUI);
+			inGameUI!.QueueFree();
 			MainMenu.Visible = true;
 		}
 
