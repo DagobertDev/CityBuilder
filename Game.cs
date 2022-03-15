@@ -164,6 +164,11 @@ namespace CityBuilder
 		[Subscribe]
 		private void On(in BlueprintPlacedMessage message)
 		{
+			if (message.Position.Value is not { X: > 0 and < MapSize, Y: > 0 and < MapSize })
+			{
+				return;
+			}
+
 			if (false)
 			{
 				var random = new Random();
