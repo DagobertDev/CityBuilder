@@ -29,8 +29,8 @@ namespace CityBuilder
 		public static World World { get; } = new();
 		public static IPublisher Publisher => World;
 
-		private Node2D? _entityRoot;
-		private Node2D EntityRoot => _entityRoot ??= GetNode<Node2D>("YSort/Navigation");
+		private Map? _map;
+		private Map Map => _map ??= GetNode<Map>("Map");
 
 		private CanvasItem? _mainMenu;
 		public CanvasItem MainMenu => _mainMenu ??= FindNode<CanvasItem>("MainMenu");
@@ -49,21 +49,7 @@ namespace CityBuilder
 
 		public override void _Ready()
 		{
-			var navigationPolygon = new NavigationPolygon();
-			navigationPolygon.AddOutline(new[]
-			{
-				Vector2.Zero,
-				Vector2.Right * MapSize,
-				Vector2.One * MapSize,
-				Vector2.Down * MapSize,
-			});
-
-			navigationPolygon.MakePolygonsFromOutlines();
-
-			EntityRoot.AddChild(new NavigationPolygonInstance
-			{
-				Navpoly = navigationPolygon,
-			});
+			Map.Initialize(new Vector2(MapSize, MapSize));
 
 			World.SubscribeComponentAdded((in Entity entity, in Sprite sprite) =>
 			{
@@ -108,7 +94,7 @@ namespace CityBuilder
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
-				new SpriteCreationSystem(World, EntityRoot),
+				new SpriteCreationSystem(World, Map.EntityRoot),
 				new SpritePositionSystem(World),
 				new NavigationInitSystem(World),
 				new NavigationDestinationSystem(World),
@@ -218,21 +204,9 @@ namespace CityBuilder
 		{
 			MainMenu.Visible = false;
 
-			foreach (var entity in World)
-			{
-				entity.Dispose();
-			}
-
-			var map = GD.Load<PackedScene>("user://map.scn").Instance();
-			map.Name = "Map";
-
-			if (EntityRoot.GetNodeOrNull("Map") is { } oldMap)
-			{
-				EntityRoot.RemoveChild(oldMap);
-				oldMap.Free();
-			}
-
-			EntityRoot.AddChild(map);
+			var mapBackground = GD.Load<PackedScene>("user://map.scn").Instance();
+			mapBackground.Name = "Background";
+			Map.AddChild(mapBackground);
 
 			inGameUI = GD.Load<PackedScene>("res://GUI/InGameUI.tscn").Instance();
 			GetNode("GUI").AddChild(inGameUI);
@@ -276,6 +250,14 @@ namespace CityBuilder
 		[Subscribe]
 		private void On(in OpenMainMenuMessage message)
 		{
+			foreach (var entity in World)
+			{
+				entity.Dispose();
+			}
+
+			Map.RemoveChild(Map.GetNode("Background"));
+			Map.Reset();
+
 			GetNode("GUI").RemoveChild(inGameUI);
 			inGameUI!.QueueFree();
 			MainMenu.Visible = true;
