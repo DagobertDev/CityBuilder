@@ -236,7 +236,36 @@ namespace CityBuilder
 
 			inGameUI = GD.Load<PackedScene>("res://GUI/InGameUI.tscn").Instance();
 			GetNode("GUI").AddChild(inGameUI);
+
+			for (var i = 0; i <= message.Population; i++)
+			{
+				World.Publish(new BlueprintPlacedMessage(Global.Blueprints["Human"], new Position(100 * i, 100), 0));
+			}
 		}
+
+		private void NavigateToMainMenu(string subMenu)
+		{
+			var overview = FindNode<CanvasItem>("Overview");
+			var newGameMenu = FindNode<CanvasItem>("NewGameMenu");
+
+			if (subMenu == "NewGameMenu")
+			{
+				overview.Visible = false;
+				newGameMenu.Visible = true;
+			}
+
+			else
+			{
+				newGameMenu.Visible = false;
+				overview.Visible = true;
+			}
+		}
+
+		public void ExitGame()
+		{
+			GetTree().Quit();
+		}
+
 
 		[Subscribe]
 		private void On(in CloseInGameMenuMessage message)
@@ -250,6 +279,7 @@ namespace CityBuilder
 			GetNode("GUI").RemoveChild(inGameUI);
 			inGameUI!.QueueFree();
 			MainMenu.Visible = true;
+			NavigateToMainMenu("Overview");
 		}
 
 		private T FindNode<T>(NodePath nodePath) where T : Node => (T)FindNode(nodePath, owned: false);

@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
+[ext_resource path="res://GUI/NewGameMenu.cs" type="Script" id=1]
 [ext_resource path="res://Camera.cs" type="Script" id=2]
-[ext_resource path="res://GUI/ExitButton.cs" type="Script" id=3]
 [ext_resource path="res://Game.cs" type="Script" id=4]
 [ext_resource path="res://GUI/BlueprintGhost.cs" type="Script" id=5]
-[ext_resource path="res://GUI/NewGameButton.cs" type="Script" id=11]
 
 [node name="CityBuilder" type="Control"]
 script = ExtResource( 4 )
@@ -34,28 +33,55 @@ __meta__ = {
 [node name="CenterContainer" type="CenterContainer" parent="GUI/MainMenu"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GUI/MainMenu/CenterContainer"]
+[node name="Overview" type="VBoxContainer" parent="GUI/MainMenu/CenterContainer"]
 margin_left = 471.0
 margin_top = 278.0
 margin_right = 553.0
 margin_bottom = 322.0
 
-[node name="NewGame" type="Button" parent="GUI/MainMenu/CenterContainer/VBoxContainer"]
+[node name="NewGame" type="Button" parent="GUI/MainMenu/CenterContainer/Overview"]
 margin_right = 82.0
 margin_bottom = 20.0
 text = "New Game"
-script = ExtResource( 11 )
 
-[node name="Exit" type="Button" parent="GUI/MainMenu/CenterContainer/VBoxContainer"]
+[node name="Exit" type="Button" parent="GUI/MainMenu/CenterContainer/Overview"]
 margin_top = 24.0
 margin_right = 82.0
 margin_bottom = 44.0
 text = "Exit"
-script = ExtResource( 3 )
+
+[node name="NewGameMenu" type="VBoxContainer" parent="GUI/MainMenu/CenterContainer"]
+visible = false
+margin_left = 470.0
+margin_top = 255.0
+margin_right = 553.0
+margin_bottom = 345.0
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="GUI/MainMenu/CenterContainer/NewGameMenu"]
+margin_right = 83.0
+margin_bottom = 14.0
+text = "Population:"
+
+[node name="Humans" type="SpinBox" parent="GUI/MainMenu/CenterContainer/NewGameMenu"]
+margin_top = 18.0
+margin_right = 83.0
+margin_bottom = 42.0
+min_value = 1.0
+value = 1.0
+
+[node name="Start Game" type="Button" parent="GUI/MainMenu/CenterContainer/NewGameMenu"]
+margin_top = 46.0
+margin_right = 83.0
+margin_bottom = 66.0
+text = "Start Game"
+
+[node name="Back" type="Button" parent="GUI/MainMenu/CenterContainer/NewGameMenu"]
+margin_top = 70.0
+margin_right = 83.0
+margin_bottom = 90.0
+text = "Go Back"
 
 [node name="BlueprintGhost" type="Sprite" parent="."]
 z_index = 1024
@@ -65,3 +91,8 @@ script = ExtResource( 5 )
 
 [node name="Navigation" type="Navigation2D" parent="YSort"]
 cell_size = 64.0
+
+[connection signal="pressed" from="GUI/MainMenu/CenterContainer/Overview/NewGame" to="." method="NavigateToMainMenu" binds= [ "NewGameMenu" ]]
+[connection signal="pressed" from="GUI/MainMenu/CenterContainer/Overview/Exit" to="." method="ExitGame"]
+[connection signal="pressed" from="GUI/MainMenu/CenterContainer/NewGameMenu/Start Game" to="GUI/MainMenu/CenterContainer/NewGameMenu" method="StartNewGame"]
+[connection signal="pressed" from="GUI/MainMenu/CenterContainer/NewGameMenu/Back" to="." method="NavigateToMainMenu" binds= [ "Overview" ]]
