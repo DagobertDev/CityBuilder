@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+ [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://GUI/EntityInspector.cs" type="Script" id=1]
 [ext_resource path="res://GUI/InventoryInspector.cs" type="Script" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://GUI/EntityDebugInspector.cs" type="Script" id=4]
 [ext_resource path="res://GUI/JsonTree.cs" type="Script" id=5]
 [ext_resource path="res://GUI/DebugConsole.cs" type="Script" id=6]
-[ext_resource path="res://GUI/ExitButton.cs" type="Script" id=7]
 [ext_resource path="res://GUI/ContinueButton.cs" type="Script" id=8]
 [ext_resource path="res://GUI/Blueprints.cs" type="Script" id=9]
 [ext_resource path="res://GUI/InGameMenu.cs" type="Script" id=10]
@@ -15,9 +14,6 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="InGameMenu" type="CenterContainer" parent="."]
 visible = false
@@ -52,7 +48,6 @@ margin_top = 48.0
 margin_right = 91.0
 margin_bottom = 68.0
 text = "Leave Game"
-script = ExtResource( 7 )
 
 [node name="DebugConsole" type="LineEdit" parent="."]
 visible = false
