@@ -204,8 +204,9 @@ namespace CityBuilder
 		{
 			MainMenu.Visible = false;
 
-			var mapBackground = GD.Load<PackedScene>("user://map.scn").Instance();
+			var mapBackground = GD.Load<PackedScene>("user://map.scn").Instance<Node2D>();
 			mapBackground.Name = "Background";
+			mapBackground.ZIndex = -128;
 			Map.AddChild(mapBackground);
 
 			inGameUI = GD.Load<PackedScene>("res://GUI/InGameUI.tscn").Instance();
