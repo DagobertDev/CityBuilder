@@ -16,6 +16,7 @@ public sealed class AISystem : ISystem<float>
 			new EatDecisionSystem(world),
 			new SleepDecisionSystem(world),
 			new WorkingDecisionSystem(world),
+			new CollectResourceDecisionSystem(world),
 			new TransportDecisionSystem(world),
 			new WanderAroundDecisionSystem(world),
 			new DoNothingDecisionSystem(world),
@@ -27,6 +28,7 @@ public sealed class AISystem : ISystem<float>
 			new EatStateSystem(world),
 			new SleepStateSystem(world),
 			new WorkingStateSystem(world),
+			new CollectResourceStateSystem(world),
 			new TransportStateSystem(world),
 			new WanderAroundStateSystem(world, mapSize),
 			new DoNothingStateSystem(world)

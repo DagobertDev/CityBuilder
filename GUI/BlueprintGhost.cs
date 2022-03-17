@@ -113,7 +113,8 @@ namespace CityBuilder.GUI
 				size = new Vector2(size.Y, size.X);
 			}
 
-			CanBuild = Blueprint is { RemoveRequest: { } } || Game.World.Get<ICollisionSystem>()
+			CanBuild = Blueprint is { RemoveRequest: { } } or { CollectResource: { } } || Game.World
+				.Get<ICollisionSystem>()
 				.GetEntities(new HitBox(position.ToNumericsVector(), size, default)).All(entity => entity.Has<Agent>());
 		}
 

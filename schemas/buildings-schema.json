@@ -77,6 +77,20 @@
                         ],
                         "additionalProperties": false
                     },
+                    "Resource": {
+                        "properties": {
+                            "Type": {
+                                "type": "string"
+                            },
+                            "Difficulty": {
+                                "$ref": "#/definitions/nonNegativeNumber"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "CollectResource": {
+                        "type": "string"
+                    },
                     "Market": {
                         "$ref": "#/definitions/emptyObject"
                     },

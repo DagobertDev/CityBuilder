@@ -51,6 +51,12 @@
         }
       }
     },
+    "CutTrees": {
+      "Name": "Cut Trees",
+      "Texture": "cut_trees.png",
+      "Category": "Tools",
+      "CollectResource": "Tree"
+    },
     "House": {
       "Name": "House",
       "Texture": "house.png",
@@ -153,12 +159,12 @@
       "Name": "Tree",
       "Texture": "tree.png",
       "Category": "Debug",
-      "Workplace": {
-        "MaxEmployees": 1,
-        "Difficulty": 10
-      },
       "Output": {
         "Wood": 5
+      },
+      "Resource": {
+        "Type": "Tree",
+        "Difficulty": 10
       }
     },
     "Windmill": {

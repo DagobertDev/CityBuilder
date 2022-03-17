@@ -94,6 +94,7 @@ namespace CityBuilder
 
 			_system = new SequentialSystem<float>(
 				new RemoveSystem(World, collisionSystem),
+				new CollectResourceSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, Map.EntityRoot),
 				new SpritePositionSystem(World),
 				new NavigationInitSystem(World),

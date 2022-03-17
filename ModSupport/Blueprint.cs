@@ -9,6 +9,7 @@ using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 using Godot;
 using Input = CityBuilder.Core.Components.Production.Input;
+using Resource = CityBuilder.Core.Components.Production.Resource;
 
 namespace CityBuilder.ModSupport
 {
@@ -19,6 +20,7 @@ namespace CityBuilder.ModSupport
 		string? Category,
 		Housing? Housing,
 		Workplace? Workplace,
+		Resource? Resource,
 		Blueprint.SerializedGoods? Input,
 		Blueprint.SerializedGoods? Output,
 		Agent? Agent,
@@ -26,6 +28,7 @@ namespace CityBuilder.ModSupport
 		int? TransportCapacity,
 		Blueprint.SerializedConstruction? Construction,
 		RemoveRequest? RemoveRequest,
+		string? CollectResource,
 		float? HungerRate,
 		float? TirednessRate,
 		WantsHousing? WantsHousing,
@@ -44,6 +47,11 @@ namespace CityBuilder.ModSupport
 			if (Workplace is { } workplace)
 			{
 				entity.Set(workplace);
+			}
+
+			if (Resource is { } resource)
+			{
+				entity.Set(resource);
 			}
 
 			if (Input is { } input)
@@ -105,6 +113,11 @@ namespace CityBuilder.ModSupport
 			if (RemoveRequest is { } removeRequest)
 			{
 				entity.Set(removeRequest);
+			}
+
+			if (CollectResource is { } collectResource)
+			{
+				entity.Set(new CollectResource(collectResource));
 			}
 
 			entity.Set(Texture);
