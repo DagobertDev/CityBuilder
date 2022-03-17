@@ -118,7 +118,9 @@ namespace CityBuilder
 				new CheckOutputSystem(World, inventorySystem),
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
-				new ConstructionProgressVisualisationSystem(World));
+				new ConstructionProgressVisualisationSystem(World),
+				new ResourcePileVisualisationSystem(World),
+				new ResourcePileRemovalSystem(World));
 
 			var textureManager = new TextureManager();
 			textureManager.Manage(World);
@@ -217,6 +219,8 @@ namespace CityBuilder
 			{
 				World.Publish(new BlueprintPlacedMessage(Global.Blueprints["Human"], new Position(100 * i, 100), 0));
 			}
+
+			World.Get<IInventorySystem>().CreatePile(new Position(200, 100), "Wood", 10);
 		}
 
 		private void NavigateToMainMenu(string subMenu)

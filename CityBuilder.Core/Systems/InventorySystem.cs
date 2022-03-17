@@ -44,6 +44,21 @@ public class InventorySystem : IInventorySystem
 	public Entity GetGood(Entity owner, string name) =>
 		_ownerAndGood[(new Owner(owner), new Good(name))];
 
+	public Entity CreatePile(Position position, string good, int amount)
+	{
+		var entity = World.CreateEntity();
+		entity.Set(new Good(good));
+		entity.Set<Amount>(amount);
+
+		entity.Set(position);
+
+		entity.Set<ResourcePile>();
+		entity.Set<InventoryPriority>(Priority.Low);
+		entity.Set<Capacity>(amount);
+
+		return entity;
+	}
+
 	public ICollection<Entity> GetGoods(Entity owner)
 	{
 		if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
