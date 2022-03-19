@@ -9,8 +9,11 @@ namespace CityBuilder.Core.Systems.AI;
 
 public sealed partial class CollectResourceStateSystem : AEntitySetSystem<float>
 {
+	[ConstructorParameter]
+	private readonly IInventorySystem _inventorySystem;
+
 	[Update, UseBuffer]
-	private static void Update(in Entity entity, in CollectingResource collecting, [Changed] BehaviorState state)
+	private void Update(in Entity entity, in CollectingResource collecting, [Changed] BehaviorState state)
 	{
 		if (!collecting.Resource.IsAlive)
 		{
@@ -26,7 +29,11 @@ public sealed partial class CollectResourceStateSystem : AEntitySetSystem<float>
 				entity.Set<Waiting>(collecting.Resource.Get<Resource>().Difficulty);
 				break;
 			case Finished:
-				collecting.Resource.Dispose();
+				var resourceEntity = collecting.Resource;
+				var (good, amount) = resourceEntity.Get<Output>();
+				resourceEntity.Dispose();
+				_inventorySystem.CreatePile(resourceEntity.Get<Position>(), good, amount);
+
 				entity.Remove<CollectingResource>();
 				entity.Set(BehaviorState.Deciding);
 				break;

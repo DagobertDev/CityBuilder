@@ -8,7 +8,7 @@ public sealed class AISystem : ISystem<float>
 {
 	private readonly ISystem<float> _system;
 
-	public AISystem(World world, Vector2 mapSize)
+	public AISystem(World world, Vector2 mapSize, IInventorySystem inventorySystem)
 	{
 		_system = new SequentialSystem<float>
 		(
@@ -28,7 +28,7 @@ public sealed class AISystem : ISystem<float>
 			new EatStateSystem(world),
 			new SleepStateSystem(world),
 			new WorkingStateSystem(world),
-			new CollectResourceStateSystem(world),
+			new CollectResourceStateSystem(world, inventorySystem),
 			new TransportStateSystem(world),
 			new WanderAroundStateSystem(world, mapSize),
 			new DoNothingStateSystem(world)

@@ -103,7 +103,7 @@ namespace CityBuilder
 				new MovementSystem(World),
 				collisionSystem,
 				new LocationSensorSystem(World),
-				new AISystem(World, System.Numerics.Vector2.One * MapSize),
+				new AISystem(World, System.Numerics.Vector2.One * MapSize, inventorySystem),
 				new TransportReservationSystem(World),
 				new WaitingSystem(World),
 				new HungerSystem(World),

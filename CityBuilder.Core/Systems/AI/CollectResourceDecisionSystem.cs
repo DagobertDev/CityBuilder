@@ -2,12 +2,14 @@ using System;
 using System.Numerics;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
+using CityBuilder.Core.Components.Needs;
 using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 using DefaultEcs.System;
 
 namespace CityBuilder.Core.Systems.AI;
 
+[With(typeof(WantsWork))]
 public sealed partial class CollectResourceDecisionSystem : AEntitySetSystem<float>
 {
 	private readonly EntitySet _resources;
