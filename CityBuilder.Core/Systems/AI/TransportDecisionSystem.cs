@@ -17,12 +17,12 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 
 	public TransportDecisionSystem(World world) : base(world, true)
 	{
-		_highPriority = world.GetEntities().With<Position>().Without<Agent>()
-			.With((in InventoryPriority value) => value == Priority.High)
+		_highPriority = world.GetEntities().With<Position>()
+			.With((in InventoryType value) => value == InventoryType.Demand)
 			.With((in FutureUnusedCapacity capacity) => capacity > 0)
 			.AsMultiMap<Good>();
-		_mediumPriority = world.GetEntities().With<Position>().Without<Agent>()
-			.With((in InventoryPriority value) => value == Priority.Medium)
+		_mediumPriority = world.GetEntities().With<Position>()
+			.With((in InventoryType value) => value == InventoryType.Market)
 			.With((in FutureUnusedCapacity capacity) => capacity > 0)
 			.AsMultiMap<Good>();
 		_transporters = world.GetEntities().With<TransportCapacity>()
@@ -31,7 +31,7 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 	}
 
 	[Update]
-	private void Update(in Good good, in Entity source, in InventoryPriority priority)
+	private void Update(in Good good, in Entity source, in InventoryType type)
 	{
 		if (_transporters.Count == 0)
 		{
@@ -43,7 +43,7 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 			StartTransport(source, good, highDemand);
 		}
 
-		else if (priority == Priority.Low && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
+		else if (type == InventoryType.Supply && _mediumPriority.TryGetEntities(good, out var mediumDemand) &&
 				 !mediumDemand.IsEmpty)
 		{
 			StartTransport(source, good, mediumDemand);
@@ -61,7 +61,7 @@ public sealed partial class TransportDecisionSystem : AEntityMultiMapSystem<floa
 	}
 
 	[WithPredicate]
-	private static bool Filter(in InventoryPriority priority) => priority != Priority.High;
+	private static bool Filter(in InventoryType type) => type is InventoryType.Supply or InventoryType.Market;
 
 	[WithPredicate]
 	private static bool Filter(in FutureAmount amount) => amount > 0;

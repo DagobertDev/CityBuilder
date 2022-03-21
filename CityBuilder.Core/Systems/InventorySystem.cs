@@ -53,7 +53,7 @@ public class InventorySystem : IInventorySystem
 		entity.Set(position);
 
 		entity.Set<ResourcePile>();
-		entity.Set<InventoryPriority>(Priority.Low);
+		entity.Set(InventoryType.Supply);
 		entity.Set<Capacity>(amount);
 
 		return entity;
@@ -89,7 +89,7 @@ public class InventorySystem : IInventorySystem
 
 		if (owner.Has<Input>() && owner.Get<Input>().Value.ContainsKey(good))
 		{
-			entity.Set<InventoryPriority>(Priority.High);
+			entity.Set(InventoryType.Demand);
 
 			if (owner.Has<Construction>())
 			{
@@ -102,12 +102,17 @@ public class InventorySystem : IInventorySystem
 		}
 		else if (owner.Has<Output>() && owner.Get<Output>().Good == good)
 		{
-			entity.Set<InventoryPriority>(Priority.Low);
+			entity.Set(InventoryType.Supply);
+			entity.Set<Capacity>(DefaultInventoryCapacity);
+		}
+		else if (owner.Has<Market>())
+		{
+			entity.Set(InventoryType.Market);
 			entity.Set<Capacity>(DefaultInventoryCapacity);
 		}
 		else
 		{
-			entity.Set<InventoryPriority>(Priority.Medium);
+			entity.Set(InventoryType.Manual);
 			entity.Set<Capacity>(DefaultInventoryCapacity);
 		}
 	}
