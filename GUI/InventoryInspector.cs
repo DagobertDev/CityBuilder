@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Inventory;
@@ -179,13 +180,54 @@ namespace CityBuilder.GUI
 			{
 				AddHeading("Inventory");
 
-				foreach (var good in goods)
-				{
-					var description = Global.GoodDescriptions[good.Get<Good>().Name];
+				var goodsByType = goods.ToLookup(g => g.Get<InventoryType>());
 
-					AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
-							$"Incoming: {good.Get<UnusedCapacity>() - good.Get<FutureUnusedCapacity>()} " +
-							$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}", description.Icon);
+				if (goodsByType.Contains(InventoryType.Manual))
+				{
+					foreach (var good in goodsByType[InventoryType.Manual])
+					{
+						var description = Global.GoodDescriptions[good.Get<Good>().Name];
+
+						AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value}",
+							description.Icon);
+					}
+				}
+
+				if (goodsByType.Contains(InventoryType.Market))
+				{
+					foreach (var good in goodsByType[InventoryType.Market])
+					{
+						var description = Global.GoodDescriptions[good.Get<Good>().Name];
+
+						AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
+								$"Incoming: {good.Get<UnusedCapacity>() - good.Get<FutureUnusedCapacity>()} " +
+								$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}", description.Icon);
+					}
+				}
+
+				if (goodsByType.Contains(InventoryType.Demand))
+				{
+					AddItem("Input:");
+					foreach (var good in goodsByType[InventoryType.Demand])
+					{
+						var description = Global.GoodDescriptions[good.Get<Good>().Name];
+
+						AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
+								$"Incoming: {good.Get<UnusedCapacity>() - good.Get<FutureUnusedCapacity>()}",
+							description.Icon);
+					}
+				}
+
+				if (goodsByType.Contains(InventoryType.Supply))
+				{
+					AddItem("Output:");
+					foreach (var good in goodsByType[InventoryType.Supply])
+					{
+						var description = Global.GoodDescriptions[good.Get<Good>().Name];
+
+						AddItem($"{description.Name}: {good.Get<Amount>().Value} / {good.Get<Capacity>().Value} " +
+								$"Outgoing: {good.Get<Amount>() - good.Get<FutureAmount>()}", description.Icon);
+					}
 				}
 			}
 		}
