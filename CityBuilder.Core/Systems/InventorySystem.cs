@@ -11,20 +11,16 @@ public class InventorySystem : IInventorySystem
 {
 	private const int DefaultInventoryCapacity = 100;
 	private World World { get; }
-	private readonly EntityMap<(Owner, Good)> _ownerAndGood;
-	private readonly EntityMultiMap<Owner> _goodsByOwner;
 
 	public InventorySystem(World world)
 	{
 		World = world;
-		_ownerAndGood = World.GetEntities().AsMap<(Owner, Good)>();
-		_goodsByOwner = World.GetEntities().AsMultiMap<Owner>();
 
-		world.SubscribeEntityDisposed((in Entity entity) =>
+		World.SubscribeComponentRemoved((in Entity _, in Inventory inventory) =>
 		{
-			foreach (var inventory in GetGoods(entity))
+			foreach (var good in inventory.Values)
 			{
-				inventory.Dispose();
+				good.Dispose();
 			}
 		});
 	}
@@ -41,8 +37,7 @@ public class InventorySystem : IInventorySystem
 		return inventory;
 	}
 
-	public Entity GetGood(Entity owner, string name) =>
-		_ownerAndGood[(new Owner(owner), new Good(name))];
+	public Entity GetGood(Entity owner, string name) => owner.Get<Inventory>()[name];
 
 	public Entity CreatePile(Position position, string good, int amount)
 	{
@@ -59,24 +54,30 @@ public class InventorySystem : IInventorySystem
 		return entity;
 	}
 
-	public ICollection<Entity> GetGoods(Entity owner)
-	{
-		if (_goodsByOwner.TryGetEntities(new Owner(owner), out var entities))
-		{
-			return entities.ToArray();
-		}
-
-		return Array.Empty<Entity>();
-	}
+	public ICollection<Entity> GetGoods(Entity owner) =>
+		owner.Has<Inventory>() ? owner.Get<Inventory>().Values : Array.Empty<Entity>();
 
 	public void EnsureCreated(Entity owner, string good)
 	{
-		if (_ownerAndGood.ContainsKey((new Owner(owner), new Good(good))))
+		Inventory ownerInventory;
+
+		if (owner.Has<Inventory>())
+		{
+			ownerInventory = owner.Get<Inventory>();
+		}
+		else
+		{
+			ownerInventory = new Inventory(4);
+			owner.Set(ownerInventory);
+		}
+
+		if (ownerInventory.ContainsKey(good))
 		{
 			return;
 		}
 
 		var entity = World.CreateEntity();
+		ownerInventory[good] = entity;
 		entity.Set(new Owner(owner));
 		entity.Set(new Good(good));
 		entity.Set<Amount>(0);
