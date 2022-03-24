@@ -15,19 +15,12 @@ public sealed partial class ProductionWithInputSystem : AEntitySetSystem<float>
 	private readonly IInventorySystem _inventorySystem;
 
 	[Update, UseBuffer]
-	private void Update(in Entity workplace, ref WorkProgress workProgress, in Output output, in Input required)
+	private void Update(in Entity workplace, in WorkProgress workProgress, in Output output, in Input required)
 	{
 		var inventory = _inventorySystem.GetGood(workplace, output.Good);
 
 		inventory.Set<Amount>(inventory.Get<Amount>() + output.Amount);
-
-		if (inventory.Get<UnusedCapacity>() < output.Amount)
-		{
-			workplace.AddFlag(CanNotWorkReason.InventoryFull);
-		}
-
-		workProgress -= 1;
-		workplace.NotifyChanged<WorkProgress>();
+		workplace.Set<WorkProgress>(workProgress - 1);
 
 		var newAmount = new List<(Entity, int)>(required.Value.Count);
 
