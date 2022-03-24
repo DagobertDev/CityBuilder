@@ -1,17 +1,14 @@
-using System;
-using System.Reflection.Emit;
 using DefaultEcs;
 
 namespace CityBuilder.Core.Components.Flags;
 
 public static class FlagExtension
 {
-	public static void AddFlag<T>(this Entity entity, T value) where T : struct, Enum
+	public static void AddFlag(this Entity entity, CanNotWorkReason value)
 	{
-		if (entity.Has<T>())
+		if (entity.Has<CanNotWorkReason>())
 		{
-			var toLong = Converter<T>.ToLong;
-			entity.Set((T)(object)(toLong(entity.Get<T>()) | toLong(value)));
+			entity.Set(entity.Get<CanNotWorkReason>() | value);
 		}
 		else
 		{
@@ -19,42 +16,23 @@ public static class FlagExtension
 		}
 	}
 
-	public static void RemoveFlag<T>(this Entity entity, T removedValue) where T : struct, Enum
+	public static void RemoveFlag(this Entity entity, CanNotWorkReason value)
 	{
-		var toLong = Converter<T>.ToLong;
-
-		var value = toLong(entity.Get<T>());
-		value &= ~toLong(removedValue);
-
-		if (value == 0)
+		if (!entity.Has<CanNotWorkReason>())
 		{
-			entity.Remove<T>();
+			return;
+		}
+
+		var newValue = entity.Get<CanNotWorkReason>();
+		newValue &= ~value;
+
+		if (newValue == 0)
+		{
+			entity.Remove<CanNotWorkReason>();
 		}
 		else
 		{
-			entity.Set((T)(object)value);
-		}
-	}
-
-	private static class Converter<TEnum> where TEnum : struct, Enum
-	{
-		public static readonly Func<TEnum, long> ToLong = CreateConvertToLong<TEnum>();
-
-		private static Func<T, long> CreateConvertToLong<T>() where T : struct, Enum
-		{
-			var method = new DynamicMethod(
-				"ConvertToLong",
-				typeof(long),
-				new[] { typeof(T) },
-				typeof(FlagExtension).Module,
-				true);
-
-			var ilGen = method.GetILGenerator();
-
-			ilGen.Emit(OpCodes.Ldarg_0);
-			ilGen.Emit(OpCodes.Conv_I8);
-			ilGen.Emit(OpCodes.Ret);
-			return (Func<T, long>)method.CreateDelegate(typeof(Func<T, long>));
+			entity.Set(newValue);
 		}
 	}
 }
