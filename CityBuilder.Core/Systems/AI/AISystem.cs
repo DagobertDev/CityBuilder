@@ -16,6 +16,7 @@ public sealed class AISystem : ISystem<float>
 			new EatDecisionSystem(world),
 			new SleepDecisionSystem(world),
 			new WorkingDecisionSystem(world),
+			new CollectResourceAsWorkDecisionSystem(world),
 			new CollectResourceDecisionSystem(world),
 			new TransportDecisionSystem(world),
 			new WanderAroundDecisionSystem(world),

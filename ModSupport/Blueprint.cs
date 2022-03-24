@@ -20,6 +20,7 @@ namespace CityBuilder.ModSupport
 		string? Category,
 		Housing? Housing,
 		Workplace? Workplace,
+		string? ResourceCollector,
 		Resource? Resource,
 		Blueprint.SerializedGoods? Input,
 		Blueprint.SerializedGoods? Output,
@@ -47,6 +48,11 @@ namespace CityBuilder.ModSupport
 			if (Workplace is { } workplace)
 			{
 				entity.Set(workplace);
+			}
+
+			if (ResourceCollector is { } resourceCollector)
+			{
+				entity.Set(new ResourceCollector(resourceCollector));
 			}
 
 			if (Resource is { } resource)

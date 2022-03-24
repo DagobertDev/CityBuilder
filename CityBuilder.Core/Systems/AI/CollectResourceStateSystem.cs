@@ -1,6 +1,8 @@
+using System;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
 using CityBuilder.Core.Components.Behaviors;
+using CityBuilder.Core.Components.Inventory;
 using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 using DefaultEcs.System;
@@ -17,6 +19,8 @@ public sealed partial class CollectResourceStateSystem : AEntitySetSystem<float>
 	{
 		if (!collecting.Resource.IsAlive)
 		{
+			entity.Remove<CollectingResource>();
+			entity.Set(BehaviorState.Deciding);
 			return;
 		}
 
@@ -31,11 +35,27 @@ public sealed partial class CollectResourceStateSystem : AEntitySetSystem<float>
 			case Finished:
 				var resourceEntity = collecting.Resource;
 				var (good, amount) = resourceEntity.Get<Output>();
+				var position = resourceEntity.Get<Position>();
 				resourceEntity.Dispose();
-				_inventorySystem.CreatePile(resourceEntity.Get<Position>(), good, amount);
 
-				entity.Remove<CollectingResource>();
-				entity.Set(BehaviorState.Deciding);
+				var pile = _inventorySystem.CreatePile(position, good, amount);
+
+				if (collecting.TransportTo.IsAlive)
+				{
+					_inventorySystem.EnsureCreated(collecting.TransportTo, good);
+					var workInventory = _inventorySystem.GetGood(collecting.TransportTo, good);
+
+					var transportedAmount = Math.Min(amount, workInventory.Get<FutureUnusedCapacity>());
+					entity.Set(new Transport(pile, workInventory, new Good(good), transportedAmount));
+					entity.Remove<CollectingResource>();
+					entity.Set(BehaviorState.Starting);
+				}
+				else
+				{
+					entity.Remove<CollectingResource>();
+					entity.Set(BehaviorState.Deciding);
+				}
+
 				break;
 		}
 	}

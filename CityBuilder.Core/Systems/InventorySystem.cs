@@ -100,7 +100,7 @@ public class InventorySystem : IInventorySystem
 				entity.Set<Capacity>(DefaultInventoryCapacity);
 			}
 		}
-		else if (owner.Has<Output>() && owner.Get<Output>().Good == good)
+		else if (owner.Has<Output>() && owner.Get<Output>().Good == good || owner.Has<ResourceCollector>())
 		{
 			entity.Set(InventoryType.Supply);
 			entity.Set<Capacity>(DefaultInventoryCapacity);

@@ -190,6 +190,25 @@
           "Wood": 8
         }
       }
+    },
+    "Woodcutter": {
+      "Name": "Woodcutter",
+      "Texture": "woodcutter.png",
+      "Category": "Production",
+      "Workplace": {
+        "MaxEmployees": 2,
+        "Difficulty": 0
+      },
+      "Construction": {
+        "Workplace": {
+          "MaxEmployees": 2,
+          "Difficulty": 10
+        },
+        "Input": {
+          "Wood": 4
+        }
+      },
+      "ResourceCollector": "Tree"
     }
   }
 }

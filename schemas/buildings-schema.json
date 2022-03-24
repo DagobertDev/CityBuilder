@@ -60,6 +60,9 @@
                     "Output": {
                         "$ref": "#/definitions/goods"
                     },
+                    "ResourceCollector": {
+                        "type": "string"
+                    },
                     "Workplace": {
                         "$ref": "#/definitions/workplace"
                     },

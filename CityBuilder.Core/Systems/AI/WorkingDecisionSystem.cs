@@ -1,5 +1,6 @@
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
+using CityBuilder.Core.Components.Production;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -10,7 +11,7 @@ public sealed partial class WorkingDecisionSystem : AEntitySetSystem<float>
 	[Update, UseBuffer]
 	private static void Update(in Entity entity, in Employee employee)
 	{
-		if (employee.Workplace.Has<CanNotWorkReason>())
+		if (employee.Workplace.Has<CanNotWorkReason>() || employee.Workplace.Has<ResourceCollector>())
 		{
 			return;
 		}
