@@ -97,6 +97,7 @@ namespace CityBuilder
 				new CollectResourceSystem(World, collisionSystem),
 				new SpriteCreationSystem(World, Map.EntityRoot),
 				new SpritePositionSystem(World),
+				new SpriteRotationSystem(World),
 				new NavigationInitSystem(World),
 				new NavigationDestinationSystem(World),
 				new NavigationSystem(World),
@@ -119,6 +120,7 @@ namespace CityBuilder
 				new ConstructionSystem(World),
 				new ConstructionProgressVisualisationInitSystem(World),
 				new ConstructionProgressVisualisationSystem(World),
+				new MovementRotationSystem(World),
 				new ResourcePileVisualisationSystem(World),
 				new ResourcePileRemovalSystem(World));
 

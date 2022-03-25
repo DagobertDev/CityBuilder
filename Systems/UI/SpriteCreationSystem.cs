@@ -19,18 +19,10 @@ namespace CityBuilder.Systems.UI
 				entity.Get<Sprite>().QueueFree();
 			}
 
-			var rotation = 0;
-
-			if (entity.Has<Rotation>())
-			{
-				rotation = entity.Get<Rotation>();
-			}
-
 			var sprite = new Sprite
 			{
 				Texture = texture,
 				Position = position.Value.ToGodotVector(),
-				RotationDegrees = rotation,
 			};
 
 			if (entity.Has<Agent>())
