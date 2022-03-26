@@ -19,7 +19,11 @@ public static class Vector2Extensions
 		return num <= delta || num < 9.99999997475243E-07 ? to : from + other / num * delta;
 	}
 
-	public static double Angle(this Vector2 vector2) => Math.Atan2(vector2.Y, vector2.X) * 180 / Math.PI;
+	public static double Angle(this Vector2 vector2)
+	{
+		var result = Math.Atan2(vector2.Y, vector2.X) * 180 / Math.PI;
+		return result >= 0 ? result : result + 360;
+	}
 
 	public static double AngleTo(this Vector2 from, Vector2 to) => Angle(to - from);
 }
