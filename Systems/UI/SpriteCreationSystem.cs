@@ -3,11 +3,18 @@ using CityBuilder.Core.Components;
 using DefaultEcs;
 using DefaultEcs.System;
 using Godot;
+using World = DefaultEcs.World;
 
 namespace CityBuilder.Systems.UI
 {
 	public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
 	{
+		public SpriteCreationSystem(World world, Node node) : base(world, CreateEntityContainer, true)
+		{
+			world.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
+			_node = node;
+		}
+
 		[ConstructorParameter]
 		private readonly Node _node;
 

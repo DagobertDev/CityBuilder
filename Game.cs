@@ -51,11 +51,6 @@ namespace CityBuilder
 		{
 			Map.Initialize(new Vector2(MapSize, MapSize));
 
-			World.SubscribeComponentAdded((in Entity entity, in Sprite sprite) =>
-			{
-				entity.Set<Size>(sprite.Texture.GetSize().ToNumericsVector());
-			});
-
 			var collisionSystem = new CollisionSystem(World, 0, 0, MapSize, MapSize);
 			World.SetMaxCapacity<ICollisionSystem>(1);
 			World.Set<ICollisionSystem>(collisionSystem);
@@ -63,8 +58,6 @@ namespace CityBuilder
 			var inventorySystem = new InventorySystem(World);
 			World.SetMaxCapacity<IInventorySystem>(1);
 			World.Set<IInventorySystem>(inventorySystem);
-
-			World.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
 
 			World.SubscribeComponentAdded((in Entity entity, in Market _) =>
 			{
@@ -98,6 +91,7 @@ namespace CityBuilder
 				new SpriteCreationSystem(World, Map.EntityRoot),
 				new SpritePositionSystem(World),
 				new SpriteRotationSystem(World),
+				new SizeFromSpriteSystem(World),
 				new NavigationInitSystem(World),
 				new NavigationDestinationSystem(World),
 				new NavigationSystem(World),
