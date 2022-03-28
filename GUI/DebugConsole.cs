@@ -8,99 +8,98 @@ using CityBuilder.Messages;
 using DefaultEcs;
 using Godot;
 
-namespace CityBuilder.GUI
+namespace CityBuilder.GUI;
+
+public class DebugConsole : LineEdit
 {
-	public class DebugConsole : LineEdit
+	private readonly IList<DebugCommand> _commands;
+	private Entity? _selectedEntity;
+
+	public DebugConsole()
 	{
-		private readonly IList<DebugCommand> _commands;
-		private Entity? _selectedEntity;
+		Game.World.Subscribe(this);
 
-		public DebugConsole()
+		_commands = new List<DebugCommand>
 		{
-			Game.World.Subscribe(this);
-
-			_commands = new List<DebugCommand>
+			new("print", GD.Print),
+			new("pause", () =>
 			{
-				new("print", GD.Print),
-				new("pause", () =>
+				var paused = GetTree().Paused;
+				GetTree().Paused = !paused;
+				GD.Print(paused ? "Game continued" : "Game paused");
+			}),
+			new("set_inventory", args =>
+			{
+				if (!_selectedEntity.HasValue || args.Length < 2)
 				{
-					var paused = GetTree().Paused;
-					GetTree().Paused = !paused;
-					GD.Print(paused ? "Game continued" : "Game paused");
-				}),
-				new("set_inventory", args =>
+					return;
+				}
+
+				if (!int.TryParse(args[1], out var amount))
 				{
-					if (!_selectedEntity.HasValue || args.Length < 2)
-					{
-						return;
-					}
+					return;
+				}
 
-					if (!int.TryParse(args[1], out var amount))
-					{
-						return;
-					}
-
-					var good = args[0];
-					Game.World.Get<IInventorySystem>().SetGood(_selectedEntity.Value, good, amount);
-				}),
-				new("view_inventory", () =>
+				var good = args[0];
+				Game.World.Get<IInventorySystem>().SetGood(_selectedEntity.Value, good, amount);
+			}),
+			new("view_inventory", () =>
+			{
+				if (!_selectedEntity.HasValue)
 				{
-					if (!_selectedEntity.HasValue)
-					{
-						return;
-					}
+					return;
+				}
 
-					var inventory = Game.World.Get<IInventorySystem>().GetGoods(_selectedEntity.Value);
+				var inventory = Game.World.Get<IInventorySystem>().GetGoods(_selectedEntity.Value);
 
-					GD.Print(string.Join("\n", inventory.Select(entity
-						=> $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}"
-						   + $"{(entity.Has<Market>() ? " - Market" : string.Empty)}")));
-				}),
-			};
+				GD.Print(string.Join("\n", inventory.Select(entity
+					=> $"{entity.Get<Good>().Name}: {entity.Get<Amount>().Value}"
+					   + $"{(entity.Has<Market>() ? " - Market" : string.Empty)}")));
+			}),
+		};
 
-			Connect("text_entered", this, nameof(HandleInput));
-		}
+		Connect("text_entered", this, nameof(HandleInput));
+	}
 
-		public override void _UnhandledInput(InputEvent @event)
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (@event.IsActionPressed(InputAction.ToggleDebug))
 		{
-			if (@event.IsActionPressed(InputAction.ToggleDebug))
-			{
-				Visible = !Visible;
-			}
+			Visible = !Visible;
 		}
+	}
 
-		public void HandleInput(string text)
+	public void HandleInput(string text)
+	{
+		var command = text.Split(" ");
+		var args = command.Skip(1).ToArray();
+
+		_commands.FirstOrDefault(c => c.Id == command[0])?.Invoke(args);
+	}
+
+	[Subscribe]
+	private void On(in EntitySelected selected)
+	{
+		_selectedEntity = selected.Entity;
+	}
+
+	private class DebugCommand
+	{
+		public string Id { get; }
+		private readonly Action<string[]> _action;
+
+		public DebugCommand(string id, Action action)
 		{
-			var command = text.Split(" ");
-			var args = command.Skip(1).ToArray();
-
-			_commands.FirstOrDefault(c => c.Id == command[0])?.Invoke(args);
+			Id = id;
+			_action = _ => action();
 		}
 
-		[Subscribe]
-		private void On(in EntitySelected selected)
+		public DebugCommand(string id, Action<string[]> action)
 		{
-			_selectedEntity = selected.Entity;
+			Id = id;
+			_action = action;
 		}
 
-		private class DebugCommand
-		{
-			public string Id { get; }
-			private readonly Action<string[]> _action;
-
-			public DebugCommand(string id, Action action)
-			{
-				Id = id;
-				_action = _ => action();
-			}
-
-			public DebugCommand(string id, Action<string[]> action)
-			{
-				Id = id;
-				_action = action;
-			}
-
-			public void Invoke(params string[] args) => _action.Invoke(args);
-		}
+		public void Invoke(params string[] args) => _action.Invoke(args);
 	}
 }

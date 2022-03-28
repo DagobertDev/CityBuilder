@@ -1,4 +1,3 @@
-namespace CityBuilder.Messages
-{
-	public record OpenMainMenuMessage;
-}
+namespace CityBuilder.Messages;
+
+public record OpenMainMenuMessage;

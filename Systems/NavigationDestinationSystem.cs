@@ -3,14 +3,13 @@ using CityBuilder.Core.Components;
 using DefaultEcs.System;
 using Godot;
 
-namespace CityBuilder.Systems
+namespace CityBuilder.Systems;
+
+public sealed partial class NavigationDestinationSystem : AEntitySetSystem<float>
 {
-	public sealed partial class NavigationDestinationSystem : AEntitySetSystem<float>
+	[Update]
+	private static void Update([Added, Changed] Destination destination, NavigationAgent2D agent)
 	{
-		[Update]
-		private static void Update([Added, Changed] Destination destination, NavigationAgent2D agent)
-		{
-			agent.SetTargetLocation(destination.Position.ToGodotVector());
-		}
+		agent.SetTargetLocation(destination.Position.ToGodotVector());
 	}
 }

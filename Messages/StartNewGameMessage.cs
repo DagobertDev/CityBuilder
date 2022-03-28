@@ -1,4 +1,3 @@
-namespace CityBuilder.Messages
-{
-	public record StartNewGameMessage(int Population);
-}
+namespace CityBuilder.Messages;
+
+public record StartNewGameMessage(int Population);

@@ -5,42 +5,41 @@ using DefaultEcs.System;
 using Godot;
 using World = DefaultEcs.World;
 
-namespace CityBuilder.Systems.UI
+namespace CityBuilder.Systems.UI;
+
+public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
 {
-	public sealed partial class SpriteCreationSystem : AEntitySetSystem<float>
+	public SpriteCreationSystem(World world, Node node) : base(world, CreateEntityContainer, true)
 	{
-		public SpriteCreationSystem(World world, Node node) : base(world, CreateEntityContainer, true)
+		world.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
+		_node = node;
+	}
+
+	[ConstructorParameter]
+	private readonly Node _node;
+
+	[Update, UseBuffer]
+	private void Update(in Entity entity, in Texture texture, in Position position)
+	{
+		if (entity.Has<Sprite>())
 		{
-			world.SubscribeComponentRemoved((in Entity _, in Sprite sprite) => sprite.QueueFree());
-			_node = node;
+			entity.Get<Sprite>().QueueFree();
 		}
 
-		[ConstructorParameter]
-		private readonly Node _node;
-
-		[Update, UseBuffer]
-		private void Update(in Entity entity, in Texture texture, in Position position)
+		var sprite = new Sprite
 		{
-			if (entity.Has<Sprite>())
-			{
-				entity.Get<Sprite>().QueueFree();
-			}
+			Texture = texture,
+			Position = position.Value.ToGodotVector(),
+		};
 
-			var sprite = new Sprite
-			{
-				Texture = texture,
-				Position = position.Value.ToGodotVector(),
-			};
-
-			if (entity.Has<Agent>())
-			{
-				sprite.ZIndex = 1;
-			}
-
-			_node.AddChild(sprite);
-
-			entity.Set(sprite);
-			entity.Remove<Texture>();
+		if (entity.Has<Agent>())
+		{
+			sprite.ZIndex = 1;
 		}
+
+		_node.AddChild(sprite);
+
+		entity.Set(sprite);
+		entity.Remove<Texture>();
 	}
 }

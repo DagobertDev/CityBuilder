@@ -1,4 +1,3 @@
-namespace CityBuilder.Messages
-{
-	public record CloseInGameMenuMessage;
-}
+namespace CityBuilder.Messages;
+
+public record CloseInGameMenuMessage;
