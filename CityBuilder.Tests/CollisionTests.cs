@@ -1,11 +1,6 @@
-using System.Numerics;
-using CityBuilder.Core.Components;
-using CityBuilder.Core.Systems;
-using DefaultEcs;
-using NUnit.Framework;
-
 namespace CityBuilder.Tests;
 
+/*
 public class CollisionTests
 {
 	private World _world;
@@ -85,3 +80,4 @@ public class CollisionTests
 		Assert.IsEmpty(collisions);
 	}
 }
+*/

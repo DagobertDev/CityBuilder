@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Numerics;
 using CityBuilder.Core.Components;
+using CityBuilder.Core.Systems;
 using DefaultEcs;
 using DefaultEcs.System;
 using UltimateQuadTree;
 
-namespace CityBuilder.Core.Systems;
+namespace CityBuilder.Systems;
 
 public sealed partial class CollisionSystem : AEntitySetSystem<float>, ICollisionSystem
 {
@@ -39,18 +40,18 @@ public sealed partial class CollisionSystem : AEntitySetSystem<float>, ICollisio
 	}
 
 	public IEnumerable<Entity> GetEntities(HitBox hitBox) =>
-		_quadTree.GetNearestObjects(hitBox).Where(box => box.Value.IntersectsWith(hitBox.Value))
+		_quadTree.GetNearestObjects(hitBox).Where(box => box.Value.Intersects(hitBox.Value))
 			.Select(box => box.Entity).ToList();
 
 	public IEnumerable<Entity> GetEntities(Vector2 position) =>
 		_quadTree.GetNearestObjects(new HitBox(position, Vector2.One, default))
-			.Where(box => box.Value.Contains(position.ToPoint())).Select(box => box.Entity).ToList();
+			.Where(box => box.Value.Contains(position)).Select(box => box.Entity).ToList();
 
 	private class Bounds : IQuadTreeObjectBounds<HitBox>
 	{
-		public double GetLeft(HitBox hitBox) => hitBox.Value.Left;
-		public double GetRight(HitBox hitBox) => hitBox.Value.Right;
-		public double GetTop(HitBox hitBox) => hitBox.Value.Top;
-		public double GetBottom(HitBox hitBox) => hitBox.Value.Bottom;
+		public double GetLeft(HitBox hitBox) => hitBox.Value.Position.X;
+		public double GetRight(HitBox hitBox) => hitBox.Value.Position.X + hitBox.Value.Size.X;
+		public double GetTop(HitBox hitBox) => hitBox.Value.Position.Y;
+		public double GetBottom(HitBox hitBox) => hitBox.Value.Position.Y + hitBox.Value.Size.Y;
 	}
 }
