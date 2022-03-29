@@ -19,6 +19,7 @@ public readonly record struct Rotation
 	}
 
 	public int Value { get; }
+	public float Radians => (float)(Value * Math.PI / 180);
 
 	public static implicit operator int(Rotation rotation) => rotation.Value;
 	public static implicit operator Rotation(int value) => new(value);

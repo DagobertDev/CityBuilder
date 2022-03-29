@@ -7,7 +7,7 @@ namespace CityBuilder.Core.Systems;
 
 public interface ICollisionSystem
 {
-	public IEnumerable<Entity> GetEntities(HitBox hitBox);
+	public IEnumerable<Entity> GetEntities(HitBox boundingBox);
 
 	public IEnumerable<Entity> GetEntities(Vector2 position);
 }
