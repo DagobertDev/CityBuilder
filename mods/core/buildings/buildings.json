@@ -81,6 +81,7 @@
       "Speed": 100,
       "HungerRate": 0.1,
       "TirednessRate": 0.5,
+      "TransportCapacity": 5,
       "WantsHousing": {},
       "WantsWork": {},
       "WantsRecreation": {}
