@@ -116,7 +116,10 @@ public class Game : Control
 			new ConstructionProgressVisualisationSystem(World),
 			new MovementRotationSystem(World),
 			new ResourcePileVisualisationSystem(World),
-			new ResourcePileRemovalSystem(World));
+			new ResourcePileRemovalSystem(World),
+			new GrowthInitSystem(World),
+			new GrowthSystem(World),
+			new GrowthVisualisationSystem(World));
 
 		var textureManager = new TextureManager();
 		textureManager.Manage(World);

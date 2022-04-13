@@ -91,6 +91,9 @@
                         },
                         "additionalProperties": false
                     },
+                    "GrowthRate": {
+                        "$ref": "#/definitions/nonNegativeNumber"
+                    },
                     "CollectResource": {
                         "type": "string"
                     },

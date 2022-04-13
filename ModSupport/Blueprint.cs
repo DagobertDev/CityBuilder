@@ -35,7 +35,8 @@ public record Blueprint
 	WantsHousing? WantsHousing,
 	WantsRecreation? WantsRecreation,
 	WantsWork? WantsWork,
-	Market? Market
+	Market? Market,
+	float? GrowthRate
 )
 {
 	public void Populate(Entity entity)
@@ -124,6 +125,11 @@ public record Blueprint
 		if (CollectResource is { } collectResource)
 		{
 			entity.Set(new CollectResource(collectResource));
+		}
+
+		if (GrowthRate is { } growthRate)
+		{
+			entity.Set<GrowthRate>(growthRate);
 		}
 
 		entity.Set(Texture);

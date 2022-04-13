@@ -12,11 +12,18 @@ namespace CityBuilder.Core.Systems.AI;
 public sealed partial class CollectResourceAsWorkDecisionSystem : AEntitySetSystem<float>
 {
 	private readonly EntityMultiMap<Resource> _resources;
+	private readonly EntityMultiMap<Resource> _grownResources;
 
 	public CollectResourceAsWorkDecisionSystem(World world) : base(world, CreateEntityContainer, true)
 	{
 		_resources = world.GetEntities()
 			.With((in Resource resource) => resource.CollectionStatus != Resource.Status.Reserved)
+			.Without<Growth>()
+			.AsMultiMap(new ResourceTypeComparer());
+
+		_grownResources = world.GetEntities()
+			.With((in Resource resource) => resource.CollectionStatus != Resource.Status.Reserved)
+			.With((in Growth growth) => growth >= 1)
 			.AsMultiMap(new ResourceTypeComparer());
 	}
 
@@ -33,12 +40,15 @@ public sealed partial class CollectResourceAsWorkDecisionSystem : AEntitySetSyst
 
 		var resourceType = employee.Workplace.Get<ResourceCollector>().Type;
 
-		if (!_resources.TryGetEntities(new Resource { Type = resourceType }, out var resources))
+		_resources.TryGetEntities(new Resource { Type = resourceType }, out var resources);
+		_grownResources.TryGetEntities(new Resource { Type = resourceType }, out var grownResources);
+
+		var resource = FindBestResource(workplacePosition, resources, grownResources);
+
+		if (resource == default)
 		{
 			return;
 		}
-
-		var resource = FindBestResource(workplacePosition, resources);
 
 		resource.Set(resource.Get<Resource>() with { CollectionStatus = Resource.Status.Reserved });
 		entity.Set(new CollectingResource(resource, workplace));
@@ -48,28 +58,30 @@ public sealed partial class CollectResourceAsWorkDecisionSystem : AEntitySetSyst
 	[WithPredicate]
 	private static bool Filter(in BehaviorState state) => state.HasNotDecided;
 
-	private static Entity FindBestResource(Vector2 position, ReadOnlySpan<Entity> resources)
+	private static Entity FindBestResource(Vector2 position, ReadOnlySpan<Entity> resources,
+		ReadOnlySpan<Entity> grownResources)
 	{
 		var distance = float.MaxValue;
-		var closest = default(Entity);
+		Entity closest = default;
 
-		foreach (var resource in resources)
-		{
-			var newDistance = resource.Get<Position>().Value.DistanceSquaredTo(position);
-
-			if (newDistance < distance)
-			{
-				distance = newDistance;
-				closest = resource;
-			}
-		}
-
-		if (!closest.IsAlive)
-		{
-			throw new ApplicationException("Resource not found");
-		}
+		FindBestResourceInternal(resources);
+		FindBestResourceInternal(grownResources);
 
 		return closest;
+
+		void FindBestResourceInternal(ReadOnlySpan<Entity> res)
+		{
+			foreach (var resource in res)
+			{
+				var newDistance = resource.Get<Position>().Value.DistanceSquaredTo(position);
+
+				if (newDistance < distance)
+				{
+					distance = newDistance;
+					closest = resource;
+				}
+			}
+		}
 	}
 
 	private class ResourceTypeComparer : IEqualityComparer<Resource>

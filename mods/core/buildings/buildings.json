@@ -166,7 +166,8 @@
       "Resource": {
         "Type": "Tree",
         "Difficulty": 10
-      }
+      },
+      "GrowthRate": 0.1
     },
     "Windmill": {
       "Name": "Windmill",
