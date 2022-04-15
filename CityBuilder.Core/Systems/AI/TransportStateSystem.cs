@@ -101,7 +101,7 @@ public sealed partial class TransportStateSystem : AEntitySetSystem<float>
 			return;
 		}
 
-		if (entity.Get<Position>().Value != to.Get<Position>().Value)
+		if (entity.Get<Position>().Value.DistanceSquaredTo(to.Get<Position>()) > 100)
 		{
 			throw new ApplicationException("Transporter did not reach destination.");
 		}

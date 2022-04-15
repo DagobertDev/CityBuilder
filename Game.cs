@@ -93,6 +93,7 @@ public class Game : Control
 			new SpriteRotationSystem(World),
 			new SizeFromSpriteSystem(World),
 			new NavigationInitSystem(World),
+			new NavigationMeshSystem(World, Map),
 			new NavigationDestinationSystem(World),
 			new NavigationSystem(World),
 			new MovementSystem(World),

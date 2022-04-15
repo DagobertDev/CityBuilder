@@ -1,3 +1,4 @@
+using CityBuilder.Components;
 using CityBuilder.Core.Components;
 using CityBuilder.Core.Components.AI;
 using DefaultEcs;
@@ -11,11 +12,9 @@ namespace CityBuilder.Systems;
 public sealed partial class NavigationSystem : AEntitySetSystem<float>
 {
 	[Update, UseBuffer]
-	private static void Update(in Entity entity, in NavigationAgent2D agent, in Destination destination,
-		in Position position)
+	private static void Update(in Entity entity, in NavigationAgent2D agent)
 	{
-		// TODO: Fix this
-		/*if (agent.IsNavigationFinished())
+		if (agent.IsNavigationFinished())
 		{
 			entity.Remove<Destination>();
 			entity.Get<BehaviorState>().Next(out var next);
@@ -24,16 +23,6 @@ public sealed partial class NavigationSystem : AEntitySetSystem<float>
 		}
 
 		var waypoint = agent.GetNextLocation().ToNumericsVector();
-		entity.Set<Waypoint>(waypoint);*/
-
-		if (destination.Position == position.Value)
-		{
-			entity.Remove<Destination>();
-			entity.Get<BehaviorState>().Next(out var next);
-			entity.Set(next);
-			return;
-		}
-
-		entity.Set<Waypoint>(destination.Position);
+		entity.Set<Waypoint>(waypoint);
 	}
 }
