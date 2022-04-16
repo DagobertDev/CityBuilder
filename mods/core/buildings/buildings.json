@@ -57,6 +57,12 @@
       "Category": "Tools",
       "CollectResource": "Tree"
     },
+    "CollectStone": {
+      "Name": "Collect Stone",
+      "Texture": "collect_stone.png",
+      "Category": "Tools",
+      "CollectResource": "Stone"
+    },
     "House": {
       "Name": "House",
       "Texture": "house.png",
@@ -154,6 +160,18 @@
         "Input": {
           "Wood": 10
         }
+      }
+    },
+    "Rock": {
+      "Name": "Rock",
+      "Texture": "rock.png",
+      "Category": "Debug",
+      "Output": {
+        "Stone": 5
+      },
+      "Resource": {
+        "Type": "Stone",
+        "Difficulty": 10
       }
     },
     "Tree": {
