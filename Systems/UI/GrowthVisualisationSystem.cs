@@ -6,16 +6,14 @@ namespace CityBuilder.Systems.UI;
 
 public sealed partial class GrowthVisualisationSystem : AEntitySetSystem<float>
 {
-	private const float MinimalAlpha = 0.3f;
-	private const float MaximumAlpha = 0.7f;
+	private const float MinimalScale = 0.3f;
+	private const float MaximumScale = 0.7f;
 
 	[Update]
 	private static void Update(in Sprite sprite, [Added, Changed] in Growth growth)
 	{
-		var modulate = sprite.SelfModulate;
+		var scale = growth == 1 ? 1 : MinimalScale + growth * (MaximumScale - MinimalScale);
 
-		modulate.a = growth == 1 ? 1 : MinimalAlpha + growth * (MaximumAlpha - MinimalAlpha);
-
-		sprite.SelfModulate = modulate;
+		sprite.Scale = new Vector2(scale, scale);
 	}
 }
