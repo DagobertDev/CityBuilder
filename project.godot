@@ -86,6 +86,10 @@ escape={
  ]
 }
 
+[mono]
+
+project/assembly_name="CityBuilder"
+
 [physics]
 
 common/enable_pause_aware_picking=true
